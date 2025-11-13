@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.P_Final_Componentes">
         <activity
+            android:name=".editpeli"
+            android:exported="false" />
+        <activity
+            android:name=".addpeli"
+            android:exported="false" />
+        <activity
             android:name=".sidebar"
             android:exported="false" />
         <activity
