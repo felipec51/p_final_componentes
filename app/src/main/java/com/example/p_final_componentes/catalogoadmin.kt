@@ -53,7 +53,7 @@ class catalogoadmin : AppCompatActivity() {
         // Se busca el contenedor de Compose por su ID
         val composeView = findViewById<ComposeView>(R.id.render)
 
-
+//hola
         composeView.setContent {
 
             MaterialTheme {
