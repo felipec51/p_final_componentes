@@ -58,7 +58,7 @@ class main2 : AppCompatActivity() {
         }
 
         // Se busca el contenedor de Compose por su ID
-        val composeView = findViewById<ComposeView>(R.id.hola)
+        val composeView = findViewById<ComposeView>(R.id.render)
 
 
         composeView.setContent {
