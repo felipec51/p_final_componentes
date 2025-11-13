@@ -12,6 +12,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.P_Final_Componentes">
         <activity
+            android:name=".sidebar"
+            android:exported="false" />
+        <activity
+            android:name=".pelinodispo"
+            android:exported="false" />
+        <activity
+            android:name=".pelidispo"
+            android:exported="false" />
+        <activity
             android:name=".comprar"
             android:exported="false" />
         <activity
