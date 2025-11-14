@@ -7,4 +7,11 @@
     android:layout_height="match_parent"
     tools:context=".menuadmin">
 
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/render"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="16dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

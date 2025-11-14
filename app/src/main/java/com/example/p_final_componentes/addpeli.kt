@@ -71,26 +71,7 @@ class addpeli : AppCompatActivity() {
     }
 
     @Composable
-    fun AndroidAddPeli(modifier: Modifier = Modifier) {
-        Box(
-            modifier = modifier
-                .requiredWidth(width = 458.dp)
-                .requiredHeight(height = 917.dp)
-                .background(color = Color.White)
-        ) {
-            Propiedad1Predeterminado(
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(
-                        x = (-3).dp,
-                        y = (-1).dp
-                    )
-            )
-        }
-    }
-
-    @Composable
-    fun Propiedad1Predeterminado(modifier: Modifier = Modifier) {
+    fun AdminEditPelicula(modifier: Modifier = Modifier) {
         Box(
             modifier = modifier
                 .requiredWidth(width = 468.dp)
@@ -784,7 +765,10 @@ class addpeli : AppCompatActivity() {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = 873.dp)
+                    .padding(
+                        end = 0.4541015625.dp,
+                        bottom = 873.dp
+                    )
             ) {
                 Box(
                     modifier = Modifier
@@ -985,15 +969,10 @@ class addpeli : AppCompatActivity() {
             }
             Box(
                 modifier = Modifier
-                    .align(alignment = Alignment.TopCenter)
-                    .offset(
-                        x = 0.45.dp,
-                        y = 0.dp
-                    )
-                    .fillMaxHeight()
-                    .requiredWidth(width = 468.dp)
+                    .fillMaxSize()
                     .background(color = Color.Black.copy(alpha = 0.5f))
                     .padding(
+                        start = 0.4541015625.dp,
                         top = 64.dp,
                         bottom = 20.dp
                     )
@@ -1003,13 +982,13 @@ class addpeli : AppCompatActivity() {
                 color = Color(0xff141414),
                 border = BorderStroke(1.1204500198364258.dp, Color(0xff2f2f2f)),
                 modifier = Modifier
-                    .align(alignment = Alignment.TopCenter)
-                    .offset(
-                        x = 0.dp,
-                        y = 0.dp
-                    )
                     .clip(shape = RoundedCornerShape(10.dp))
-                    .padding(vertical = 187.dp)
+                    .padding(
+                        start = 10.dp,
+                        end = 10.4541015625.dp,
+                        top = 187.dp,
+                        bottom = 187.dp
+                    )
                     .shadow(
                         elevation = 6.dp,
                         shape = RoundedCornerShape(10.dp)
@@ -1078,7 +1057,7 @@ class addpeli : AppCompatActivity() {
                                 .requiredHeight(height = 18.dp)
                         ) {
                             Text(
-                                text = "Agregar Nueva Película",
+                                text = "Editar Película",
                                 color = Color.White,
                                 textAlign = TextAlign.Center,
                                 lineHeight = 1.em,
@@ -1089,7 +1068,7 @@ class addpeli : AppCompatActivity() {
                                 modifier = Modifier
                                     .align(alignment = Alignment.TopStart)
                                     .offset(
-                                        x = 97.99.dp,
+                                        x = 136.99.dp,
                                         y = (-1.36).dp
                                     )
                             )
@@ -1100,7 +1079,7 @@ class addpeli : AppCompatActivity() {
                                 .requiredWidth(width = 398.dp)
                         ) {
                             Text(
-                                text = "Complete los detalles de la película para agregar al catálogo ",
+                                text = "Complete los detalles de la película para actualizar",
                                 color = Color(0xff99a1af),
                                 textAlign = TextAlign.Center,
                                 lineHeight = 1.43.em,
@@ -1147,12 +1126,12 @@ class addpeli : AppCompatActivity() {
                                         )
                                     )
                                 },
-                                placeholder = { Text("Ej: Interestelar") },
+                                placeholder = { Text("Interestelar") },
                                 textStyle = TextStyle(
                                     fontSize = 16.sp
                                 ),
                                 colors = TextFieldDefaults.textFieldColors(
-                                    textColor = Color(0xff717182),
+                                    textColor = Color.White,
                                     containerColor = Color.Transparent
                                 ),
                                 modifier = Modifier
@@ -1182,7 +1161,7 @@ class addpeli : AppCompatActivity() {
                                         fontSize = 16.sp
                                     ),
                                     colors = TextFieldDefaults.textFieldColors(
-                                        textColor = Color(0xff717182),
+                                        textColor = Color.White,
                                         containerColor = Color.Transparent
                                     ),
                                     modifier = Modifier
@@ -1207,7 +1186,7 @@ class addpeli : AppCompatActivity() {
                                         fontSize = 16.sp
                                     ),
                                     colors = TextFieldDefaults.textFieldColors(
-                                        textColor = Color(0xff717182),
+                                        textColor = Color.White,
                                         containerColor = Color.Transparent
                                     ),
                                     modifier = Modifier
@@ -1235,8 +1214,8 @@ class addpeli : AppCompatActivity() {
                                 },
                                 supportingText = {
                                     Text(
-                                        text = "Selecciona un género",
-                                        color = Color(0xff717182),
+                                        text = "Accion",
+                                        color = Color.White,
                                         lineHeight = 1.43.em,
                                         style = TextStyle(
                                             fontSize = 14.sp
@@ -1262,12 +1241,12 @@ class addpeli : AppCompatActivity() {
                                         )
                                     )
                                 },
-                                placeholder = { Text("Ej: Christopher Nolan") },
+                                placeholder = { Text("Christopher Nolan") },
                                 textStyle = TextStyle(
                                     fontSize = 16.sp
                                 ),
                                 colors = TextFieldDefaults.textFieldColors(
-                                    textColor = Color(0xff717182),
+                                    textColor = Color.White,
                                     containerColor = Color.Transparent
                                 ),
                                 modifier = Modifier
@@ -1287,12 +1266,12 @@ class addpeli : AppCompatActivity() {
                                         )
                                     )
                                 },
-                                placeholder = { Text("https://...") },
+                                placeholder = { Text("https://images.unsplash.com/photo-168263265465...") },
                                 textStyle = TextStyle(
                                     fontSize = 16.sp
                                 ),
                                 colors = TextFieldDefaults.textFieldColors(
-                                    textColor = Color(0xff717182),
+                                    textColor = Color.White,
                                     containerColor = Color.Transparent
                                 ),
                                 modifier = Modifier
@@ -1323,7 +1302,7 @@ class addpeli : AppCompatActivity() {
                                     )
                             ) {
                                 Text(
-                                    text = "Agregar Película",
+                                    text = "Guardar Cambios",
                                     color = Color.White,
                                     lineHeight = 1.43.em,
                                     style = TextStyle(
@@ -1370,9 +1349,9 @@ class addpeli : AppCompatActivity() {
         }
     }
 
-    @Preview(widthDp = 458, heightDp = 917)
+    @Preview(widthDp = 468, heightDp = 917)
     @Composable
-    private fun AndroidAddPeliPreview() {
-        AndroidAddPeli(Modifier)
+    private fun AndroidEditPeliPreview() {
+        AndroidEditPeli(Modifier)
     }
 }
