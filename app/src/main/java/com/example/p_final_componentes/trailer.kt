@@ -46,14 +46,12 @@ class trailer : AppCompatActivity() {
         }
         val composeView = findViewById<ComposeView>(R.id.render)
         composeView.setContent {
-
             MaterialTheme {
                 Login()
             }
         }
     }
 }
-
 @Composable
 fun Container(modifier: Modifier = Modifier) {
     Box(
@@ -98,7 +96,7 @@ fun Container(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .align(alignment = Alignment.TopStart)
                     .offset(x = 15.99.dp,
-                        y = 236.35.dp))
+                        y = 236.3.dp))
         }
         Box(
             modifier = Modifier
@@ -128,7 +126,7 @@ fun Container(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .align(alignment = Alignment.TopStart)
                     .offset(x = 15.99.dp,
-                        y = 236.35.dp))
+                        y = 236.3.dp))
         }
     }
 }
