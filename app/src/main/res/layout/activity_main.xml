@@ -16,12 +16,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/google_ic"
-        tools:layout_editor_absoluteX="186dp"
-        tools:layout_editor_absoluteY="218dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

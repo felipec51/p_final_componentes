@@ -46,11 +46,9 @@ class catalogoadmin : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        // Se busca el contenedor de Compose por su ID
+
         val composeView = findViewById<ComposeView>(R.id.render)
-
         composeView.setContent {
-
             MaterialTheme {
                 App()
             }
@@ -64,7 +62,7 @@ fun App(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .requiredWidth(width = 389.dp)
-            .requiredHeight(height = 1030.dp)
+            .requiredHeight(height = 365.dp)
             .background(color = Color(0xff141414))
     ) {
         Row(
@@ -214,9 +212,9 @@ fun App(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .align(alignment = Alignment.TopStart)
                 .offset(x = 24.dp,
-                    y = 114.9.dp)
+                    y = 115.dp)
                 .requiredWidth(width = 322.dp)
-                .requiredHeight(height = 866.dp)
+                .requiredHeight(height = 250.dp)
         ) {
             Surface(
                 shape = RoundedCornerShape(14.dp),
@@ -380,7 +378,7 @@ fun App(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview(widthDp = 389, heightDp = 1030)
+@Preview(widthDp = 389, heightDp = 365)
 @Composable
 private fun AppPreview() {
     App(Modifier)

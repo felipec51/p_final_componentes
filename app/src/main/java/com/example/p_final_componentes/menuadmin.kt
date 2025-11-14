@@ -56,14 +56,14 @@ class menuadmin : AppCompatActivity() {
         composeView.setContent {
 
             MaterialTheme {
-                editLogin()
+                EditLogin()
             }
 
         }
     }
 }
     @Composable
-    fun editLogin(modifier: Modifier = Modifier) {
+    fun EditLogin(modifier: Modifier = Modifier) {
         Box(
             modifier = modifier
                 .requiredWidth(width = 468.dp)
@@ -1017,5 +1017,5 @@ class menuadmin : AppCompatActivity() {
     @Preview(widthDp = 468, heightDp = 1450)
     @Composable
     private fun EditpeliadminPreview() {
-        editLogin(Modifier)
+        EditLogin(Modifier)
     }
