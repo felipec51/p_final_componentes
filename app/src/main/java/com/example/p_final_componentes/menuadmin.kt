@@ -3,6 +3,7 @@ package com.example.p_final_componentes
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.BorderStroke
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.compose.foundation.background
@@ -23,6 +24,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -46,250 +56,966 @@ class menuadmin : AppCompatActivity() {
         composeView.setContent {
 
             MaterialTheme {
-                menuadmin()
+                editLogin()
             }
 
         }
-    }
-
-    @Composable
-    fun Frame1(modifier: Modifier = Modifier) {
-        Box(
-            modifier = modifier
-                .requiredWidth(width = 412.dp)
-                .requiredHeight(height = 917.dp)
-                .background(color = Color(0xff131313))
-        ) {
-            Box(
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(
-                        x = 224.dp,
-                        y = 13.dp
-                    )
-                    .requiredWidth(width = 171.dp)
-                    .requiredHeight(height = 39.dp)
-                    .clip(shape = RoundedCornerShape(5.dp))
-                    .background(color = Color(0xffe50914))
-            )
-            InicioPeliculas(
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(
-                        x = 4.dp,
-                        y = 18.dp
-                    )
-            )
-            Text(
-                text = "Admin",
-                color = Color.White,
-                textAlign = TextAlign.Center,
-                lineHeight = 0.75.em,
-                style = MaterialTheme.typography.displaySmall,
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(
-                        x = 232.dp,
-                        y = 18.dp
-                    )
-                    .requiredWidth(width = 150.dp)
-                    .requiredHeight(height = 29.dp)
-            )
-        }
-    }
-
-    @Composable
-    fun InicioPeliculas(modifier: Modifier = Modifier) {
-        Box(
-            modifier = modifier
-                .requiredWidth(width = 403.dp)
-                .requiredHeight(height = 849.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(
-                        x = 8.dp,
-                        y = 0.dp
-                    )
-                    .requiredWidth(width = 395.dp)
-                    .requiredHeight(height = 226.dp)
-            ) {
-                Text(
-                    text = "RewindCodeFilm",
-                    color = Color(0xffe50914),
-                    lineHeight = 1.13.em,
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier
-                        .requiredWidth(width = 198.dp)
-                )
-                Text(
-                    text = "Solo en RewindCodeFilm",
-                    color = Color.White,
-                    lineHeight = 0.75.em,
-                    style = MaterialTheme.typography.displaySmall,
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(
-                            x = 0.dp,
-                            y = 34.dp
-                        )
-                        .requiredWidth(width = 395.dp)
-                )
-                Text(
-                    text = "En RewindCodeFilm encontraras titulos originales, \nincreibles que no estan en ninguna otra otra parte. \nPeliculas especiales pensados exclusicamentes para ti.",
-                    color = Color.White,
-                    lineHeight = 1.69.em,
-                    style = TextStyle(
-                        fontSize = 16.sp
-                    ),
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(
-                            x = 6.dp,
-                            y = 118.dp
-                        )
-                        .requiredWidth(width = 366.dp)
-                )
-            }
-            Text(
-                text = "Destacadas semana",
-                color = Color.White,
-                style = TextStyle(
-                    fontSize = 16.sp
-                ),
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(
-                        x = 14.dp,
-                        y = 248.dp
-                    )
-                    .requiredWidth(width = 183.dp)
-            )
-            Box(
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(
-                        x = 0.dp,
-                        y = 317.dp
-                    )
-                    .requiredWidth(width = 384.dp)
-                    .requiredHeight(height = 106.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.rectangle_35),
-                    contentDescription = "Rectangle 35",
-                    modifier = Modifier
-                        .requiredWidth(width = 186.dp)
-                        .requiredHeight(height = 106.dp)
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.rectangle_36),
-                    contentDescription = "Rectangle 36",
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(
-                            x = 198.dp,
-                            y = 0.dp
-                        )
-                        .requiredWidth(width = 186.dp)
-                        .requiredHeight(height = 106.dp)
-                )
-            }
-            Text(
-                text = "Favoritos del publico",
-                color = Color.White,
-                style = TextStyle(
-                    fontSize = 16.sp
-                ),
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(
-                        x = 8.dp,
-                        y = 455.dp
-                    )
-                    .requiredWidth(width = 173.dp)
-            )
-            Box(
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(
-                        x = 0.dp,
-                        y = 527.dp
-                    )
-                    .requiredWidth(width = 384.dp)
-                    .requiredHeight(height = 106.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.rectangle_32),
-                    contentDescription = "Rectangle 32",
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(
-                            x = 198.dp,
-                            y = 0.dp
-                        )
-                        .requiredWidth(width = 186.dp)
-                        .requiredHeight(height = 106.dp)
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.rectangle_33),
-                    contentDescription = "Rectangle 33",
-                    modifier = Modifier
-                        .requiredWidth(width = 186.dp)
-                        .requiredHeight(height = 106.dp)
-                )
-            }
-            Text(
-                text = "Peliculas de comedia",
-                color = Color.White,
-                style = TextStyle(
-                    fontSize = 16.sp
-                ),
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(
-                        x = 8.dp,
-                        y = 665.dp
-                    )
-                    .requiredWidth(width = 186.dp)
-            )
-            Box(
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(
-                        x = 0.dp,
-                        y = 743.dp
-                    )
-                    .requiredWidth(width = 384.dp)
-                    .requiredHeight(height = 106.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.rectangle_33_1),
-                    contentDescription = "Rectangle 33",
-                    modifier = Modifier
-                        .requiredWidth(width = 186.dp)
-                        .requiredHeight(height = 106.dp)
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.rectangle_34),
-                    contentDescription = "Rectangle 34",
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(
-                            x = 198.dp,
-                            y = 0.dp
-                        )
-                        .requiredWidth(width = 186.dp)
-                        .requiredHeight(height = 106.dp)
-                )
-            }
-        }
-    }
-
-    @Preview(widthDp = 412, heightDp = 917)
-    @Composable
-    private fun Frame1Preview() {
-        Frame1(Modifier)
     }
 }
+    @Composable
+    fun editLogin(modifier: Modifier = Modifier) {
+        Box(
+            modifier = modifier
+                .requiredWidth(width = 468.dp)
+                .requiredHeight(height = 1450.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color(0xff141414))
+                    .padding(top = 63.98809814453125.dp,
+                        bottom = -0.00006103515625.dp)
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .requiredHeight(height = 1375.dp)
+                        .background(color = Color(0xff141414))
+                        .padding(start = 23.98459243774414.dp,
+                            end = 23.98458480834961.dp,
+                            top = 23.98455810546875.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .requiredWidth(width = 431.dp)
+                            .requiredHeight(height = 599.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .align(alignment = Alignment.TopStart)
+                                .offset(x = 0.02.dp,
+                                    y = 0.03.dp)
+                                .requiredWidth(width = 423.dp)
+                                .requiredHeight(height = 137.dp)
+                                .clip(shape = RoundedCornerShape(14.dp))
+                                .background(color = Color(0xff141414))
+                                .border(border = BorderStroke(1.1204500198364258.dp, Color(0xff2f2f2f)),
+                                    shape = RoundedCornerShape(14.dp))
+                                .padding(start = 23.98459243774414.dp,
+                                    top = 23.98459243774414.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .requiredWidth(width = 405.dp)
+                                    .requiredHeight(height = 105.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .requiredWidth(width = 357.dp)
+                                        .requiredHeight(height = 105.dp)
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .requiredWidth(width = 357.dp)
+                                            .requiredHeight(height = 20.dp)
+                                    ) {
+                                        Text(
+                                            text = "Total Películas",
+                                            color = Color(0xff99a1af),
+                                            lineHeight = 1.43.em,
+                                            style = TextStyle(
+                                                fontSize = 14.sp),
+                                            modifier = Modifier
+                                                .fillMaxWidth())
+                                    }
+                                    Row(
+                                        horizontalArrangement = Arrangement.Center,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .align(alignment = Alignment.TopStart)
+                                            .offset(x = 304.dp,
+                                                y = 25.dp)
+                                            .requiredSize(size = 48.dp)
+                                            .clip(shape = RoundedCornerShape(10.dp))
+                                            .background(color = Color(0xffe50914).copy(alpha = 0.1f))
+                                            .padding(end = 0.01753997802734375.dp)
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.icon),
+                                            contentDescription = "Icon",
+                                            modifier = Modifier
+                                                .requiredSize(size = 24.dp))
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .align(alignment = Alignment.TopStart)
+                                            .offset(x = 0.dp,
+                                                y = 27.98.dp)
+                                            .requiredWidth(width = 357.dp)
+                                            .requiredHeight(height = 24.dp)
+                                    ) {
+                                        Text(
+                                            text = "7",
+                                            color = Color.White,
+                                            lineHeight = 1.5.em,
+                                            style = TextStyle(
+                                                fontSize = 16.sp),
+                                            modifier = Modifier
+                                                .align(alignment = Alignment.TopStart)
+                                                .offset(x = 0.dp,
+                                                    y = (-1.88).dp))
+                                    }
+                                    Row(
+                                        modifier = Modifier
+                                            .align(alignment = Alignment.TopStart)
+                                            .offset(x = 0.dp,
+                                                y = 55.97.dp)
+                                            .requiredWidth(width = 357.dp)
+                                            .requiredHeight(height = 19.dp)
+                                    ) {
+                                        Text(
+                                            text = "En el catálogo",
+                                            color = Color(0xff6a7282),
+                                            lineHeight = 1.33.em,
+                                            style = TextStyle(
+                                                fontSize = 14.sp),
+                                            modifier = Modifier
+                                                .fillMaxWidth())
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .align(alignment = Alignment.TopStart)
+                                            .offset(x = 0.dp,
+                                                y = 82.62.dp)
+                                            .requiredWidth(width = 73.dp)
+                                            .requiredHeight(height = 23.dp)
+                                            .clip(shape = MaterialTheme.shapes.small)
+                                            .background(color = Color(0xff00c950).copy(alpha = 0.1f))
+                                    ) {
+                                        Text(
+                                            text = "↑ +12.5%",
+                                            color = Color(0xff00c950),
+                                            lineHeight = 1.33.em,
+                                            style = TextStyle(
+                                                fontSize = 14.sp),
+                                            modifier = Modifier
+                                                .align(alignment = Alignment.TopStart)
+                                                .offset(x = 7.91.dp,
+                                                    y = 1.31.dp)
+                                                .requiredWidth(width = 70.dp))
+                                    }
+                                }
+                            }
+                        }
+                        Column(
+                            modifier = Modifier
+                                .align(alignment = Alignment.TopStart)
+                                .offset(x = 0.02.dp,
+                                    y = 160.03.dp)
+                                .requiredWidth(width = 422.dp)
+                                .requiredHeight(height = 147.dp)
+                                .clip(shape = RoundedCornerShape(14.dp))
+                                .background(color = Color(0xff141414))
+                                .border(border = BorderStroke(1.1204500198364258.dp, Color(0xff2f2f2f)),
+                                    shape = RoundedCornerShape(14.dp))
+                                .padding(start = 23.98459243774414.dp,
+                                    top = 23.98459243774414.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .requiredWidth(width = 388.dp)
+                                    .requiredHeight(height = 105.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .requiredWidth(width = 357.dp)
+                                        .requiredHeight(height = 105.dp)
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .requiredWidth(width = 357.dp)
+                                            .requiredHeight(height = 20.dp)
+                                    ) {
+                                        Text(
+                                            text = "Rating Promedio",
+                                            color = Color(0xff99a1af),
+                                            lineHeight = 1.43.em,
+                                            style = TextStyle(
+                                                fontSize = 14.sp),
+                                            modifier = Modifier
+                                                .fillMaxWidth())
+                                    }
+                                    Row(
+                                        horizontalArrangement = Arrangement.Center,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .align(alignment = Alignment.TopStart)
+                                            .offset(x = 304.dp,
+                                                y = 25.dp)
+                                            .requiredSize(size = 48.dp)
+                                            .clip(shape = RoundedCornerShape(10.dp))
+                                            .background(color = Color(0xffe50914).copy(alpha = 0.1f))
+                                            .padding(end = 0.01753997802734375.dp)
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.icon),
+                                            contentDescription = "Icon",
+                                            modifier = Modifier
+                                                .requiredSize(size = 24.dp))
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .align(alignment = Alignment.TopStart)
+                                            .offset(x = 0.dp,
+                                                y = 27.98.dp)
+                                            .requiredWidth(width = 357.dp)
+                                            .requiredHeight(height = 24.dp)
+                                    ) {
+                                        Text(
+                                            text = "8.3",
+                                            color = Color.White,
+                                            lineHeight = 1.5.em,
+                                            style = TextStyle(
+                                                fontSize = 16.sp),
+                                            modifier = Modifier
+                                                .align(alignment = Alignment.TopStart)
+                                                .offset(x = 0.dp,
+                                                    y = (-1.88).dp))
+                                    }
+                                    Row(
+                                        modifier = Modifier
+                                            .align(alignment = Alignment.TopStart)
+                                            .offset(x = 0.dp,
+                                                y = 55.97.dp)
+                                            .requiredWidth(width = 357.dp)
+                                            .requiredHeight(height = 19.dp)
+                                    ) {
+                                        Text(
+                                            text = "De todas las películas",
+                                            color = Color(0xff6a7282),
+                                            lineHeight = 1.33.em,
+                                            style = TextStyle(
+                                                fontSize = 14.sp),
+                                            modifier = Modifier
+                                                .fillMaxWidth())
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .align(alignment = Alignment.TopStart)
+                                            .offset(x = 0.dp,
+                                                y = 82.62.dp)
+                                            .requiredWidth(width = 54.dp)
+                                            .requiredHeight(height = 23.dp)
+                                            .clip(shape = MaterialTheme.shapes.small)
+                                            .background(color = Color(0xff00c950).copy(alpha = 0.1f))
+                                    ) {
+                                        Text(
+                                            text = "↑ +0.3",
+                                            color = Color(0xff00c950),
+                                            lineHeight = 1.33.em,
+                                            style = TextStyle(
+                                                fontSize = 14.sp),
+                                            modifier = Modifier
+                                                .align(alignment = Alignment.TopStart)
+                                                .offset(x = 7.98.dp,
+                                                    y = 1.dp)
+                                                .requiredWidth(width = 39.dp))
+                                    }
+                                }
+                            }
+                        }
+                        Column(
+                            modifier = Modifier
+                                .align(alignment = Alignment.TopStart)
+                                .offset(x = 0.02.dp,
+                                    y = 322.03.dp)
+                                .requiredWidth(width = 422.dp)
+                                .requiredHeight(height = 117.dp)
+                                .clip(shape = RoundedCornerShape(14.dp))
+                                .background(color = Color(0xff141414))
+                                .border(border = BorderStroke(1.1204500198364258.dp, Color(0xff2f2f2f)),
+                                    shape = RoundedCornerShape(14.dp))
+                                .padding(start = 23.98459243774414.dp,
+                                    top = 23.98459243774414.dp,
+                                    bottom = 23.98459243774414.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .requiredWidth(width = 388.dp)
+                            ) {
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(7.98.dp, Alignment.Top),
+                                    modifier = Modifier
+                                        .requiredWidth(width = 357.dp)
+                                        .requiredHeight(height = 75.dp)
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .requiredHeight(height = 20.dp)
+                                    ) {
+                                        Text(
+                                            text = "Géneros",
+                                            color = Color(0xff99a1af),
+                                            lineHeight = 1.43.em,
+                                            style = TextStyle(
+                                                fontSize = 14.sp),
+                                            modifier = Modifier
+                                                .fillMaxWidth())
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .requiredHeight(height = 24.dp)
+                                    ) {
+                                        Text(
+                                            text = "6",
+                                            color = Color.White,
+                                            lineHeight = 1.5.em,
+                                            style = TextStyle(
+                                                fontSize = 16.sp),
+                                            modifier = Modifier
+                                                .align(alignment = Alignment.TopStart)
+                                                .offset(x = 0.dp,
+                                                    y = (-1.88).dp))
+                                    }
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .requiredHeight(height = 19.dp)
+                                    ) {
+                                        Text(
+                                            text = "Categorías disponibles",
+                                            color = Color(0xff6a7282),
+                                            lineHeight = 1.33.em,
+                                            style = TextStyle(
+                                                fontSize = 14.sp),
+                                            modifier = Modifier
+                                                .fillMaxWidth())
+                                    }
+                                }
+                                Row(
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier
+                                        .align(alignment = Alignment.TopStart)
+                                        .offset(x = 304.dp,
+                                            y = 25.dp)
+                                        .requiredSize(size = 48.dp)
+                                        .clip(shape = RoundedCornerShape(10.dp))
+                                        .background(color = Color(0xffe50914).copy(alpha = 0.1f))
+                                        .padding(end = 0.01753997802734375.dp)
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.icon),
+                                        contentDescription = "Icon",
+                                        modifier = Modifier
+                                            .requiredSize(size = 24.dp))
+                                }
+                            }
+                        }
+                        Column(
+                            modifier = Modifier
+                                .align(alignment = Alignment.TopStart)
+                                .offset(x = 0.02.dp,
+                                    y = 454.03.dp)
+                                .requiredWidth(width = 422.dp)
+                                .requiredHeight(height = 145.dp)
+                                .clip(shape = RoundedCornerShape(14.dp))
+                                .background(color = Color(0xff141414))
+                                .border(border = BorderStroke(1.1204500198364258.dp, Color(0xff2f2f2f)),
+                                    shape = RoundedCornerShape(14.dp))
+                                .padding(start = 23.98459243774414.dp,
+                                    top = 23.98459243774414.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .requiredWidth(width = 388.dp)
+                                    .requiredHeight(height = 105.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .requiredWidth(width = 357.dp)
+                                        .requiredHeight(height = 105.dp)
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .requiredWidth(width = 357.dp)
+                                            .requiredHeight(height = 20.dp)
+                                    ) {
+                                        Text(
+                                            text = "Visualizaciones",
+                                            color = Color(0xff99a1af),
+                                            lineHeight = 1.43.em,
+                                            style = TextStyle(
+                                                fontSize = 14.sp),
+                                            modifier = Modifier
+                                                .fillMaxWidth())
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .align(alignment = Alignment.TopStart)
+                                            .offset(x = 0.dp,
+                                                y = 27.98.dp)
+                                            .requiredWidth(width = 357.dp)
+                                            .requiredHeight(height = 24.dp)
+                                    ) {
+                                        Text(
+                                            text = "156K",
+                                            color = Color.White,
+                                            lineHeight = 1.5.em,
+                                            style = TextStyle(
+                                                fontSize = 16.sp),
+                                            modifier = Modifier
+                                                .align(alignment = Alignment.TopStart)
+                                                .offset(x = 0.dp,
+                                                    y = (-1.88).dp))
+                                    }
+                                    Row(
+                                        modifier = Modifier
+                                            .align(alignment = Alignment.TopStart)
+                                            .offset(x = 0.dp,
+                                                y = 55.97.dp)
+                                            .requiredWidth(width = 357.dp)
+                                            .requiredHeight(height = 19.dp)
+                                    ) {
+                                        Text(
+                                            text = "Este mes",
+                                            color = Color(0xff6a7282),
+                                            lineHeight = 1.33.em,
+                                            style = TextStyle(
+                                                fontSize = 14.sp),
+                                            modifier = Modifier
+                                                .fillMaxWidth())
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .align(alignment = Alignment.TopStart)
+                                            .offset(x = 0.dp,
+                                                y = 82.62.dp)
+                                            .requiredWidth(width = 66.dp)
+                                            .requiredHeight(height = 23.dp)
+                                            .clip(shape = MaterialTheme.shapes.small)
+                                            .background(color = Color(0xff00c950).copy(alpha = 0.1f))
+                                    ) {
+                                        Text(
+                                            text = "↑ +8.2%",
+                                            color = Color(0xff00c950),
+                                            lineHeight = 1.33.em,
+                                            style = TextStyle(
+                                                fontSize = 14.sp),
+                                            modifier = Modifier
+                                                .align(alignment = Alignment.TopStart)
+                                                .offset(x = 7.91.dp,
+                                                    y = 0.55.dp)
+                                                .requiredWidth(width = 65.dp))
+                                    }
+                                }
+                                Row(
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier
+                                        .align(alignment = Alignment.TopStart)
+                                        .offset(x = 304.dp,
+                                            y = 25.dp)
+                                        .requiredSize(size = 48.dp)
+                                        .clip(shape = RoundedCornerShape(10.dp))
+                                        .background(color = Color(0xffe50914).copy(alpha = 0.1f))
+                                        .padding(end = 0.01753997802734375.dp)
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.icon),
+                                        contentDescription = "Icon",
+                                        modifier = Modifier
+                                            .requiredSize(size = 24.dp))
+                                }
+                            }
+                        }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .requiredHeight(height = 691.dp)
+                    ) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(3.99.dp, Alignment.Top),
+                            modifier = Modifier
+                                .requiredWidth(width = 150.dp)
+                                .requiredHeight(height = 48.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .requiredHeight(height = 24.dp)
+                            ) {
+                                Text(
+                                    text = "Catálogo de Películas",
+                                    color = Color.White,
+                                    lineHeight = 1.5.em,
+                                    style = TextStyle(
+                                        fontSize = 16.sp),
+                                    modifier = Modifier
+                                        .align(alignment = Alignment.TopStart)
+                                        .offset(x = 0.dp,
+                                            y = (-1.88).dp))
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .requiredHeight(height = 20.dp)
+                            ) {
+                                Text(
+                                    text = "7 películas encontradas",
+                                    color = Color(0xff99a1af),
+                                    lineHeight = 1.43.em,
+                                    style = TextStyle(
+                                        fontSize = 14.sp),
+                                    modifier = Modifier
+                                        .align(alignment = Alignment.TopStart)
+                                        .offset(x = 0.dp,
+                                            y = (-2).dp)
+                                        .requiredWidth(width = 145.dp))
+                            }
+                        }
+                        Box(
+                            modifier = Modifier
+                                .align(alignment = Alignment.TopCenter)
+                                .offset(x = (-0.5).dp,
+                                    y = 71.04.dp)
+                                .requiredWidth(width = 425.dp)
+                                .requiredHeight(height = 619.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .align(alignment = Alignment.TopStart)
+                                    .offset(x = 18.dp,
+                                        y = 14.99.dp)
+                                    .requiredWidth(width = 200.dp)
+                                    .requiredHeight(height = 106.dp)
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.rectangle37),
+                                    contentDescription = "Rectangle 37",
+                                    modifier = Modifier
+                                        .fillMaxSize())
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .align(alignment = Alignment.TopStart)
+                                    .offset(x = 218.dp,
+                                        y = 15.dp)
+                                    .requiredWidth(width = 200.dp)
+                                    .requiredHeight(height = 106.dp)
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.image_13),
+                                    contentDescription = "image 13",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .requiredHeight(height = 115.dp))
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .align(alignment = Alignment.TopStart)
+                                    .offset(x = 10.dp,
+                                        y = 129.dp)
+                                    .requiredWidth(width = 200.dp)
+                                    .requiredHeight(height = 106.dp)
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.image_14),
+                                    contentDescription = "image 14",
+                                    modifier = Modifier
+                                        .align(alignment = Alignment.TopStart)
+                                        .offset(x = 0.dp,
+                                            y = (-3).dp)
+                                        .requiredWidth(width = 200.dp)
+                                        .requiredHeight(height = 113.dp))
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .align(alignment = Alignment.TopStart)
+                                    .offset(x = 218.dp,
+                                        y = 129.dp)
+                                    .requiredWidth(width = 200.dp)
+                                    .requiredHeight(height = 106.dp)
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.image_15),
+                                    contentDescription = "image 15",
+                                    modifier = Modifier
+                                        .align(alignment = Alignment.TopStart)
+                                        .offset(x = 0.dp,
+                                            y = (-4).dp)
+                                        .requiredWidth(width = 200.dp)
+                                        .requiredHeight(height = 113.dp))
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(7.98.dp, Alignment.Start),
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(end = -0.000019073486328125.dp)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .requiredWidth(width = 100.dp)
+                                            .requiredHeight(height = 18.dp)
+                                            .clip(shape = RoundedCornerShape(8.dp))
+                                            .background(color = Color.White)
+                                    ) {
+                                        Text(
+                                            text = "Editar",
+                                            color = Color.Black,
+                                            lineHeight = 1.33.em,
+                                            style = TextStyle(
+                                                fontSize = 14.sp),
+                                            modifier = Modifier
+                                                .align(alignment = Alignment.Center)
+                                                .offset(x = 0.5.dp,
+                                                    y = 0.5.dp))
+                                        Image(
+                                            painter = painterResource(id = R.drawable.icon),
+                                            contentDescription = "Icon",
+                                            modifier = Modifier
+                                                .align(alignment = Alignment.CenterStart)
+                                                .offset(x = 9.dp,
+                                                    y = (-0.01).dp)
+                                                .requiredSize(size = 16.dp))
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .requiredSize(size = 23.dp)
+                                            .clip(shape = RoundedCornerShape(8.dp))
+                                            .background(color = Color(0xffe50914))
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.icon),
+                                            contentDescription = "Icon",
+                                            modifier = Modifier
+                                                .align(alignment = Alignment.TopStart)
+                                                .offset(x = 4.dp,
+                                                    y = 4.dp)
+                                                .requiredSize(size = 16.dp))
+                                    }
+                                }
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .align(alignment = Alignment.TopStart)
+                                    .offset(x = 10.dp,
+                                        y = 243.dp)
+                                    .requiredWidth(width = 200.dp)
+                                    .requiredHeight(height = 107.dp)
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.vistaprevia9),
+                                    contentDescription = "vista previa 9",
+                                    modifier = Modifier
+                                        .fillMaxSize())
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(7.98.dp, Alignment.Start),
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(end = -0.000019073486328125.dp)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .requiredWidth(width = 100.dp)
+                                            .requiredHeight(height = 18.dp)
+                                            .clip(shape = RoundedCornerShape(8.dp))
+                                            .background(color = Color.White)
+                                    ) {
+                                        Text(
+                                            text = "Editar",
+                                            color = Color.Black,
+                                            lineHeight = 1.33.em,
+                                            style = TextStyle(
+                                                fontSize = 14.sp),
+                                            modifier = Modifier
+                                                .align(alignment = Alignment.Center)
+                                                .offset(x = 0.5.dp,
+                                                    y = 0.5.dp))
+                                        Image(
+                                            painter = painterResource(id = R.drawable.icon),
+                                            contentDescription = "Icon",
+                                            modifier = Modifier
+                                                .align(alignment = Alignment.CenterStart)
+                                                .offset(x = 9.dp,
+                                                    y = (-0.01).dp)
+                                                .requiredSize(size = 16.dp))
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .requiredSize(size = 23.dp)
+                                            .clip(shape = RoundedCornerShape(8.dp))
+                                            .background(color = Color(0xffe50914))
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.icon),
+                                            contentDescription = "Icon",
+                                            modifier = Modifier
+                                                .align(alignment = Alignment.TopStart)
+                                                .offset(x = 4.dp,
+                                                    y = 4.dp)
+                                                .requiredSize(size = 16.dp))
+                                    }
+                                }
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .align(alignment = Alignment.TopStart)
+                                    .offset(x = 218.dp,
+                                        y = 243.dp)
+                                    .requiredWidth(width = 200.dp)
+                                    .requiredHeight(height = 107.dp)
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.image_16),
+                                    contentDescription = "image 16",
+                                    modifier = Modifier
+                                        .align(alignment = Alignment.TopStart)
+                                        .offset(x = (-2).dp,
+                                            y = (-4).dp)
+                                        .requiredWidth(width = 203.dp)
+                                        .requiredHeight(height = 115.dp))
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .align(alignment = Alignment.TopStart)
+                                    .offset(x = 10.dp,
+                                        y = 358.dp)
+                                    .requiredWidth(width = 200.dp)
+                                    .requiredHeight(height = 106.dp)
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.vistaprevia14),
+                                    contentDescription = "vista previa 14",
+                                    modifier = Modifier
+                                        .fillMaxSize())
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .align(alignment = Alignment.TopStart)
+                                    .offset(x = 218.dp,
+                                        y = 358.dp)
+                                    .requiredWidth(width = 200.dp)
+                                    .requiredHeight(height = 106.dp)
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.image_17),
+                                    contentDescription = "image 17",
+                                    modifier = Modifier
+                                        .align(alignment = Alignment.TopStart)
+                                        .offset(x = 0.dp,
+                                            y = (-4).dp)
+                                        .fillMaxWidth()
+                                        .requiredHeight(height = 113.dp))
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .align(alignment = Alignment.TopStart)
+                                    .offset(x = 10.dp,
+                                        y = 472.dp)
+                                    .requiredWidth(width = 200.dp)
+                                    .requiredHeight(height = 106.dp)
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.image_18),
+                                    contentDescription = "image 18",
+                                    modifier = Modifier
+                                        .align(alignment = Alignment.TopStart)
+                                        .offset(x = 0.dp,
+                                            y = (-4).dp)
+                                        .requiredWidth(width = 194.dp)
+                                        .requiredHeight(height = 110.dp))
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .align(alignment = Alignment.TopStart)
+                                    .offset(x = 218.dp,
+                                        y = 472.dp)
+                                    .requiredWidth(width = 200.dp)
+                                    .requiredHeight(height = 106.dp)
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.image_19),
+                                    contentDescription = "image 19",
+                                    modifier = Modifier
+                                        .align(alignment = Alignment.TopStart)
+                                        .offset(x = 0.dp,
+                                            y = (-3).dp)
+                                        .requiredWidth(width = 200.dp)
+                                        .requiredHeight(height = 113.dp))
+                            }
+                        }
+                    }
+                }
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 1386.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .align(alignment = Alignment.TopStart)
+                        .offset(x = 47.97.dp,
+                            y = 0.dp)
+                        .requiredWidth(width = 1.dp)
+                        .requiredHeight(height = 63.dp)
+                        .background(color = Color(0xff2f2f2f)))
+                Box(
+                    modifier = Modifier
+                        .align(alignment = Alignment.TopStart)
+                        .offset(x = 65.dp,
+                            y = 13.dp)
+                        .requiredWidth(width = 106.dp)
+                        .requiredHeight(height = 36.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .requiredWidth(width = 106.dp)
+                            .requiredHeight(height = 36.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .requiredWidth(width = 106.dp)
+                                .requiredHeight(height = 36.dp)
+                                .clip(shape = RoundedCornerShape(8.dp))
+                                .background(color = Color(0xff2f2f2f))
+                                .border(border = BorderStroke(1.1204500198364258.dp, Color(0xff2f2f2f)),
+                                    shape = RoundedCornerShape(8.dp))
+                                .padding(start = 36.dp,
+                                    top = 4.dp,
+                                    bottom = 4.dp)
+                        ) {
+                            Text(
+                                text = "Buscar ",
+                                color = Color(0xff6a7282),
+                                style = TextStyle(
+                                    fontSize = 16.sp),
+                                modifier = Modifier
+                                    .requiredWidth(width = 70.dp))
+                        }
+                        Image(
+                            painter = painterResource(id = R.drawable.icon),
+                            contentDescription = "Icon",
+                            modifier = Modifier
+                                .align(alignment = Alignment.TopStart)
+                                .offset(x = 11.99.dp,
+                                    y = 10.01.dp)
+                                .requiredSize(size = 16.dp))
+                    }
+                }
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(7.98.dp, Alignment.Start),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .align(alignment = Alignment.TopStart)
+                        .offset(x = 306.dp,
+                            y = 14.dp)
+                        .requiredWidth(width = 145.dp)
+                        .requiredHeight(height = 36.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .requiredHeight(height = 36.dp)
+                            .clip(shape = RoundedCornerShape(8.dp))
+                            .background(color = Color(0xffe50914))
+                    ) {
+                        Text(
+                            text = "Agregar Película",
+                            color = Color.White,
+                            lineHeight = 1.43.em,
+                            style = TextStyle(
+                                fontSize = 14.sp),
+                            modifier = Modifier
+                                .align(alignment = Alignment.TopStart)
+                                .offset(x = 34.dp,
+                                    y = 6.dp)
+                                .requiredWidth(width = 114.dp))
+                        Image(
+                            painter = painterResource(id = R.drawable.icon),
+                            contentDescription = "Icon",
+                            modifier = Modifier
+                                .align(alignment = Alignment.TopStart)
+                                .offset(x = 11.99.dp,
+                                    y = 10.dp)
+                                .requiredSize(size = 16.dp))
+                    }
+                }
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .align(alignment = Alignment.TopStart)
+                        .offset(x = 11.99.dp,
+                            y = 17.44.dp)
+                        .requiredSize(size = 28.dp)
+                        .clip(shape = RoundedCornerShape(8.dp))
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.icon),
+                        contentDescription = "Icon",
+                        modifier = Modifier
+                            .requiredSize(size = 16.dp))
+                }
+                Row(
+                    modifier = Modifier
+                        .align(alignment = Alignment.TopStart)
+                        .offset(x = 25.47.dp,
+                            y = 30.92.dp)
+                        .requiredSize(size = 1.dp)
+                ) {
+                    Text(
+                        text = "Toggle Sidebar",
+                        color = Color.White,
+                        lineHeight = 1.43.em,
+                        style = TextStyle(
+                            fontSize = 14.sp))
+                }
+            }
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(81.23.dp, Alignment.Start),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(shape = RoundedCornerShape(8.dp))
+                    .background(color = Color(0xff2f2f2f))
+                    .border(border = BorderStroke(1.1204500198364258.dp, Color(0xff2f2f2f)),
+                        shape = RoundedCornerShape(8.dp))
+                    .padding(start = 11.992297172546387.dp,
+                        end = 11.992291450500488.dp)
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .requiredWidth(width = 37.dp)
+                        .requiredHeight(height = 20.dp)
+                ) {
+                    Text(
+                        text = "Todos",
+                        color = Color.White,
+                        lineHeight = 1.43.em,
+                        style = TextStyle(
+                            fontSize = 14.sp))
+                }
+                Image(
+                    painter = painterResource(id = R.drawable.icon),
+                    contentDescription = "Icon",
+                    alpha = 0.5f,
+                    modifier = Modifier
+                        .requiredSize(size = 16.dp))
+            }
+        }
+    }
+
+    @Preview(widthDp = 468, heightDp = 1450)
+    @Composable
+    private fun EditpeliadminPreview() {
+        editLogin(Modifier)
+    }

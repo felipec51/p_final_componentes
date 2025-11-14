@@ -12,8 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.P_Final_Componentes">
         <activity
-            android:name=".editpeli"
+            android:name=".catalogoadmin"
             android:exported="false" />
+
         <activity
             android:name=".addpeli"
             android:exported="false" />
@@ -21,16 +22,7 @@
             android:name=".sidebar"
             android:exported="false" />
         <activity
-            android:name=".pelinodispo"
-            android:exported="false" />
-        <activity
-            android:name=".pelidispo"
-            android:exported="false" />
-        <activity
             android:name=".comprar"
-            android:exported="false" />
-        <activity
-            android:name=".catalogoadmin"
             android:exported="false" />
         <activity
             android:name=".menuadmin"

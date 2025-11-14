@@ -57,10 +57,7 @@ class main2 : AppCompatActivity() {
             insets
         }
 
-        // Se busca el contenedor de Compose por su ID
         val composeView = findViewById<ComposeView>(R.id.render)
-
-
         composeView.setContent {
 
             MaterialTheme {
