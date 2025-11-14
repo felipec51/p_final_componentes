@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -61,17 +62,16 @@ class addpeli : AppCompatActivity() {
         // Se busca el contenedor de Compose por su ID
         val composeView = findViewById<ComposeView>(R.id.render)
 
-
         composeView.setContent {
 
             MaterialTheme {
-                addpeli()
+                funtionaddpeli()
             }
         }
     }
 
     @Composable
-    fun AdminEditPelicula(modifier: Modifier = Modifier) {
+    fun funtionaddpeli(modifier: Modifier = Modifier) {
         Box(
             modifier = modifier
                 .requiredWidth(width = 468.dp)
@@ -1130,9 +1130,11 @@ class addpeli : AppCompatActivity() {
                                 textStyle = TextStyle(
                                     fontSize = 16.sp
                                 ),
-                                colors = TextFieldDefaults.textFieldColors(
-                                    textColor = Color.White,
-                                    containerColor = Color.Transparent
+                                colors = TextFieldDefaults.colors(
+                                    focusedTextColor = Color.White,
+                                    unfocusedTextColor = Color.White,
+                                    focusedContainerColor = Color.Transparent,
+                                    unfocusedContainerColor = Color.Transparent
                                 ),
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -1160,9 +1162,11 @@ class addpeli : AppCompatActivity() {
                                     textStyle = TextStyle(
                                         fontSize = 16.sp
                                     ),
-                                    colors = TextFieldDefaults.textFieldColors(
-                                        textColor = Color.White,
-                                        containerColor = Color.Transparent
+                                    colors = TextFieldDefaults.colors(
+                                        focusedTextColor = Color.White,
+                                        unfocusedTextColor = Color.White,
+                                        focusedContainerColor = Color.Transparent,
+                                        unfocusedContainerColor = Color.Transparent
                                     ),
                                     modifier = Modifier
                                         .requiredWidth(width = 193.dp)
@@ -1185,9 +1189,11 @@ class addpeli : AppCompatActivity() {
                                     textStyle = TextStyle(
                                         fontSize = 16.sp
                                     ),
-                                    colors = TextFieldDefaults.textFieldColors(
-                                        textColor = Color.White,
-                                        containerColor = Color.Transparent
+                                    colors = TextFieldDefaults.colors(
+                                        focusedTextColor = Color.White,
+                                        unfocusedTextColor = Color.White,
+                                        focusedContainerColor = Color.Transparent,
+                                        unfocusedContainerColor = Color.Transparent
                                     ),
                                     modifier = Modifier
                                         .align(alignment = Alignment.TopStart)
@@ -1245,9 +1251,11 @@ class addpeli : AppCompatActivity() {
                                 textStyle = TextStyle(
                                     fontSize = 16.sp
                                 ),
-                                colors = TextFieldDefaults.textFieldColors(
-                                    textColor = Color.White,
-                                    containerColor = Color.Transparent
+                                colors = TextFieldDefaults.colors(
+                                    focusedTextColor = Color.White,
+                                    unfocusedTextColor = Color.White,
+                                    focusedContainerColor = Color.Transparent,
+                                    unfocusedContainerColor = Color.Transparent
                                 ),
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -1270,9 +1278,11 @@ class addpeli : AppCompatActivity() {
                                 textStyle = TextStyle(
                                     fontSize = 16.sp
                                 ),
-                                colors = TextFieldDefaults.textFieldColors(
-                                    textColor = Color.White,
-                                    containerColor = Color.Transparent
+                                colors = TextFieldDefaults.colors(
+                                    focusedTextColor = Color.White,
+                                    unfocusedTextColor = Color.White,
+                                    focusedContainerColor = Color.Transparent,
+                                    unfocusedContainerColor = Color.Transparent
                                 ),
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -1351,7 +1361,7 @@ class addpeli : AppCompatActivity() {
 
     @Preview(widthDp = 468, heightDp = 917)
     @Composable
-    private fun AndroidEditPeliPreview() {
-        AndroidEditPeli(Modifier)
+    private fun addpeli() {
+        funtionaddpeli(Modifier)
     }
 }

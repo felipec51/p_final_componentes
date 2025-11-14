@@ -1281,7 +1281,7 @@ class catalogoadmin : AppCompatActivity() {
                 .fillMaxWidth()
                 .requiredHeight(height = 218.dp)
                 .clip(shape = RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp))
-                .background(color = AppColors.color_White)
+                .background(color = Color.White)
         ) {
             StateDefault()
             StateDefault()
@@ -1298,20 +1298,13 @@ class catalogoadmin : AppCompatActivity() {
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
                 .fillMaxWidth()
-                .background(color = AppColors.color_White)
+                .background(color = Color.White)
                 .padding(
                     horizontal = 24.dp,
                     vertical = 11.dp
                 )
         ) {
-            Label5()
-            Icon(
-                painter = painterResource(id = R.drawable.chevrondowns),
-                contentDescription = "icons/regular/chevron-down-s",
-                tint = Color(0xffececec),
-                modifier = Modifier
-                    .requiredSize(size = 20.dp)
-            )
+
         }
     }
 
@@ -1326,7 +1319,7 @@ class catalogoadmin : AppCompatActivity() {
                 text = "Label1",
                 color = Color(0xffececec),
                 lineHeight = 1.5.em,
-                style = AppTypes.type_Drop_Menu_Menu,
+                style =  MaterialTheme.typography.labelLarge,
                 modifier = Modifier
                     .fillMaxSize()
                     .wrapContentHeight(align = Alignment.CenterVertically)
@@ -1345,7 +1338,7 @@ class catalogoadmin : AppCompatActivity() {
                 text = "Label2",
                 color = Color(0xffececec),
                 lineHeight = 1.5.em,
-                style = AppTypes.type_Drop_Menu_Menu,
+                style =  MaterialTheme.typography.labelLarge,
                 modifier = Modifier
                     .fillMaxSize()
                     .wrapContentHeight(align = Alignment.CenterVertically)
@@ -1364,7 +1357,7 @@ class catalogoadmin : AppCompatActivity() {
                 text = "Label3",
                 color = Color(0xffececec),
                 lineHeight = 1.5.em,
-                style = AppTypes.type_Drop_Menu_Menu,
+                style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier
                     .fillMaxSize()
                     .wrapContentHeight(align = Alignment.CenterVertically)
@@ -1383,7 +1376,7 @@ class catalogoadmin : AppCompatActivity() {
                 text = "Label4",
                 color = Color(0xffececec),
                 lineHeight = 1.5.em,
-                style = AppTypes.type_Drop_Menu_Menu,
+                style =  MaterialTheme.typography.labelLarge,
                 modifier = Modifier
                     .fillMaxSize()
                     .wrapContentHeight(align = Alignment.CenterVertically)
@@ -1402,7 +1395,7 @@ class catalogoadmin : AppCompatActivity() {
                 text = "Label5",
                 color = Color(0xffececec),
                 lineHeight = 1.5.em,
-                style = AppTypes.type_Drop_Menu_Menu,
+                style =  MaterialTheme.typography.labelLarge,
                 modifier = Modifier
                     .fillMaxSize()
                     .wrapContentHeight(align = Alignment.CenterVertically)
