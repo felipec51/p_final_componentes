@@ -72,7 +72,7 @@ fun App(modifier: Modifier = Modifier) {
                 .requiredWidth(width = 370.dp)
                 .requiredHeight(height = 91.dp)
                 .padding(start = 24.dp,
-                    end = -19.00000762939453.dp)
+                    end = 9.0.dp)
         ) {
             Row(
                 horizontalArrangement = Arrangement.Center,
@@ -83,7 +83,7 @@ fun App(modifier: Modifier = Modifier) {
                     .clip(shape = RoundedCornerShape(10.dp))
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.icon),
+                    painter = painterResource(id = R.drawable.iconad),
                     contentDescription = "Icon",
                     modifier = Modifier
                         .requiredSize(size = 16.dp))
