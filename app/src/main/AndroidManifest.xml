@@ -11,9 +11,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.P_Final_Componentes">
         <activity
+            android:name=".masinformacion"
+            android:exported="false" />
+        <activity
             android:name=".catalogoadmin"
             android:exported="false" />
-
         <activity
             android:name=".addpeli"
             android:exported="false" />
@@ -32,7 +34,6 @@
         <activity
             android:name=".registrarse"
             android:exported="false" />
-
         <activity
             android:name=".main2"
             android:exported="true">
