@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
@@ -44,7 +43,7 @@ android {
 
     composeOptions {
         // EXTENSION DEL COMPILADOR COMPATIBLE CON KOTLIN 2.x
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.14"
     }
 }
 

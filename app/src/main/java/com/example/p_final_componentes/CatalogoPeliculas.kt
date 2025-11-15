@@ -123,7 +123,7 @@ fun Catalogopeli(modifier: Modifier = Modifier) {
                 .requiredHeight(height = 102.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.image_18),
+                painter = painterResource(id = R.drawable.image),
                 contentDescription = "image_18",
                 modifier = Modifier
                     .requiredWidth(width = 175.dp)
