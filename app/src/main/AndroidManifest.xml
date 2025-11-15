@@ -41,6 +41,9 @@
             android:name=".PantallaUnida"
             android:exported="false" />
         <activity
+            android:name=".Activityadmincat"
+            android:exported="true" />
+        <activity
             android:name=".main2"
             android:exported="true">
             <intent-filter>
