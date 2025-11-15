@@ -21,21 +21,10 @@
           </targets>
         </DialogSelection>
       </SelectionState>
-      <SelectionState runConfigName="PreviewPantallaCompleta">
-        <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-11-15T17:53:39.480899169Z">
-          <Target type="DEFAULT_BOOT">
-            <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=RFCXB0BGH0M" />
-            </handle>
-          </Target>
-        </DropdownSelection>
-        <DialogSelection />
-      </SelectionState>
-      <SelectionState runConfigName="AndroidCompact2Preview">
+      <SelectionState runConfigName="menupeliculaprevie">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="ContainerPreview">
+      <SelectionState runConfigName="Menupeliculaprevie">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
