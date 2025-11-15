@@ -61,11 +61,8 @@ class addpeli : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        // Se busca el contenedor de Compose por su ID
         val composeView = findViewById<ComposeView>(R.id.render)
-
         composeView.setContent {
-
             MaterialTheme {
                 FormAadirPelicula()
             }
