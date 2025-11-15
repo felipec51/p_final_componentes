@@ -13,11 +13,14 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -50,7 +53,7 @@ class catalogoadmin : AppCompatActivity() {
         val composeView = findViewById<ComposeView>(R.id.render)
         composeView.setContent {
             MaterialTheme {
-                App()
+                AppPreview()
             }
         }
     }
@@ -378,8 +381,22 @@ fun App(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview(widthDp = 389, heightDp = 365)
 @Composable
-private fun AppPreview() {
-    App(Modifier)
+fun AppPreview(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color(0xFF141414))      // ajusta fondo si quieres
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        App(Modifier)
+        Catalogopeli()
+    }}
+@Preview(showBackground = true, showSystemUi = true,widthDp = 412, heightDp = 250)
+
+@Composable
+fun Admipeliculaprevie() {
+    AppPreview()
 }

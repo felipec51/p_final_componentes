@@ -21,10 +21,10 @@
           </targets>
         </DialogSelection>
       </SelectionState>
-      <SelectionState runConfigName="menupeliculaprevie">
+      <SelectionState runConfigName="AppPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="Menupeliculaprevie">
+      <SelectionState runConfigName="Activityadmincat">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
