@@ -205,7 +205,7 @@ fun IniciarSesionAndroid(
         // ----------- BOTÓN INICIAR SESIÓN ------------------------
         Box(
             modifier = Modifier
-                .offset(x = 57.dp, y = 298.dp)
+                .offset(x = 57.dp, y = 318.dp)
                 .requiredWidth(318.dp)
                 .requiredHeight(75.dp)
         ) {
