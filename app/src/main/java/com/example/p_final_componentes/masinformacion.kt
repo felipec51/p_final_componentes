@@ -323,8 +323,8 @@ fun Informacio(modifier: Modifier = Modifier) {
                     .clip(shape = RoundedCornerShape(10.dp))
                     .background(color = Color(0xff5e5e5e).copy(alpha = 0.35f))
                     .padding(start = 23.995532989501953.dp,
-                        end = 23.9.dp,
-                        top = 23.9.dp)
+                        end = 23.995555877685547.dp,
+                        top = 23.9954833984375.dp)
             ) {
                 Box(
                     modifier = Modifier

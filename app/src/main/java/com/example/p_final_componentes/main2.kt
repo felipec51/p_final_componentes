@@ -31,7 +31,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
-import androidx.compose.material3.MaterialTheme // ¡Importante para MaterialTheme.shapes.medium!
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.ComposeView

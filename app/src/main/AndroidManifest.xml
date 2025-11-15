@@ -11,6 +11,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.P_Final_Componentes">
         <activity
+            android:name=".CatalogoPeliculas"
+            android:exported="false" />
+        <activity
+            android:name=".ActivityCompra"
+            android:exported="false" />
+        <activity
             android:name=".masinformacion"
             android:exported="false" />
         <activity
@@ -25,7 +31,6 @@
         <activity
             android:name=".comprar"
             android:exported="false" />
-
         <activity
             android:name=".menupeliculas"
             android:exported="false" />
@@ -34,12 +39,10 @@
             android:exported="false" />
         <activity
             android:name=".PantallaUnida"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".main2"
             android:exported="true">
-
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
