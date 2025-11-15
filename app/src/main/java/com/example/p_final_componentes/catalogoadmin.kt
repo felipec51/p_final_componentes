@@ -86,7 +86,7 @@ fun App(modifier: Modifier = Modifier) {
                     .clip(shape = RoundedCornerShape(10.dp))
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.iconad),
+                    painter = painterResource(id = R.drawable.icon_3),
                     contentDescription = "Icon",
                     modifier = Modifier
                         .requiredSize(size = 16.dp))
@@ -129,7 +129,7 @@ fun App(modifier: Modifier = Modifier) {
                                 fontSize = 16.sp))
                     }
                     Image(
-                        painter = painterResource(id = R.drawable.icon),
+                        painter = painterResource(id = R.drawable.icon_1n),
                         contentDescription = "Icon",
                         modifier = Modifier
                             .align(alignment = Alignment.TopStart)
@@ -169,7 +169,7 @@ fun App(modifier: Modifier = Modifier) {
                                     y = (-0.2).dp))
                     }
                     Image(
-                        painter = painterResource(id = R.drawable.icon),
+                        painter = painterResource(id = R.drawable.icon_1ad),
                         contentDescription = "Icon",
                         alpha = 0.5f,
                         modifier = Modifier
@@ -187,7 +187,7 @@ fun App(modifier: Modifier = Modifier) {
                     .padding(start = 16.dp)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.icon),
+                    painter = painterResource(id = R.drawable.iconad),
                     contentDescription = "Icon",
                     modifier = Modifier
                         .requiredWidth(width = 9.dp)
@@ -386,7 +386,7 @@ fun AppPreview(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFF141414))      // ajusta fondo si quieres
+            .background(Color(0xFF141414))
             .verticalScroll(rememberScrollState())
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)

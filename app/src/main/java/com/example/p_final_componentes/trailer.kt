@@ -3,18 +3,11 @@ package com.example.p_final_componentes
 import android.os.Bundle
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,16 +37,11 @@ class trailer : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val composeView = findViewById<ComposeView>(R.id.render)
-        composeView.setContent {
-            MaterialTheme {
-                Login()
-            }
-        }
+
     }
 }
 @Composable
-fun Container(modifier: Modifier = Modifier) {
+fun Trailer(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .requiredWidth(width = 393.dp)
@@ -134,5 +122,5 @@ fun Container(modifier: Modifier = Modifier) {
 @Preview(widthDp = 393, heightDp = 672)
 @Composable
 private fun ContainerPreview() {
-    Container(Modifier)
+    Trailer(Modifier)
 }

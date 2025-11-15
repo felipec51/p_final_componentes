@@ -44,7 +44,7 @@
             android:name=".Activityadmincat"
             android:exported="true" />
         <activity
-            android:name=".main2"
+            android:name=".login"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

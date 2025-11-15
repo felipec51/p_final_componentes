@@ -53,7 +53,7 @@ fun PantallaCompleta(modifier: Modifier = Modifier) {
         // Llama tus composables existentes (ya definidos en tus otros archivos)
         Compra()        // del archivo comprar.kt
         Informacio()    // del archivo masinformacion.kt
-        Container()     // del archivo trailer.kt
+        Trailer()     // del archivo trailer.kt
     }}
 @Preview(showBackground = true, showSystemUi = true)
 @Composable

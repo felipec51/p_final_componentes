@@ -21,10 +21,19 @@
           </targets>
         </DialogSelection>
       </SelectionState>
-      <SelectionState runConfigName="AppPreview">
+      <SelectionState runConfigName="Admipeliculaprevie">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="Activityadmincat">
+      <SelectionState runConfigName="FormAadirPeliculaPreview">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="PreviewPantallaCompleta">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="AndroidCompact2Preview">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="FormPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
