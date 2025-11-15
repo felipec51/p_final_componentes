@@ -22,6 +22,11 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -44,7 +49,7 @@ class menupeliculas : AppCompatActivity() {
         composeView.setContent {
 
             MaterialTheme {
-                MenuAndroid()
+                Menupeliculasrender()
             }
         }
     }
@@ -123,8 +128,22 @@ fun InicioPeliculas(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview(widthDp = 412, heightDp = 250)
 @Composable
-private fun MenuAndroidPreview() {
-    MenuAndroid(Modifier)
+fun Menupeliculasrender(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color(0xFF141414))      // ajusta fondo si quieres
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        MenuAndroid(Modifier)
+        Catalogopeli()
+    }}
+@Preview(showBackground = true, showSystemUi = true,widthDp = 412, heightDp = 250)
+
+@Composable
+fun Menupeliculaprevie() {
+    Menupeliculasrender()
 }

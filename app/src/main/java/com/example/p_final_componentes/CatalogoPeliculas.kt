@@ -43,23 +43,26 @@ class CatalogoPeliculas : AppCompatActivity() {
         composeView.setContent {
 
             MaterialTheme {
-                catalogopeli()
+                Catalogopeli()
             }
         }
     }
 }
 
 @Composable
-fun catalogopeli(modifier: Modifier = Modifier) {
+fun Catalogopeli(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
-            .requiredWidth(width = 420.dp)
+            .requiredWidth(width = 367.dp)
             .requiredHeight(height = 691.dp)
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(3.99.dp, Alignment.Top),
             modifier = Modifier
-                .requiredWidth(width = 150.dp)
+                .align(alignment = Alignment.TopStart)
+                .offset(x = 6.dp,
+                    y = 0.dp)
+                .requiredWidth(width = 233.dp)
                 .requiredHeight(height = 48.dp)
         ) {
             Box(
@@ -92,197 +95,168 @@ fun catalogopeli(modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .align(alignment = Alignment.TopStart)
                         .offset(x = 0.dp,
-                            y = (-2).dp)
-                        .requiredWidth(width = 145.dp))
+                            y = (-1.99).dp)
+                        .requiredWidth(width = 192.dp))
             }
         }
         Box(
             modifier = Modifier
-                .align(alignment = Alignment.TopCenter)
-                .offset(x = (-0.5).dp,
-                    y = 71.04.dp)
-                .requiredWidth(width = 425.dp)
-                .requiredHeight(height = 619.dp)
+                .align(alignment = Alignment.TopStart)
+                .offset(x = 186.dp,
+                    y = 80.dp)
+                .requiredWidth(width = 176.dp)
+                .requiredHeight(height = 102.dp)
         ) {
-            Box(
+            Image(
+                painter = painterResource(id = R.drawable.image_13),
+                contentDescription = "image_13",
                 modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 9.98.dp,
-                        y = 14.96.dp)
-                    .requiredWidth(width = 200.dp)
-                    .requiredHeight(height = 106.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.image_18),
-                    contentDescription = "image 18",
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(x = 0.dp,
-                            y = (-4).dp)
-                        .requiredWidth(width = 194.dp)
-                        .requiredHeight(height = 110.dp))
-            }
-            Box(
+                    .requiredWidth(width = 175.dp)
+                    .requiredHeight(height = 99.dp))
+        }
+        Box(
+            modifier = Modifier
+                .align(alignment = Alignment.TopStart)
+                .offset(x = 0.dp,
+                    y = 80.dp)
+                .requiredWidth(width = 176.dp)
+                .requiredHeight(height = 102.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.image_18),
+                contentDescription = "image_18",
                 modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 218.dp,
-                        y = 15.dp)
-                    .requiredWidth(width = 200.dp)
-                    .requiredHeight(height = 106.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.image_13),
-                    contentDescription = "image 13",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .requiredHeight(height = 115.dp))
-            }
-            Box(
+                    .requiredWidth(width = 175.dp)
+                    .requiredHeight(height = 99.dp))
+        }
+        Box(
+            modifier = Modifier
+                .align(alignment = Alignment.TopStart)
+                .offset(x = 0.dp,
+                    y = 189.dp)
+                .requiredWidth(width = 176.dp)
+                .requiredHeight(height = 102.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.image_14),
+                contentDescription = "image 14",
                 modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 10.dp,
-                        y = 129.dp)
-                    .requiredWidth(width = 200.dp)
-                    .requiredHeight(height = 106.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.image_14),
-                    contentDescription = "image 14",
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(x = 0.dp,
-                            y = (-3).dp)
-                        .requiredWidth(width = 200.dp)
-                        .requiredHeight(height = 113.dp))
-            }
-            Box(
+                    .requiredWidth(width = 175.dp)
+                    .requiredHeight(height = 99.dp))
+        }
+        Box(
+            modifier = Modifier
+                .align(alignment = Alignment.TopStart)
+                .offset(x = 186.dp,
+                    y = 189.dp)
+                .requiredWidth(width = 176.dp)
+                .requiredHeight(height = 102.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.image_15),
+                contentDescription = "image_15",
                 modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 218.dp,
-                        y = 129.dp)
-                    .requiredWidth(width = 200.dp)
-                    .requiredHeight(height = 106.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.image_15),
-                    contentDescription = "image 15",
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(x = 0.dp,
-                            y = (-4).dp)
-                        .requiredWidth(width = 200.dp)
-                        .requiredHeight(height = 113.dp))
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(end = 0.dp))
-            }
-            Box(
+                    .requiredWidth(width = 175.dp)
+                    .requiredHeight(height = 99.dp))
+        }
+        Box(
+            modifier = Modifier
+                .align(alignment = Alignment.TopStart)
+                .offset(x = 0.dp,
+                    y = 299.dp)
+                .requiredWidth(width = 176.dp)
+                .requiredHeight(height = 102.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.vistaprevia9),
+                contentDescription = "vista previa 9",
                 modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 10.dp,
-                        y = 243.dp)
-                    .requiredWidth(width = 200.dp)
-                    .requiredHeight(height = 107.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.vistaprevia9),
-                    contentDescription = "vista previa 9",
-                    modifier = Modifier
-                        .fillMaxSize())
-            }
-            Box(
+                    .requiredWidth(width = 176.dp)
+                    .requiredHeight(height = 99.dp))
+        }
+        Box(
+            modifier = Modifier
+                .align(alignment = Alignment.TopStart)
+                .offset(x = 186.dp,
+                    y = 299.dp)
+                .requiredWidth(width = 176.dp)
+                .requiredHeight(height = 102.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.image_16),
+                contentDescription = "image_16",
                 modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 218.dp,
-                        y = 243.dp)
-                    .requiredWidth(width = 200.dp)
-                    .requiredHeight(height = 107.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.image_16),
-                    contentDescription = "image 16",
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(x = (-2).dp,
-                            y = (-4).dp)
-                        .requiredWidth(width = 203.dp)
-                        .requiredHeight(height = 115.dp))
-            }
-            Box(
+                    .requiredWidth(width = 175.dp)
+                    .requiredHeight(height = 99.dp))
+        }
+        Box(
+            modifier = Modifier
+                .align(alignment = Alignment.TopStart)
+                .offset(x = 0.dp,
+                    y = 409.dp)
+                .requiredWidth(width = 176.dp)
+                .requiredHeight(height = 102.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.vistaprevia14),
+                contentDescription = "vista previa 14",
                 modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 10.dp,
-                        y = 358.dp)
-                    .requiredWidth(width = 200.dp)
-                    .requiredHeight(height = 106.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.vistaprevia14),
-                    contentDescription = "vista previa 14",
-                    modifier = Modifier
-                        .fillMaxSize())
-            }
-            Box(
+                    .requiredWidth(width = 176.dp)
+                    .requiredHeight(height = 99.dp))
+        }
+        Box(
+            modifier = Modifier
+                .align(alignment = Alignment.TopStart)
+                .offset(x = 186.dp,
+                    y = 409.dp)
+                .requiredWidth(width = 176.dp)
+                .requiredHeight(height = 102.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.image_17),
+                contentDescription = "image_17",
                 modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 218.dp,
-                        y = 358.dp)
-                    .requiredWidth(width = 200.dp)
-                    .requiredHeight(height = 106.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.image_17),
-                    contentDescription = "image 17",
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(x = 0.dp,
-                            y = (-4).dp)
-                        .fillMaxWidth()
-                        .requiredHeight(height = 113.dp))
-            }
-            Box(
+                    .requiredWidth(width = 175.dp)
+                    .requiredHeight(height = 99.dp))
+        }
+        Box(
+            modifier = Modifier
+                .align(alignment = Alignment.TopStart)
+                .offset(x = 0.dp,
+                    y = 518.dp)
+                .requiredWidth(width = 176.dp)
+                .requiredHeight(height = 102.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.image_18),
+                contentDescription = "image_18",
                 modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 10.dp,
-                        y = 472.dp)
-                    .requiredWidth(width = 200.dp)
-                    .requiredHeight(height = 106.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.image_18),
-                    contentDescription = "image 18",
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(x = 0.dp,
-                            y = (-4).dp)
-                        .requiredWidth(width = 194.dp)
-                        .requiredHeight(height = 110.dp))
-            }
-            Box(
+                    .requiredWidth(width = 177.dp)
+                    .requiredHeight(height = 100.dp))
+        }
+        Box(
+            modifier = Modifier
+                .align(alignment = Alignment.TopStart)
+                .offset(x = 186.dp,
+                    y = 518.dp)
+                .requiredWidth(width = 176.dp)
+                .requiredHeight(height = 102.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.image_19),
+                contentDescription = "image_19",
                 modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 218.dp,
-                        y = 472.dp)
-                    .requiredWidth(width = 200.dp)
-                    .requiredHeight(height = 106.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.image_19),
-                    contentDescription = "image 19",
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(x = 0.dp,
-                            y = (-3).dp)
-                        .requiredWidth(width = 200.dp)
-                        .requiredHeight(height = 113.dp))
-            }
+                    .align(alignment = Alignment.BottomStart)
+                    .offset(x = 0.dp,
+                        y = (-3).dp)
+                    .requiredWidth(width = 175.dp)
+                    .requiredHeight(height = 99.dp))
         }
     }
 }
 
-@Preview(widthDp = 420, heightDp = 691)
+@Preview(widthDp = 367, heightDp = 691)
 @Composable
 private fun ContainerPreview() {
-    catalogopeli(Modifier)
+    Catalogopeli(Modifier)
 }
