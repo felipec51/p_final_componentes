@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.foundation.layout)
 
     // --- BOM de COMPOSE ---
     val composeBom = platform("androidx.compose:compose-bom:2024.06.00")

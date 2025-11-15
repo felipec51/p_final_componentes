@@ -17,9 +17,6 @@
             android:name=".CatalogoPeliculas"
             android:exported="false" />
         <activity
-            android:name=".ActivityCompra"
-            android:exported="false" />
-        <activity
             android:name=".masinformacion"
             android:exported="false" />
         <activity
@@ -43,9 +40,6 @@
         <activity
             android:name=".PantallaUnida"
             android:exported="false" />
-        <activity
-            android:name=".Activityadmincat"
-            android:exported="true" />
         <activity
             android:name=".login"
             android:exported="true">
