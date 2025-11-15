@@ -36,6 +36,6 @@ fun PantallaCompleta2() {
         App()
 
         // 👉 SEGUNDA PANTALLA (Catálogo de Películas)
-        catalogopeli()
+        Catalogopeli()
     }
 }
