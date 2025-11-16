@@ -1,10 +1,3 @@
-<?php
-// login.php
-
-// Muestra todos los errores de PHP para debug.
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
 // Incluye el archivo de conexión
 include('conexion.php');
 $link = Conectar();
