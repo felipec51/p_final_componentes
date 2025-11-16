@@ -21,19 +21,27 @@
           </targets>
         </DialogSelection>
       </SelectionState>
-      <SelectionState runConfigName="PantallaUnida">
+      <SelectionState runConfigName="FormPreview">
+        <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2025-11-16T19:57:30.202252800Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=R58R43PW20H" />
+            </handle>
+          </Target>
+        </DropdownSelection>
+        <DialogSelection />
+      </SelectionState>
+      <SelectionState runConfigName="registrarse (2)">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="menupeliculas">
+      <SelectionState runConfigName="registrarse (3)">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="PantallaUnida (1)">
+      <SelectionState runConfigName="registrarse (4)">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="LoginPreview">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="PantallaUnida (2)">
+      <SelectionState runConfigName="registrarse">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

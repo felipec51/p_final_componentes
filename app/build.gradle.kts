@@ -66,6 +66,7 @@ dependencies {
     // Activity con soporte Compose
     implementation("androidx.activity:activity-compose")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
     // Módulos principales de Compose
     implementation("androidx.compose.ui:ui")
