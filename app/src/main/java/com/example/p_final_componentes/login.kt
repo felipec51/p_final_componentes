@@ -38,7 +38,6 @@ import com.android.volley.toolbox.Volley
 import java.util.Hashtable
 import com.android.volley.Response
 
-
 class login : AppCompatActivity() {
 
     // 1. URL del servidor
@@ -69,19 +68,26 @@ class login : AppCompatActivity() {
                         errorMessageState.value = "Email o contraseña incorrecta."
                         Toast.makeText(this, "Email o contraseña incorrecta.", Toast.LENGTH_LONG).show()
                     }
-                    "LOGIN_SUCCESS" -> {
+                    "1" -> { // Rol 1: Admin
+                        // Éxito: Navegación a catalogoadmin
+                        Toast.makeText(this, "Inicio de Sesión Exitoso (Admin)", Toast.LENGTH_LONG).show()
+
+                        val intent = Intent(this@login, catalogoadmin::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
+                    "2" -> { // Rol 2: Socio/Usuario normal
                         // Éxito: Navegación a menupeliculas
                         Toast.makeText(this, "Inicio de Sesión Exitoso", Toast.LENGTH_LONG).show()
 
-                        // Usamos la clase de menú que nos proporcionaste
                         val intent = Intent(this@login, menupeliculas::class.java)
                         startActivity(intent)
                         finish()
                     }
                     else -> {
-                        // Respuesta inesperada
+                        // Respuesta inesperada (posible error SQL de PHP)
                         errorMessageState.value = "Respuesta inesperada: $res"
-                        Toast.makeText(this, "Respuesta inesperada del servidor.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "Respuesta inesperada del servidor: $res", Toast.LENGTH_LONG).show()
                     }
                 }
             },
