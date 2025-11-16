@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,6 +26,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +43,11 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.width
 
 class catalogoadmin : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,15 +63,58 @@ class catalogoadmin : AppCompatActivity() {
         val composeView = findViewById<ComposeView>(R.id.render)
         composeView.setContent {
             MaterialTheme {
-                AppPreview()
+                MainScreenWithSidebar()
             }
         }
     }
 }
 
+@Composable
+fun MainScreenWithSidebar(modifier: Modifier = Modifier) {
+    var showSidebar by remember { mutableStateOf(false) }
+
+    Box(modifier = modifier.fillMaxSize()) {
+        // Contenido principal
+        AppPreview(
+            onMenuClick = { showSidebar = !showSidebar }
+        )
+
+        // Sidebar con animación y fondo oscuro
+        AnimatedVisibility(
+            visible = showSidebar,
+            enter = slideInHorizontally(initialOffsetX = { -it }),
+            exit = slideOutHorizontally(targetOffsetX = { -it })
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                // Fondo oscuro semi-transparente
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.5f))
+                        .clickable { showSidebar = false }
+                )
+
+                // Sidebar que ocupa ancho limitado
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(280.dp)
+                        .align(Alignment.CenterStart)
+                ) {
+                    Component1()
+                }
+            }
+        }
+    }
+}
 
 @Composable
-fun App(modifier: Modifier = Modifier) {
+fun App(
+    modifier: Modifier = Modifier,
+    onMenuClick: () -> Unit = {}
+) {
     Box(
         modifier = modifier
             .requiredWidth(width = 389.dp)
@@ -74,9 +127,9 @@ fun App(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .requiredWidth(width = 370.dp)
                 .requiredHeight(height = 91.dp)
-                .padding(start = 24.dp,
-                    end = 9.0.dp)
+                .padding(start = 24.dp, end = 9.0.dp)
         ) {
+            // ICONO CON CLICKABLE
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
@@ -84,12 +137,13 @@ fun App(modifier: Modifier = Modifier) {
                     .requiredWidth(width = 16.dp)
                     .requiredHeight(height = 28.dp)
                     .clip(shape = RoundedCornerShape(10.dp))
+                    .clickable { onMenuClick() }
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.icon_3),
-                    contentDescription = "Icon",
-                    modifier = Modifier
-                        .requiredSize(size = 16.dp))
+                    contentDescription = "Menu Icon",
+                    modifier = Modifier.requiredSize(size = 16.dp)
+                )
             }
             Box(
                 modifier = Modifier
@@ -103,8 +157,7 @@ fun App(modifier: Modifier = Modifier) {
                 Box(
                     modifier = Modifier
                         .align(alignment = Alignment.TopStart)
-                        .offset(x = 104.63.dp,
-                            y = 0.dp)
+                        .offset(x = 104.63.dp, y = 0.dp)
                         .requiredWidth(width = 106.dp)
                         .requiredHeight(height = 42.dp)
                 ) {
@@ -117,24 +170,19 @@ fun App(modifier: Modifier = Modifier) {
                             .background(color = Color(0xff2f2f2f))
                             .border(border = BorderStroke(0.9014080166816711.dp, Color(0xff2f2f2f)),
                                 shape = RoundedCornerShape(10.dp))
-                            .padding(start = 36.dp,
-                                end = 12.dp,
-                                top = 8.dp,
-                                bottom = 8.dp)
+                            .padding(start = 36.dp, end = 12.dp, top = 8.dp, bottom = 8.dp)
                     ) {
                         Text(
                             text = "Buscar",
                             color = Color(0xff6a7282).copy(alpha = 0.5f),
-                            style = TextStyle(
-                                fontSize = 16.sp))
+                            style = TextStyle(fontSize = 16.sp))
                     }
                     Image(
                         painter = painterResource(id = R.drawable.icon_1n),
                         contentDescription = "Icon",
                         modifier = Modifier
                             .align(alignment = Alignment.TopStart)
-                            .offset(x = 12.dp,
-                                y = 12.9.dp)
+                            .offset(x = 12.dp, y = 12.9.dp)
                             .requiredSize(size = 16.dp))
                 }
                 Row(
@@ -142,8 +190,7 @@ fun App(modifier: Modifier = Modifier) {
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .align(alignment = Alignment.TopStart)
-                        .offset(x = 0.dp,
-                            y = 1.49.dp)
+                        .offset(x = 0.dp, y = 1.49.dp)
                         .requiredWidth(width = 89.dp)
                         .requiredHeight(height = 39.dp)
                         .clip(shape = RoundedCornerShape(10.dp))
@@ -161,19 +208,16 @@ fun App(modifier: Modifier = Modifier) {
                             text = "Todos",
                             color = Color.White,
                             lineHeight = 1.5.em,
-                            style = TextStyle(
-                                fontSize = 14.sp),
+                            style = TextStyle(fontSize = 14.sp),
                             modifier = Modifier
                                 .align(alignment = Alignment.TopStart)
-                                .offset(x = 0.dp,
-                                    y = (-0.2).dp))
+                                .offset(x = 0.dp, y = (-0.2).dp))
                     }
                     Image(
                         painter = painterResource(id = R.drawable.icon_1ad),
                         contentDescription = "Icon",
                         alpha = 0.5f,
-                        modifier = Modifier
-                            .requiredSize(size = 16.dp))
+                        modifier = Modifier.requiredSize(size = 16.dp))
                 }
             }
             Row(
@@ -201,12 +245,10 @@ fun App(modifier: Modifier = Modifier) {
                         text = "Agregar Película",
                         color = Color.White,
                         lineHeight = 1.5.em,
-                        style = TextStyle(
-                            fontSize = 14.sp),
+                        style = TextStyle(fontSize = 14.sp),
                         modifier = Modifier
                             .align(alignment = Alignment.TopStart)
-                            .offset(x = 0.dp,
-                                y = (-0.2).dp)
+                            .offset(x = 0.dp, y = (-0.2).dp)
                             .requiredWidth(width = 51.dp))
                 }
             }
@@ -214,8 +256,7 @@ fun App(modifier: Modifier = Modifier) {
         Box(
             modifier = Modifier
                 .align(alignment = Alignment.TopStart)
-                .offset(x = 24.dp,
-                    y = 115.dp)
+                .offset(x = 24.dp, y = 115.dp)
                 .requiredWidth(width = 322.dp)
                 .requiredHeight(height = 250.dp)
         ) {
@@ -225,8 +266,7 @@ fun App(modifier: Modifier = Modifier) {
                 border = BorderStroke(0.9014080166816711.dp, Color(0xff2f2f2f)),
                 modifier = Modifier
                     .align(alignment = Alignment.TopStart)
-                    .offset(x = 0.dp,
-                        y = 11.1.dp)
+                    .offset(x = 0.dp, y = 11.1.dp)
                     .clip(shape = RoundedCornerShape(14.dp))
             ) {
                 Box(
@@ -237,8 +277,7 @@ fun App(modifier: Modifier = Modifier) {
                     Box(
                         modifier = Modifier
                             .align(alignment = Alignment.TopStart)
-                            .offset(x = 25.dp,
-                                y = 18.dp)
+                            .offset(x = 25.dp, y = 18.dp)
                             .requiredWidth(width = 273.dp)
                             .requiredHeight(height = 74.dp)
                     ) {
@@ -246,44 +285,35 @@ fun App(modifier: Modifier = Modifier) {
                             text = "Total peliculas",
                             color = Color(0xff99a1af),
                             lineHeight = 1.43.em,
-                            style = TextStyle(
-                                fontSize = 14.sp),
+                            style = TextStyle(fontSize = 14.sp),
                             modifier = Modifier
                                 .align(alignment = Alignment.TopStart)
-                                .offset(x = 0.dp,
-                                    y = (-0.2).dp))
+                                .offset(x = 0.dp, y = (-0.2).dp))
                         Text(
                             text = "7",
                             color = Color.White,
                             lineHeight = 1.5.em,
-                            style = TextStyle(
-                                fontSize = 16.sp),
+                            style = TextStyle(fontSize = 16.sp),
                             modifier = Modifier
                                 .align(alignment = Alignment.TopStart)
-                                .offset(x = 0.dp,
-                                    y = 20.8.dp))
+                                .offset(x = 0.dp, y = 20.8.dp))
                         Text(
                             text = "en el catalogo",
                             color = Color(0xff6a7282),
                             lineHeight = 1.33.em,
-                            style = TextStyle(
-                                fontSize = 14.sp),
+                            style = TextStyle(fontSize = 14.sp),
                             modifier = Modifier
                                 .align(alignment = Alignment.TopStart)
-                                .offset(x = 0.dp,
-                                    y = 49.9.dp))
+                                .offset(x = 0.dp, y = 49.9.dp))
                     }
                     Column(
                         modifier = Modifier
                             .align(alignment = Alignment.TopStart)
-                            .offset(x = 249.58.dp,
-                                y = 24.9.dp)
+                            .offset(x = 249.58.dp, y = 24.9.dp)
                             .requiredSize(size = 48.dp)
                             .clip(shape = RoundedCornerShape(10.dp))
                             .background(color = Color(0xffe50914).copy(alpha = 0.1f))
-                            .padding(start = 12.dp,
-                                end = 12.dp,
-                                top = 12.dp)
+                            .padding(start = 12.dp, end = 12.dp, top = 12.dp)
                     ) {
                         Box(
                             modifier = Modifier
@@ -295,8 +325,7 @@ fun App(modifier: Modifier = Modifier) {
                                 contentDescription = "FilmIcon 1",
                                 modifier = Modifier
                                     .align(alignment = Alignment.TopStart)
-                                    .offset(x = 0.42.dp,
-                                        y = 0.1.dp)
+                                    .offset(x = 0.42.dp, y = 0.1.dp)
                                     .requiredSize(size = 24.dp))
                         }
                     }
@@ -308,8 +337,7 @@ fun App(modifier: Modifier = Modifier) {
                 border = BorderStroke(0.9014080166816711.dp, Color(0xff2f2f2f)),
                 modifier = Modifier
                     .align(alignment = Alignment.TopStart)
-                    .offset(x = 0.dp,
-                        y = 129.1.dp)
+                    .offset(x = 0.dp, y = 129.1.dp)
                     .clip(shape = RoundedCornerShape(14.dp))
             ) {
                 Box(
@@ -320,8 +348,7 @@ fun App(modifier: Modifier = Modifier) {
                     Box(
                         modifier = Modifier
                             .align(alignment = Alignment.TopStart)
-                            .offset(x = 25.dp,
-                                y = 18.dp)
+                            .offset(x = 25.dp, y = 18.dp)
                             .requiredWidth(width = 273.dp)
                             .requiredHeight(height = 74.dp)
                     ) {
@@ -329,44 +356,35 @@ fun App(modifier: Modifier = Modifier) {
                             text = "Rating Promedio",
                             color = Color(0xff99a1af),
                             lineHeight = 1.43.em,
-                            style = TextStyle(
-                                fontSize = 14.sp),
+                            style = TextStyle(fontSize = 14.sp),
                             modifier = Modifier
                                 .align(alignment = Alignment.TopStart)
-                                .offset(x = 0.dp,
-                                    y = (-0.2).dp))
+                                .offset(x = 0.dp, y = (-0.2).dp))
                         Text(
                             text = "8.3",
                             color = Color.White,
                             lineHeight = 1.5.em,
-                            style = TextStyle(
-                                fontSize = 16.sp),
+                            style = TextStyle(fontSize = 16.sp),
                             modifier = Modifier
                                 .align(alignment = Alignment.TopStart)
-                                .offset(x = 0.dp,
-                                    y = 20.8.dp))
+                                .offset(x = 0.dp, y = 20.8.dp))
                         Text(
                             text = "De todas las películas",
                             color = Color(0xff6a7282),
                             lineHeight = 1.33.em,
-                            style = TextStyle(
-                                fontSize = 14.sp),
+                            style = TextStyle(fontSize = 14.sp),
                             modifier = Modifier
                                 .align(alignment = Alignment.TopStart)
-                                .offset(x = 0.dp,
-                                    y = 49.9.dp))
+                                .offset(x = 0.dp, y = 49.9.dp))
                     }
                     Column(
                         modifier = Modifier
                             .align(alignment = Alignment.TopStart)
-                            .offset(x = 249.58.dp,
-                                y = 24.9.dp)
+                            .offset(x = 249.58.dp, y = 24.9.dp)
                             .requiredSize(size = 48.dp)
                             .clip(shape = RoundedCornerShape(10.dp))
                             .background(color = Color(0xffe50914).copy(alpha = 0.1f))
-                            .padding(start = 12.dp,
-                                end = 12.dp,
-                                top = 12.dp)
+                            .padding(start = 12.dp, end = 12.dp, top = 12.dp)
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.staricon),
@@ -382,7 +400,10 @@ fun App(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun AppPreview(modifier: Modifier = Modifier) {
+fun AppPreview(
+    modifier: Modifier = Modifier,
+    onMenuClick: () -> Unit = {}
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -391,12 +412,13 @@ fun AppPreview(modifier: Modifier = Modifier) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        App(Modifier)
+        App(Modifier, onMenuClick)
         Catalogopeli()
-    }}
-@Preview(showBackground = true, showSystemUi = true,widthDp = 412, heightDp = 250)
+    }
+}
 
+@Preview(showBackground = true, showSystemUi = true, widthDp = 412, heightDp = 250)
 @Composable
 fun Admipeliculaprevie() {
-    AppPreview()
+    MainScreenWithSidebar()
 }
