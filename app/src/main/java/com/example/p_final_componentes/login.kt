@@ -2,6 +2,7 @@ package com.example.p_final_componentes
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -23,92 +24,108 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.android.volley.AuthFailureError
+import com.android.volley.Request
 import com.android.volley.RequestQueue
-import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import java.util.Hashtable
 
 class login : AppCompatActivity() {
 
-    // IMPORTANTE: Cambia esta IP según tu configuración
-    // Para EMULADOR: "http://10.0.2.2/androidComponentes/login.php"
-    // Para DISPOSITIVO REAL: "http://TU_IP_LOCAL/androidComponentes/login.php"
     private val URL_LOGIN = "http://192.168.2.4/androidComponentes/login.php"
 
     private val isLoadingState = mutableStateOf(false)
     private val errorMessageState = mutableStateOf<String?>(null)
     private lateinit var requestQueue: RequestQueue
 
-    // Función que implementa la lógica de Volley
-    private fun attemptLogin(email: String, password: String) {
+    private fun attemptLogin(username: String, password: String) {
         isLoadingState.value = true
         errorMessageState.value = null
 
-        val stringRequest: StringRequest = object : StringRequest(
+        Log.d("LOGIN", "Intentando login con: $username")
+
+        val stringRequest = object : StringRequest(
             Method.POST, URL_LOGIN,
-            // Listener de Éxito
-            Response.Listener { response ->
+            { response ->
                 isLoadingState.value = false
-                val res = response.trim() // Eliminar espacios en blanco
+                Log.d("LOGIN", "Respuesta: $response")
 
-                when (res) {
-                    "ERROR 1" -> {
-                        errorMessageState.value = "Faltan campos (email/contraseña)."
-                        Toast.makeText(this, "Debe llenar ambos campos.", Toast.LENGTH_LONG).show()
-                    }
-                    "ERROR 2" -> {
-                        errorMessageState.value = "Email o contraseña incorrecta."
-                        Toast.makeText(this, "Email o contraseña incorrecta.", Toast.LENGTH_LONG).show()
-                    }
-                    "1" -> { // Rol 1: Admin
-                        Toast.makeText(this, "Bienvenido Admin!", Toast.LENGTH_SHORT).show()
+                try {
+                    val jsonResponse = org.json.JSONObject(response)
+                    val success = jsonResponse.getBoolean("success")
 
-                        val intent = Intent(this@login, catalogoadmin::class.java)
-                        intent.putExtra("user_email", email)
-                        intent.putExtra("user_type", "admin")
-                        startActivity(intent)
-                        finish()
-                    }
-                    "2" -> { // Rol 2: Socio/Usuario normal
-                        Toast.makeText(this, "Inicio de Sesión Exitoso", Toast.LENGTH_SHORT).show()
+                    if (success) {
+                        val rol = jsonResponse.getInt("rol")
+                        val userId = jsonResponse.getInt("user_id")
+                        val userName = jsonResponse.optString("username", username)
 
-                        val intent = Intent(this@login, menupeliculas::class.java)
-                        intent.putExtra("user_email", email)
-                        intent.putExtra("user_type", "socio")
-                        startActivity(intent)
-                        finish()
+                        when (rol) {
+                            1 -> { // Admin
+                                Toast.makeText(this, "¡Bienvenido Admin!", Toast.LENGTH_SHORT).show()
+                                val intent = Intent(this@login, catalogoadmin::class.java).apply {
+                                    putExtra("user_name", userName)
+                                    putExtra("user_id", userId)
+                                    putExtra("user_type", "admin")
+                                }
+                                startActivity(intent)
+                                finish()
+                            }
+                            2 -> { // Usuario/Socio
+                                Toast.makeText(this, "¡Inicio de Sesión Exitoso!", Toast.LENGTH_SHORT).show()
+                                val intent = Intent(this@login, menupeliculas::class.java).apply {
+                                    putExtra("user_name", userName)
+                                    putExtra("user_id", userId)
+                                    putExtra("user_type", "socio")
+                                }
+                                startActivity(intent)
+                                finish()
+                            }
+                            else -> {
+                                errorMessageState.value = "Rol desconocido"
+                                Toast.makeText(this, "Error: Rol no válido", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    } else {
+                        val error = jsonResponse.optString("error", "Error desconocido")
+                        errorMessageState.value = error
+
+                        when (error) {
+                            "Faltan datos" -> {
+                                Toast.makeText(this, "Debe llenar ambos campos", Toast.LENGTH_LONG).show()
+                            }
+                            "Credenciales inválidas" -> {
+                                Toast.makeText(this, "Usuario o contraseña incorrecta", Toast.LENGTH_LONG).show()
+                            }
+                            else -> {
+                                Toast.makeText(this, "Error: $error", Toast.LENGTH_LONG).show()
+                            }
+                        }
                     }
-                    else -> {
-                        // Respuesta inesperada (posible error SQL de PHP)
-                        errorMessageState.value = "Respuesta inesperada: $res"
-                        Toast.makeText(this, "Error del servidor: $res", Toast.LENGTH_LONG).show()
-                    }
+                } catch (e: Exception) {
+                    Log.e("LOGIN", "Error parseando JSON: ${e.message}")
+                    errorMessageState.value = "Error al procesar respuesta: ${e.message}"
+                    Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             },
-            // Listener de Error (Error de conexión, timeout, etc.)
-            Response.ErrorListener { volleyError ->
+            { error ->
                 isLoadingState.value = false
-                val errorMsg = "Error de red: ${volleyError.message ?: "Verifique la conexión y la IP del servidor."}"
+                Log.e("LOGIN", "Error de red: ${error.message}")
+                val errorMsg = "Error de red: ${error.message ?: "Verifique la conexión"}"
                 errorMessageState.value = errorMsg
                 Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show()
             }
         ) {
-            // Envío de parámetros POST
-            @Throws(AuthFailureError::class)
-            override fun getParams(): Map<String, String> {
-                val parametros: MutableMap<String, String> = Hashtable()
-                parametros["user"] = email
-                parametros["passw"] = password
-                return parametros
+            override fun getParams(): MutableMap<String, String> {
+                val params = HashMap<String, String>()
+                params["user"] = username
+                params["passw"] = password
+                Log.d("LOGIN", "Enviando parámetros: user=$username")
+                return params
             }
         }
 
@@ -135,8 +152,8 @@ class login : AppCompatActivity() {
                     isLoading = isLoadingState.value,
                     errorMessage = errorMessageState.value,
                     onClearError = { errorMessageState.value = null },
-                    onLogin = { email, password ->
-                        attemptLogin(email, password)
+                    onLogin = { username, password ->
+                        attemptLogin(username, password)
                     }
                 )
             }
@@ -157,6 +174,7 @@ fun Login(
 
     if (errorMessage != null) {
         LaunchedEffect(errorMessage) {
+            kotlinx.coroutines.delay(3000)
             onClearError()
         }
     }
@@ -217,7 +235,7 @@ fun IniciarSesionAndroid(
         )
 
         Text(
-            text = "Correo electrónico",
+            text = "Usuario",
             color = Color.White,
             modifier = Modifier
                 .align(Alignment.Start)
@@ -226,7 +244,7 @@ fun IniciarSesionAndroid(
         TextField(
             value = correo,
             onValueChange = onCorreoChange,
-            placeholder = { Text("tu@email.com", color = Color.Gray) },
+            placeholder = { Text("admin", color = Color.Gray) },
             singleLine = true,
             enabled = !isLoading,
             colors = TextFieldDefaults.colors(
@@ -302,7 +320,7 @@ fun IniciarSesionAndroid(
             }
         }
 
-        TextButton(onClick = { /* TODO: Implementar recuperar contraseña */ }) {
+        TextButton(onClick = { /* TODO */ }) {
             Text(
                 text = "¿Olvidaste contraseña?",
                 color = Color.White,
@@ -319,7 +337,7 @@ fun IniciarSesionAndroid(
                 color = Color.Gray,
                 style = TextStyle(fontSize = 14.sp)
             )
-            TextButton(onClick = { /* TODO: Implementar registro */ }) {
+            TextButton(onClick = { /* TODO */ }) {
                 Text(
                     text = "Regístrate",
                     color = Color.White,

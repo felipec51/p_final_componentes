@@ -80,6 +80,7 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     implementation("com.android.volley:volley:1.2.1")
+    implementation("io.coil-kt:coil-compose:2.5.0")
     // --- Testing clásico ---
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

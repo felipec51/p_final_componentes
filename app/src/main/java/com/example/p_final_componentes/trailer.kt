@@ -4,10 +4,18 @@ import android.os.Bundle
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,10 +25,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import android.webkit.WebView
+import android.webkit.WebSettings
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.ComposeView
@@ -37,15 +49,19 @@ class trailer : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
     }
 }
+
 @Composable
-fun Trailer(modifier: Modifier = Modifier) {
-    Box(
+fun Trailer(
+    peliculaId: Int = 0,
+    trailers: List<String> = emptyList(),
+    modifier: Modifier = Modifier
+) {
+    Column(
         modifier = modifier
-            .requiredWidth(width = 393.dp)
-            .requiredHeight(height = 672.dp)
+            .fillMaxWidth()
+            .padding(horizontal = 0.dp)
     ) {
         Text(
             text = "Tráileres y más",
@@ -53,74 +69,116 @@ fun Trailer(modifier: Modifier = Modifier) {
             lineHeight = 1.33.em,
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 13.78.dp,
-                    y = 8.dp))
-        Box(
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = (-1).dp,
-                    y = 55.dp)
-                .requiredWidth(width = 393.dp)
-                .requiredHeight(height = 273.dp)
-                .clip(shape = RoundedCornerShape(10.dp))
-                .background(color = Color(0xff1d1d1d))
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.image21),
-                contentDescription = "image 21",
+                .padding(start = 13.78.dp, bottom = 16.dp)
+        )
+
+        if (trailers.isEmpty()) {
+            Box(
                 modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = (-10.99).dp,
-                        y = (-4.7).dp)
-                    .requiredWidth(width = 412.dp)
-                    .requiredHeight(height = 231.dp))
-            Text(
-                text = "Happy Gilmore 2: Tráiler oficial",
-                color = Color.White,
-                lineHeight = 1.43.em,
-                style = TextStyle(
-                    fontSize = 14.sp),
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 15.99.dp,
-                        y = 236.3.dp))
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(shape = RoundedCornerShape(10.dp))
+                    .background(color = Color(0xff1d1d1d)),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "No hay tráilers disponibles",
+                        color = Color(0xff99a1af),
+                        fontSize = 14.sp
+                    )
+                }
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                items(trailers) { trailerUrl ->
+                    TrailerItem(
+                        trailerUrl = trailerUrl,
+                        index = trailers.indexOf(trailerUrl) + 1
+                    )
+                }
+            }
         }
-        Box(
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = (-1).dp,
-                    y = 344.26.dp)
-                .requiredWidth(width = 393.dp)
-                .requiredHeight(height = 273.dp)
-                .clip(shape = RoundedCornerShape(10.dp))
-                .background(color = Color(0xff1d1d1d))
+    }
+}
+
+@Composable
+fun TrailerItem(
+    trailerUrl: String,
+    index: Int,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .clip(shape = RoundedCornerShape(10.dp))
+            .background(color = Color(0xff1d1d1d))
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.image22),
-                contentDescription = "image 22",
+            // WebView para mostrar el video de YouTube
+            AndroidView(
+                factory = { context ->
+                    WebView(context).apply {
+                        settings.apply {
+                            javaScriptEnabled = true
+                            loadWithOverviewMode = true
+                            useWideViewPort = true
+                            domStorageEnabled = true
+                            mediaPlaybackRequiresUserGesture = false
+                        }
+
+                        // Extraer el ID del video de YouTube
+                        val videoId = trailerUrl.substringAfterLast("/")
+
+                        // HTML para incrustar el video
+                        val html = """
+                            <html>
+                            <body style="margin:0; padding:0; background-color:#1d1d1d;">
+                                <iframe 
+                                    width="100%" 
+                                    height="100%" 
+                                    src="$trailerUrl" 
+                                    frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen
+                                    style="display:block;">
+                                </iframe>
+                            </body>
+                            </html>
+                        """.trimIndent()
+
+                        loadData(html, "text/html", "utf-8")
+                    }
+                },
                 modifier = Modifier
-                    .align(alignment = Alignment.Center)
-                    .offset(x = (-0.21).dp,
-                        y = (-26.09).dp)
-                    .requiredWidth(width = 399.dp)
-                    .requiredHeight(height = 225.dp))
+                    .fillMaxWidth()
+                    .height(220.dp)
+            )
+
             Text(
-                text = "Detrás de cámaras",
+                text = "Tráiler #$index",
                 color = Color.White,
                 lineHeight = 1.43.em,
-                style = TextStyle(
-                    fontSize = 14.sp),
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 15.99.dp,
-                        y = 236.3.dp))
+                style = TextStyle(fontSize = 14.sp),
+                modifier = Modifier.padding(16.dp)
+            )
         }
     }
 }
 
 @Preview(widthDp = 393, heightDp = 672)
 @Composable
-private fun ContainerPreview() {
-    Trailer(Modifier)
+private fun TrailerPreview() {
+    Trailer(
+        peliculaId = 1,
+        trailers = listOf(
+            "https://www.youtube.com/embed/PssKpzB0Ah0",
+            "https://www.youtube.com/embed/d0JYlUTbv1A"
+        )
+    )
 }

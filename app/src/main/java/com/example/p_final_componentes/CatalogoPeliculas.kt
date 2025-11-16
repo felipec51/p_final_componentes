@@ -1,262 +1,374 @@
 package com.example.p_final_componentes
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import coil.compose.AsyncImage
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
+
 class CatalogoPeliculas : AppCompatActivity() {
+
+    private val URL_GET_PELICULAS = "http://192.168.2.4/androidComponentes/getPeliculas.php"
+
+    private val peliculasState = mutableStateOf<List<Pelicula>>(emptyList())
+    private val isLoadingState = mutableStateOf(true)
+    private val errorState = mutableStateOf<String?>(null)
+    private lateinit var requestQueue: RequestQueue
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_catalogo_peliculas)
+
+        requestQueue = Volley.newRequestQueue(this)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        cargarPeliculas()
+
         val composeView = findViewById<ComposeView>(R.id.render)
         composeView.setContent {
-
             MaterialTheme {
-                Catalogopeli()
+                CatalogoPeli(
+                    peliculas = peliculasState.value,
+                    isLoading = isLoadingState.value,
+                    error = errorState.value,
+                    onPeliculaClick = { pelicula ->
+                        val intent = Intent(this@CatalogoPeliculas, PantallaUnida::class.java).apply {
+                            putExtra("pelicula_id", pelicula.id_pelicula)
+                        }
+                        startActivity(intent)
+                    },
+                    onRetry = { cargarPeliculas() }
+                )
             }
         }
     }
+
+    private fun cargarPeliculas() {
+        isLoadingState.value = true
+        errorState.value = null
+
+        val jsonObjectRequest = JsonObjectRequest(
+            Request.Method.GET, URL_GET_PELICULAS, null,
+            { response ->
+                try {
+                    val success = response.getBoolean("success")
+                    if (success) {
+                        val peliculasArray = response.getJSONArray("peliculas")
+                        val listaPeliculas = mutableListOf<Pelicula>()
+
+                        for (i in 0 until peliculasArray.length()) {
+                            val peliculaJson = peliculasArray.getJSONObject(i)
+                            val pelicula = Pelicula(
+                                id_pelicula = peliculaJson.getInt("id_pelicula"),
+                                titulo = peliculaJson.getString("titulo"),
+                                anio = peliculaJson.getInt("anio"),
+                                duracion_min = peliculaJson.getInt("duracion_min"),
+                                descripcion = peliculaJson.getString("descripcion"),
+                                poster_path = peliculaJson.getString("poster_path"),
+                                precio_alquiler = peliculaJson.getString("precio_alquiler"),
+                                calificacion = peliculaJson.getString("calificacion"),
+                                director_nombre = peliculaJson.getString("director_nombre")
+                            )
+                            listaPeliculas.add(pelicula)
+                        }
+
+                        peliculasState.value = listaPeliculas
+                        isLoadingState.value = false
+                    } else {
+                        val error = response.optString("error", "Error desconocido")
+                        errorState.value = error
+                        isLoadingState.value = false
+                        Toast.makeText(this, "Error: $error", Toast.LENGTH_LONG).show()
+                    }
+                } catch (e: Exception) {
+                    errorState.value = "Error al procesar datos: ${e.message}"
+                    isLoadingState.value = false
+                    Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            },
+            { error ->
+                val errorMsg = "Error de red: ${error.message ?: "Verifique la conexión"}"
+                errorState.value = errorMsg
+                isLoadingState.value = false
+                Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show()
+            }
+        )
+
+        requestQueue.add(jsonObjectRequest)
+    }
 }
 
+// COMPOSABLE REUTILIZABLE CON PARÁMETRO PARA MODO
 @Composable
-fun Catalogopeli(modifier: Modifier = Modifier) {
+fun CatalogoPeli(
+    peliculas: List<Pelicula>,
+    isLoading: Boolean,
+    error: String?,
+    onPeliculaClick: (Pelicula) -> Unit,
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier,
+    showHeader: Boolean = true,  // Nuevo parámetro
+    modoUsuario: Boolean = true  // Nuevo parámetro: true = usuario, false = admin
+) {
     Box(
         modifier = modifier
-            .requiredWidth(width = 367.dp)
-            .requiredHeight(height = 691.dp)
+            .fillMaxSize()
+            .background(Color(0xFF141414))
+            .padding(16.dp)
     ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(3.99.dp, Alignment.Top),
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 6.dp,
-                    y = 0.dp)
-                .requiredWidth(width = 233.dp)
-                .requiredHeight(height = 48.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .requiredHeight(height = 24.dp)
-            ) {
+        Column {
+            // Header (opcional)
+            if (showHeader) {
                 Text(
                     text = "Catálogo de Películas",
                     color = Color.White,
-                    lineHeight = 1.5.em,
-                    style = TextStyle(
-                        fontSize = 16.sp),
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(x = 0.dp,
-                            y = (-1.88).dp))
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .requiredHeight(height = 20.dp)
-            ) {
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
                 Text(
-                    text = "7 películas encontradas",
+                    text = "${peliculas.size} películas encontradas",
                     color = Color(0xff99a1af),
-                    lineHeight = 1.43.em,
-                    style = TextStyle(
-                        fontSize = 14.sp),
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(x = 0.dp,
-                            y = (-1.99).dp)
-                        .requiredWidth(width = 192.dp))
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
             }
-        }
-        Box(
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 186.dp,
-                    y = 80.dp)
-                .requiredWidth(width = 176.dp)
-                .requiredHeight(height = 102.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.image_13),
-                contentDescription = "image_13",
-                modifier = Modifier
-                    .requiredWidth(width = 175.dp)
-                    .requiredHeight(height = 99.dp))
-        }
-        Box(
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 0.dp,
-                    y = 80.dp)
-                .requiredWidth(width = 176.dp)
-                .requiredHeight(height = 102.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.image),
-                contentDescription = "image_18",
-                modifier = Modifier
-                    .requiredWidth(width = 175.dp)
-                    .requiredHeight(height = 99.dp))
-        }
-        Box(
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 0.dp,
-                    y = 189.dp)
-                .requiredWidth(width = 176.dp)
-                .requiredHeight(height = 102.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.image_14),
-                contentDescription = "image 14",
-                modifier = Modifier
-                    .requiredWidth(width = 175.dp)
-                    .requiredHeight(height = 99.dp))
-        }
-        Box(
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 186.dp,
-                    y = 189.dp)
-                .requiredWidth(width = 176.dp)
-                .requiredHeight(height = 102.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.image_15),
-                contentDescription = "image_15",
-                modifier = Modifier
-                    .requiredWidth(width = 175.dp)
-                    .requiredHeight(height = 99.dp))
-        }
-        Box(
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 0.dp,
-                    y = 299.dp)
-                .requiredWidth(width = 176.dp)
-                .requiredHeight(height = 102.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.vistaprevia9),
-                contentDescription = "vista previa 9",
-                modifier = Modifier
-                    .requiredWidth(width = 176.dp)
-                    .requiredHeight(height = 99.dp))
-        }
-        Box(
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 186.dp,
-                    y = 299.dp)
-                .requiredWidth(width = 176.dp)
-                .requiredHeight(height = 102.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.image_16),
-                contentDescription = "image_16",
-                modifier = Modifier
-                    .requiredWidth(width = 175.dp)
-                    .requiredHeight(height = 99.dp))
-        }
-        Box(
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 0.dp,
-                    y = 409.dp)
-                .requiredWidth(width = 176.dp)
-                .requiredHeight(height = 102.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.vistaprevia14),
-                contentDescription = "vista previa 14",
-                modifier = Modifier
-                    .requiredWidth(width = 176.dp)
-                    .requiredHeight(height = 99.dp))
-        }
-        Box(
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 186.dp,
-                    y = 409.dp)
-                .requiredWidth(width = 176.dp)
-                .requiredHeight(height = 102.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.image_17),
-                contentDescription = "image_17",
-                modifier = Modifier
-                    .requiredWidth(width = 175.dp)
-                    .requiredHeight(height = 99.dp))
-        }
-        Box(
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 0.dp,
-                    y = 518.dp)
-                .requiredWidth(width = 176.dp)
-                .requiredHeight(height = 102.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.image_18),
-                contentDescription = "image_18",
-                modifier = Modifier
-                    .requiredWidth(width = 177.dp)
-                    .requiredHeight(height = 100.dp))
-        }
-        Box(
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 186.dp,
-                    y = 518.dp)
-                .requiredWidth(width = 176.dp)
-                .requiredHeight(height = 102.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.image_19),
-                contentDescription = "image_19",
-                modifier = Modifier
-                    .align(alignment = Alignment.BottomStart)
-                    .offset(x = 0.dp,
-                        y = (-3).dp)
-                    .requiredWidth(width = 175.dp)
-                    .requiredHeight(height = 99.dp))
+
+            // Content
+            when {
+                isLoading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            CircularProgressIndicator(color = Color(0xffe50914))
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text("Cargando películas...", color = Color.White)
+                        }
+                    }
+                }
+
+                error != null -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.padding(32.dp)
+                        ) {
+                            Text(
+                                text = "⚠️",
+                                fontSize = 48.sp,
+                                modifier = Modifier.padding(bottom = 16.dp)
+                            )
+                            Text(
+                                text = "Error al cargar películas",
+                                color = Color.White,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                            Text(
+                                text = error,
+                                color = Color(0xff99a1af),
+                                fontSize = 14.sp,
+                                modifier = Modifier.padding(bottom = 24.dp)
+                            )
+                            Button(
+                                onClick = onRetry,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xffe50914)
+                                )
+                            ) {
+                                Text("Reintentar")
+                            }
+                        }
+                    }
+                }
+
+                peliculas.isEmpty() -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "No hay películas disponibles",
+                            color = Color.White,
+                            fontSize = 16.sp
+                        )
+                    }
+                }
+
+                else -> {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        items(peliculas) { pelicula ->
+                            PeliculaCard(
+                                pelicula = pelicula,
+                                onClick = { onPeliculaClick(pelicula) },
+                                modoUsuario = modoUsuario
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }
 
-@Preview(widthDp = 367, heightDp = 691)
 @Composable
-private fun ContainerPreview() {
-    Catalogopeli(Modifier)
+fun PeliculaCard(
+    pelicula: Pelicula,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    modoUsuario: Boolean = true
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+    ) {
+        // Imagen de la película
+        Box {
+            AsyncImage(
+                model = pelicula.poster_path,
+                contentDescription = pelicula.titulo,
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(id = R.drawable.fondo),
+                error = painterResource(id = R.drawable.fondo),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(8.dp))
+            )
+
+            // Badge de admin (solo en modo admin)
+            if (!modoUsuario) {
+                Surface(
+                    color = Color(0xffe50914).copy(alpha = 0.9f),
+                    shape = RoundedCornerShape(4.dp),
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                ) {
+                    Text(
+                        text = "EDITAR",
+                        color = Color.White,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Título
+        Text(
+            text = pelicula.titulo,
+            color = Color.White,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
+
+        // Año y calificación
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = pelicula.anio.toString(),
+                color = Color(0xff99a1af),
+                fontSize = 12.sp
+            )
+            Text(
+                text = pelicula.calificacion,
+                color = Color(0xffe50914),
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        // Precio (solo en modo usuario)
+        if (modoUsuario) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Alquiler: $${pelicula.precio_alquiler}",
+                color = Color(0xff4ade80),
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+private fun CatalogoPeliPreview() {
+    val peliculasEjemplo = listOf(
+        Pelicula(
+            id_pelicula = 1,
+            titulo = "Stranger Things",
+            anio = 2025,
+            duracion_min = 2400,
+            descripcion = "Fuerza maligna...",
+            poster_path = "./imgs/fondestringer.png",
+            precio_alquiler = "15000",
+            calificacion = "16+",
+            director_nombre = "The Duffer Brothers"
+        )
+    )
+
+    CatalogoPeli(
+        peliculas = peliculasEjemplo,
+        isLoading = false,
+        error = null,
+        onPeliculaClick = {},
+        onRetry = {},
+        modoUsuario = true
+    )
 }

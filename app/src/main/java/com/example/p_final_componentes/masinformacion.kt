@@ -9,7 +9,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
@@ -41,14 +43,30 @@ class masinformacion : AppCompatActivity() {
     }
 }
 
-
 @Composable
-fun Informacio(modifier: Modifier = Modifier) {
+fun Informacio(pelicula: PeliculaDetalle? = null, modifier: Modifier = Modifier) {
+    if (pelicula == null) {
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(200.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text("Cargando...", color = Color.White)
+        }
+        return
+    }
+
+    val generosTexto = pelicula.generos.joinToString(", ")
+    val actoresTexto = pelicula.actores.joinToString(", ")
+    val duracionTexto = "${pelicula.duracion_min / 60}h ${pelicula.duracion_min % 60}min"
+
     Box(
         modifier = modifier
             .requiredWidth(width = 393.dp)
             .requiredHeight(height = 1099.dp)
     ) {
+        // Sección principal
         Box(
             modifier = Modifier
                 .requiredWidth(width = 393.dp)
@@ -57,82 +75,83 @@ fun Informacio(modifier: Modifier = Modifier) {
                 .background(color = Color(0xff5e5e5e).copy(alpha = 0.35f))
         ) {
             Text(
-                text = "Happy Gilmore 2",
+                text = pelicula.titulo,
                 color = Color.White,
                 lineHeight = 1.33.em,
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier
                     .align(alignment = Alignment.TopStart)
-                    .offset(x = 24.dp,
-                        y = 20.95.dp))
+                    .offset(x = 24.dp, y = 20.95.dp)
+            )
+
             Text(
-                text = "2025",
+                text = pelicula.anio.toString(),
                 color = Color(0xffd1d5dc),
                 lineHeight = 1.43.em,
-                style = TextStyle(
-                    fontSize = 14.sp),
+                style = TextStyle(fontSize = 14.sp),
                 modifier = Modifier
                     .align(alignment = Alignment.TopStart)
-                    .offset(x = 24.dp,
-                        y = 71.02.dp))
+                    .offset(x = 24.dp, y = 71.02.dp)
+            )
+
             Text(
-                text = "13+",
+                text = pelicula.calificacion,
                 color = Color(0xffd1d5dc),
                 lineHeight = 1.43.em,
-                style = TextStyle(
-                    fontSize = 14.sp),
+                style = TextStyle(fontSize = 14.sp),
                 modifier = Modifier
                     .align(alignment = Alignment.TopStart)
-                    .offset(x = 75.86.dp,
-                        y = 71.02.dp))
+                    .offset(x = 75.86.dp, y = 71.02.dp)
+            )
+
             Text(
-                text = "Comedia, Deportes",
+                text = generosTexto,
                 color = Color(0xffd1d5dc),
                 lineHeight = 1.43.em,
-                style = TextStyle(
-                    fontSize = 14.sp),
+                style = TextStyle(fontSize = 14.sp),
                 modifier = Modifier
                     .align(alignment = Alignment.TopStart)
-                    .offset(x = 122.21.dp,
-                        y = 71.02.dp))
+                    .offset(x = 122.21.dp, y = 71.02.dp)
+            )
+
             Text(
-                text = "El juego no ha terminado para Happy Gilmore. El legendario y explosivo golfista interpretado por Adam Sandler vuelve al green para cumplir el deseo de su hija. Con su característico estilo poco convencional y su temperamento único, Happy deberá enfrentarse a una nueva generación de jugadores y demostrar que aún tiene lo necesario para competir al más alto nivel.",
+                text = pelicula.descripcion,
                 color = Color(0xffd1d5dc),
                 lineHeight = 1.63.em,
-                style = TextStyle(
-                    fontSize = 14.sp),
+                style = TextStyle(fontSize = 14.sp),
                 modifier = Modifier
                     .align(alignment = Alignment.TopStart)
-                    .offset(x = 24.dp,
-                        y = 107.05.dp)
-                    .requiredWidth(width = 341.dp))
+                    .offset(x = 24.dp, y = 107.05.dp)
+                    .requiredWidth(width = 341.dp)
+            )
+
             Text(
                 text = "Elenco:",
                 color = Color(0xff99a1af),
                 lineHeight = 1.43.em,
-                style = TextStyle(
-                    fontSize = 14.sp),
+                style = TextStyle(fontSize = 14.sp),
                 modifier = Modifier
                     .align(alignment = Alignment.TopStart)
-                    .offset(x = 27.01.dp,
-                        y = 270.65.dp))
+                    .offset(x = 27.01.dp, y = 270.65.dp)
+            )
+
             Text(
-                text = "Adam Sandler, Julie Bowen, Christopher McDonald, Ben Stiller, Travis Kelce",
+                text = actoresTexto,
                 color = Color(0xffd1d5dc),
                 lineHeight = 1.43.em,
-                style = TextStyle(
-                    fontSize = 14.sp),
+                style = TextStyle(fontSize = 14.sp),
                 modifier = Modifier
                     .align(alignment = Alignment.TopCenter)
-                    .offset(x = (-23.49).dp,
-                        y = 287.65.dp)
-                    .requiredWidth(width = 292.dp))
+                    .offset(x = (-23.49).dp, y = 287.65.dp)
+                    .requiredWidth(width = 292.dp)
+            )
         }
+
+        // Sección "Más info"
         Box(
             modifier = Modifier
                 .align(alignment = Alignment.TopStart)
-                .offset(x = 0.dp,
-                    y = 342.68.dp)
+                .offset(x = 0.dp, y = 342.68.dp)
                 .requiredWidth(width = 393.dp)
                 .requiredHeight(height = 756.dp)
         ) {
@@ -140,219 +159,115 @@ fun Informacio(modifier: Modifier = Modifier) {
                 text = "Más info",
                 color = Color.White,
                 lineHeight = 1.4.em,
-                style = TextStyle(
-                    fontSize = 20.sp),
+                style = TextStyle(fontSize = 20.sp),
                 modifier = Modifier
                     .align(alignment = Alignment.TopStart)
-                    .offset(x = 0.dp,
-                        y = 3.dp)
-                    .requiredWidth(width = 393.dp))
+                    .offset(x = 24.dp, y = 3.dp)
+            )
+
+            // Géneros
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Top),
                 modifier = Modifier
                     .align(alignment = Alignment.TopStart)
-                    .offset(x = (-5).dp,
-                        y = 45.dp)
+                    .offset(x = 0.dp, y = 45.dp)
                     .requiredWidth(width = 393.dp)
                     .requiredHeight(height = 107.dp)
                     .clip(shape = RoundedCornerShape(10.dp))
                     .background(color = Color(0xff5e5e5e).copy(alpha = 0.35f))
-                    .padding(start = 23.995532989501953.dp,
-                        end = 23.995555877685547.dp,
-                        top = 23.9954833984375.dp)
+                    .padding(start = 24.dp, end = 24.dp, top = 24.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .requiredHeight(height = 24.dp)
-                ) {
-                    Text(
-                        text = "Géneros",
-                        color = Color.White,
-                        lineHeight = 1.5.em,
-                        style = TextStyle(
-                            fontSize = 16.sp),
-                        modifier = Modifier
-                            .align(alignment = Alignment.TopStart)
-                            .offset(x = 0.dp,
-                                y = (-1.95).dp))
-                    Text(
-                        text = "Películas para reír y Deportes",
-                        color = Color(0xffd1d5dc),
-                        lineHeight = 1.63.em,
-                        style = TextStyle(
-                            fontSize = 14.sp),
-                        modifier = Modifier
-                            .align(alignment = Alignment.TopStart)
-                            .offset(x = 0.dp,
-                                y = 35.09.dp))
-                }
+                Text(
+                    text = "Géneros",
+                    color = Color.White,
+                    lineHeight = 1.5.em,
+                    style = TextStyle(fontSize = 16.sp)
+                )
+                Text(
+                    text = generosTexto,
+                    color = Color(0xffd1d5dc),
+                    lineHeight = 1.63.em,
+                    style = TextStyle(fontSize = 14.sp)
+                )
             }
+
+            // Duración
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Top),
                 modifier = Modifier
                     .align(alignment = Alignment.TopStart)
-                    .offset(x = (-5).dp,
-                        y = 175.73.dp)
-                    .requiredWidth(width = 393.dp)
-                    .requiredHeight(height = 129.dp)
-                    .clip(shape = RoundedCornerShape(10.dp))
-                    .background(color = Color(0xff5e5e5e).copy(alpha = 0.35f))
-                    .padding(start = 23.99953.dp,
-                        end = 23.9947.dp,
-                        top = 23.975.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .requiredHeight(height = 24.dp)
-                ) {
-                    Text(
-                        text = "Esta película es...",
-                        color = Color.White,
-                        lineHeight = 1.5.em,
-                        style = TextStyle(
-                            fontSize = 16.sp),
-                        modifier = Modifier
-                            .align(alignment = Alignment.TopStart)
-                            .offset(x = 0.dp,
-                                y = (-1.95).dp))
-                    Text(
-                        text = "Comedia física, Irreverente, Deportes, Golf, Contra todo obstáculo, Película",
-                        color = Color(0xffd1d5dc),
-                        lineHeight = 1.63.em,
-                        style = TextStyle(
-                            fontSize = 14.sp),
-                        modifier = Modifier
-                            .align(alignment = Alignment.TopStart)
-                            .offset(x = 0.dp,
-                                y = 35.09.dp)
-                            .requiredWidth(width = 341.dp))
-                }
-            }
-            Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Top),
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = (-5).dp,
-                        y = 329.2.dp)
+                    .offset(x = 0.dp, y = 175.73.dp)
                     .requiredWidth(width = 393.dp)
                     .requiredHeight(height = 107.dp)
                     .clip(shape = RoundedCornerShape(10.dp))
                     .background(color = Color(0xff5e5e5e).copy(alpha = 0.35f))
-                    .padding(start = 23.993.dp,
-                        end = 23.997.dp,
-                        top = 23.975.dp)
+                    .padding(start = 24.dp, end = 24.dp, top = 24.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .requiredHeight(height = 24.dp)
-                ) {
-                    Text(
-                        text = "Audio",
-                        color = Color.White,
-                        lineHeight = 1.5.em,
-                        style = TextStyle(
-                            fontSize = 16.sp),
-                        modifier = Modifier
-                            .align(alignment = Alignment.TopStart)
-                            .offset(x = 0.dp,
-                                y = (-1.95).dp))
-                    Text(
-                        text = "Inglés - Audio descriptivo, Inglés [Original], Español",
-                        color = Color(0xffd1d5dc),
-                        lineHeight = 1.63.em,
-                        style = TextStyle(
-                            fontSize = 14.sp),
-                        modifier = Modifier
-                            .align(alignment = Alignment.TopStart)
-                            .offset(x = 0.dp,
-                                y = 35.09.dp))
-                }
+                Text(
+                    text = "Duración",
+                    color = Color.White,
+                    lineHeight = 1.5.em,
+                    style = TextStyle(fontSize = 16.sp)
+                )
+                Text(
+                    text = duracionTexto,
+                    color = Color(0xffd1d5dc),
+                    lineHeight = 1.63.em,
+                    style = TextStyle(fontSize = 14.sp)
+                )
             }
+
+            // Director
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Top),
                 modifier = Modifier
                     .align(alignment = Alignment.TopStart)
-                    .offset(x = (-5).dp,
-                        y = 459.93.dp)
+                    .offset(x = 0.dp, y = 306.46.dp)
                     .requiredWidth(width = 393.dp)
                     .requiredHeight(height = 107.dp)
                     .clip(shape = RoundedCornerShape(10.dp))
                     .background(color = Color(0xff5e5e5e).copy(alpha = 0.35f))
-                    .padding(start = 23.995532989501953.dp,
-                        end = 23.9.dp,
-                        top = 23.9.dp)
+                    .padding(start = 24.dp, end = 24.dp, top = 24.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .requiredHeight(height = 24.dp)
-                ) {
-                    Text(
-                        text = "Subtítulos",
-                        color = Color.White,
-                        lineHeight = 1.5.em,
-                        style = TextStyle(
-                            fontSize = 16.sp),
-                        modifier = Modifier
-                            .align(alignment = Alignment.TopStart)
-                            .offset(x = 0.dp,
-                                y = (-1.95).dp))
-                    Text(
-                        text = "Inglés y Español",
-                        color = Color(0xffd1d5dc),
-                        lineHeight = 1.63.em,
-                        style = TextStyle(
-                            fontSize = 14.sp),
-                        modifier = Modifier
-                            .align(alignment = Alignment.TopStart)
-                            .offset(x = 0.dp,
-                                y = 35.09.dp))
-                }
+                Text(
+                    text = "Director",
+                    color = Color.White,
+                    lineHeight = 1.5.em,
+                    style = TextStyle(fontSize = 16.sp)
+                )
+                Text(
+                    text = pelicula.director_nombre,
+                    color = Color(0xffd1d5dc),
+                    lineHeight = 1.63.em,
+                    style = TextStyle(fontSize = 14.sp)
+                )
             }
+
+            // Elenco completo
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Top),
                 modifier = Modifier
                     .align(alignment = Alignment.TopStart)
-                    .offset(x = (-5).dp,
-                        y = 590.66.dp)
+                    .offset(x = 0.dp, y = 437.19.dp)
                     .requiredWidth(width = 393.dp)
                     .requiredHeight(height = 152.dp)
                     .clip(shape = RoundedCornerShape(10.dp))
                     .background(color = Color(0xff5e5e5e).copy(alpha = 0.35f))
-                    .padding(start = 23.995532989501953.dp,
-                        end = 23.995555877685547.dp,
-                        top = 23.9954833984375.dp)
+                    .padding(start = 24.dp, end = 24.dp, top = 24.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .requiredHeight(height = 24.dp)
-                ) {
-                    Text(
-                        text = "Elenco",
-                        color = Color.White,
-                        lineHeight = 1.5.em,
-                        style = TextStyle(
-                            fontSize = 16.sp),
-                        modifier = Modifier
-                            .align(alignment = Alignment.TopStart)
-                            .offset(x = 0.dp,
-                                y = (-1.95).dp))
-                    Text(
-                        text = "Adam Sandler, Christopher McDonald, Julie Bowen, Frances Bay, Carl Weathers, Allen Covert, Robert Smigel, Bob Barker, Richard Kiel, Dennis Dugan",
-                        color = Color(0xffd1d5dc),
-                        lineHeight = 1.63.em,
-                        style = TextStyle(
-                            fontSize = 14.sp),
-                        modifier = Modifier
-                            .align(alignment = Alignment.TopStart)
-                            .offset(x = 0.dp,
-                                y = 35.99.dp)
-                            .requiredWidth(width = 344.dp))
-                }
+                Text(
+                    text = "Elenco",
+                    color = Color.White,
+                    lineHeight = 1.5.em,
+                    style = TextStyle(fontSize = 16.sp)
+                )
+                Text(
+                    text = actoresTexto,
+                    color = Color(0xffd1d5dc),
+                    lineHeight = 1.63.em,
+                    style = TextStyle(fontSize = 14.sp),
+                    modifier = Modifier.requiredWidth(width = 344.dp)
+                )
             }
         }
     }
@@ -361,5 +276,22 @@ fun Informacio(modifier: Modifier = Modifier) {
 @Preview(widthDp = 393, heightDp = 1099)
 @Composable
 private fun InformacioPreview() {
-    Informacio(Modifier)
+    val peliculaEjemplo = PeliculaDetalle(
+        id_pelicula = 1,
+        titulo = "Stranger Things",
+        anio = 2025,
+        duracion_min = 2400,
+        descripcion = "Fuerza maligna desciende sobre un pueblo...",
+        poster_path = "",
+        precio_alquiler = "15000",
+        calificacion = "16+",
+        director_nombre = "The Duffer Brothers",
+        numerocopias = 5,
+        estado = "disponible",
+        generos = listOf("Sci-fi", "Terror", "Drama"),
+        actores = listOf("Winona Ryder", "David Harbour", "Millie Bobby Brown"),
+        trailers = emptyList(),
+        copias_disponibles = 3
+    )
+    Informacio(pelicula = peliculaEjemplo)
 }

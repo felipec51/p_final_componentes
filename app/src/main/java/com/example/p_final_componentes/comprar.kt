@@ -19,28 +19,28 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Snackbar
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.compose.material3.Surface
-import androidx.compose.ui.layout.ContentScale
-
+import coil.compose.AsyncImage
 
 class comprar : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +54,6 @@ class comprar : AppCompatActivity() {
         }
         val composeView = findViewById<ComposeView>(R.id.render)
         composeView.setContent {
-
             MaterialTheme {
                 Compra()
             }
@@ -63,7 +62,25 @@ class comprar : AppCompatActivity() {
 }
 
 @Composable
-fun Compra(modifier: Modifier = Modifier) {
+fun Compra(pelicula: PeliculaDetalle? = null, modifier: Modifier = Modifier) {
+    // Si no hay película, mostrar un placeholder
+    if (pelicula == null) {
+        Box(
+            modifier = modifier
+                .requiredWidth(width = 393.dp)
+                .requiredHeight(height = 803.dp)
+                .background(color = Color(0xff1a1a1a)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Cargando información...",
+                color = Color.White,
+                fontSize = 16.sp
+            )
+        }
+        return
+    }
+
     Box(
         modifier = modifier
             .requiredWidth(width = 393.dp)
@@ -76,38 +93,40 @@ fun Compra(modifier: Modifier = Modifier) {
                 .clip(shape = RoundedCornerShape(10.dp))
                 .background(color = Color(0xff1a1a1a))
         ) {
+            // Imagen de la película
             Column(
                 modifier = Modifier
                     .align(alignment = Alignment.TopStart)
-                    .offset(x = 46.73.dp,
-                        y = 43.dp)
+                    .offset(x = 46.73.dp, y = 43.dp)
                     .requiredWidth(width = 300.dp)
                     .requiredHeight(height = 450.dp)
                     .clip(shape = RoundedCornerShape(10.dp))
                     .background(color = Color.White)
-                    .shadow(elevation = 50.dp,
-                        shape = RoundedCornerShape(10.dp))
+                    .shadow(elevation = 50.dp, shape = RoundedCornerShape(10.dp))
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .requiredHeight(height = 450.dp)
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.imagewithfallback),
-                        contentDescription = "image 20",
-                        contentScale = ContentScale.FillBounds,
+                    AsyncImage(
+                        model = pelicula.poster_path,
+                        contentDescription = pelicula.titulo,
+                        contentScale = ContentScale.Crop,
+                        placeholder = painterResource(id = R.drawable.fondo),
+                        error = painterResource(id = R.drawable.fondo),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(568.dp)
+                            .height(450.dp)
                     )
                 }
             }
+
+            // Información de la película
             Box(
                 modifier = Modifier
                     .align(alignment = Alignment.TopStart)
-                    .offset(x = 24.01.dp,
-                        y = 498.01.dp)
+                    .offset(x = 24.01.dp, y = 498.01.dp)
                     .requiredWidth(width = 345.dp)
                     .requiredHeight(height = 255.dp)
             ) {
@@ -130,15 +149,14 @@ fun Compra(modifier: Modifier = Modifier) {
                                 .requiredHeight(height = 36.dp)
                         ) {
                             Text(
-                                text = "Happy Gilmore 2",
+                                text = pelicula.titulo,
                                 color = Color.White,
                                 lineHeight = 1.2.em,
-                                style = TextStyle(
-                                    fontSize = 30.sp),
+                                style = TextStyle(fontSize = 30.sp),
                                 modifier = Modifier
                                     .align(alignment = Alignment.TopStart)
-                                    .offset(x = 0.dp,
-                                        y = (-3.1).dp))
+                                    .offset(x = 0.dp, y = (-3.1).dp)
+                            )
                         }
                         Box(
                             modifier = Modifier
@@ -146,112 +164,118 @@ fun Compra(modifier: Modifier = Modifier) {
                                 .requiredHeight(height = 23.dp)
                         ) {
                             Text(
-                                text = "2025",
+                                text = pelicula.anio.toString(),
                                 color = Color(0xff99a1af),
                                 lineHeight = 1.43.em,
-                                style = TextStyle(
-                                    fontSize = 14.sp),
+                                style = TextStyle(fontSize = 14.sp),
                                 modifier = Modifier
                                     .align(alignment = Alignment.TopStart)
-                                    .offset(x = 13.dp,
-                                        y = (-1.26).dp))
+                                    .offset(x = 13.dp, y = (-1.26).dp)
+                            )
                             Text(
-                                text = "1h 53min",
+                                text = "${pelicula.duracion_min / 60}h ${pelicula.duracion_min % 60}min",
                                 color = Color(0xff99a1af),
                                 lineHeight = 1.43.em,
-                                style = TextStyle(
-                                    fontSize = 14.sp),
+                                style = TextStyle(fontSize = 14.sp),
                                 modifier = Modifier
                                     .align(alignment = Alignment.TopStart)
-                                    .offset(x = 117.dp,
-                                        y = 0.dp))
+                                    .offset(x = 117.dp, y = 0.dp)
+                            )
                             Text(
-                                text = "13+",
+                                text = pelicula.calificacion,
                                 color = Color.White,
                                 lineHeight = 1.33.em,
-                                style = TextStyle(
-                                    fontSize = 13.sp),
+                                style = TextStyle(fontSize = 13.sp),
                                 modifier = Modifier
                                     .align(alignment = Alignment.TopStart)
-                                    .offset(x = 77.15.dp,
-                                        y = 0.dp))
+                                    .offset(x = 77.15.dp, y = 0.dp)
+                            )
                         }
                     }
-                    Snackbar(
-                        containerColor = Color(0xffe7000b),
-                        contentColor = Color.White,
-                        shape = RoundedCornerShape(8.dp)
+
+                    // Botón de compra
+                    Button(
+                        onClick = { /* Acción de compra */ },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xffe7000b)
+                        ),
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "Comprar película",
+                            text = "Alquilar por $${pelicula.precio_alquiler}",
                             color = Color.White,
-                            lineHeight = 1.56.em,
-                            style = TextStyle(
-                                fontSize = 18.sp),
-                            modifier = Modifier
-                                .fillMaxWidth())
+                            fontSize = 18.sp
+                        )
                     }
                 }
+
                 NumeroDeCopias(
+                    disponibles = pelicula.copias_disponibles,
+                    total = pelicula.numerocopias,
                     modifier = Modifier
                         .align(alignment = Alignment.TopStart)
-                        .offset(x = 1.dp,
-                            y = 108.02.dp))
+                        .offset(x = 1.dp, y = 108.02.dp)
+                )
+
                 Text(
-                    text = "Disponible para compra",
-                    color = Color(0xff99a1af),
+                    text = if (pelicula.copias_disponibles > 0) "Disponible para alquiler" else "No disponible",
+                    color = if (pelicula.copias_disponibles > 0) Color(0xff99a1af) else Color(0xffe50914),
                     lineHeight = 1.43.em,
-                    style = TextStyle(
-                        fontSize = 14.sp),
+                    style = TextStyle(fontSize = 14.sp),
                     modifier = Modifier
                         .align(alignment = Alignment.TopStart)
-                        .offset(x = 0.dp,
-                            y = 180.dp))
+                        .offset(x = 0.dp, y = 180.dp)
+                )
             }
         }
+
+        // Header
         Text(
             text = "RewindCodeFilm",
             color = Color(0xffe50914),
             lineHeight = 1.35.em,
-            style = TextStyle(
-                fontSize = 20.sp),
+            style = TextStyle(fontSize = 20.sp),
             modifier = Modifier
                 .align(alignment = Alignment.TopStart)
-                .offset(x = 9.99.dp,
-                    y = 7.5.dp)
-                .requiredWidth(width = 204.dp))
+                .offset(x = 9.99.dp, y = 7.5.dp)
+                .requiredWidth(width = 204.dp)
+        )
+
         Row(
             horizontalArrangement = Arrangement.spacedBy(15.99.dp, Alignment.Start),
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .align(alignment = Alignment.TopStart)
-                .offset(x = 319.01.dp,
-                    y = 12.dp)
+                .offset(x = 319.01.dp, y = 12.dp)
                 .requiredWidth(width = 58.dp)
                 .requiredHeight(height = 32.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.icon_1n),
                 contentDescription = "Icon",
-                modifier = Modifier
-                    .requiredSize(size = 20.dp))
+                modifier = Modifier.requiredSize(size = 20.dp)
+            )
             Image(
                 painter = painterResource(id = R.drawable.iconn),
                 contentDescription = "Icon",
-                modifier = Modifier
-                    .requiredSize(size = 20.dp))
+                modifier = Modifier.requiredSize(size = 20.dp)
+            )
         }
     }
 }
 
 @Composable
-fun NumeroDeCopias(modifier: Modifier = Modifier) {
+fun NumeroDeCopias(
+    disponibles: Int = 3,
+    total: Int = 5,
+    modifier: Modifier = Modifier
+) {
     Surface(
         shape = RoundedCornerShape(16.dp),
         color = Color.White.copy(alpha = 0.15f),
         border = BorderStroke(0.841.dp, Color.White.copy(alpha = 0.2f)),
-        modifier = modifier
-            .clip(shape = RoundedCornerShape(16.dp))
+        modifier = modifier.clip(shape = RoundedCornerShape(16.dp))
     ) {
         Box(
             modifier = Modifier
@@ -263,123 +287,89 @@ fun NumeroDeCopias(modifier: Modifier = Modifier) {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .align(alignment = Alignment.TopStart)
-                    .offset(x = 12.83.dp,
-                        y = 12.83.dp)
+                    .offset(x = 12.83.dp, y = 12.83.dp)
                     .requiredWidth(width = 91.dp)
                     .requiredHeight(height = 41.dp)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.icon),
                     contentDescription = "Icon",
-                    modifier = Modifier
-                        .requiredSize(size = 16.dp))
+                    modifier = Modifier.requiredSize(size = 16.dp)
+                )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .requiredHeight(height = 41.dp)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .requiredWidth(width = 67.dp)
-                            .requiredHeight(height = 17.dp)
-                    ) {
-                        Text(
-                            text = "Disponibles",
-                            color = Color.White.copy(alpha = 0.6f),
-                            lineHeight = 1.33.em,
-                            style = TextStyle(
-                                fontSize = 13.sp),
-                            modifier = Modifier
-                                .align(alignment = Alignment.TopStart)
-                                .offset(x = 0.dp,
-                                    y = (-1.84).dp))
-                    }
-                    Box(
+                    Text(
+                        text = "Disponibles",
+                        color = Color.White.copy(alpha = 0.6f),
+                        lineHeight = 1.33.em,
+                        style = TextStyle(fontSize = 13.sp),
                         modifier = Modifier
                             .align(alignment = Alignment.TopStart)
-                            .offset(x = 0.dp,
-                                y = 17.33.dp)
-                            .requiredWidth(width = 67.dp)
-                            .requiredHeight(height = 24.dp)
-                    ) {
-                        Text(
-                            text = "3",
-                            color = Color.White,
-                            lineHeight = 1.5.em,
-                            style = TextStyle(
-                                fontSize = 16.sp),
-                            modifier = Modifier
-                                .align(alignment = Alignment.TopStart)
-                                .offset(x = 0.dp,
-                                    y = (-2.16).dp))
-                    }
+                            .offset(x = 0.dp, y = (-1.84).dp)
+                    )
+                    Text(
+                        text = disponibles.toString(),
+                        color = Color.White,
+                        lineHeight = 1.5.em,
+                        style = TextStyle(fontSize = 16.sp),
+                        modifier = Modifier
+                            .align(alignment = Alignment.TopStart)
+                            .offset(x = 0.dp, y = 15.dp)
+                    )
                 }
             }
+
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .align(alignment = Alignment.TopStart)
-                    .offset(x = 136.46.dp,
-                        y = 12.83.dp)
+                    .offset(x = 136.46.dp, y = 12.83.dp)
                     .requiredWidth(width = 91.dp)
                     .requiredHeight(height = 41.dp)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.icon),
                     contentDescription = "Icon",
-                    modifier = Modifier
-                        .requiredSize(size = 16.dp))
+                    modifier = Modifier.requiredSize(size = 16.dp)
+                )
                 Box(
                     modifier = Modifier
                         .requiredWidth(width = 67.dp)
                         .requiredHeight(height = 41.dp)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .requiredWidth(width = 67.dp)
-                            .requiredHeight(height = 17.dp)
-                    ) {
-                        Text(
-                            text = "Total copias",
-                            color = Color.White.copy(alpha = 0.6f),
-                            lineHeight = 1.33.em,
-                            style = TextStyle(
-                                fontSize = 13.sp),
-                            modifier = Modifier
-                                .align(alignment = Alignment.TopStart)
-                                .offset(x = 0.dp,
-                                    y = (-1.84).dp))
-                    }
-                    Box(
+                    Text(
+                        text = "Total copias",
+                        color = Color.White.copy(alpha = 0.6f),
+                        lineHeight = 1.33.em,
+                        style = TextStyle(fontSize = 13.sp),
                         modifier = Modifier
                             .align(alignment = Alignment.TopStart)
-                            .offset(x = 0.dp,
-                                y = 17.33.dp)
-                            .requiredWidth(width = 67.dp)
-                            .requiredHeight(height = 24.dp)
-                    ) {
-                        Text(
-                            text = "5",
-                            color = Color.White,
-                            lineHeight = 1.5.em,
-                            style = TextStyle(
-                                fontSize = 16.sp),
-                            modifier = Modifier
-                                .align(alignment = Alignment.TopStart)
-                                .offset(x = 0.dp,
-                                    y = (-2.16).dp))
-                    }
+                            .offset(x = 0.dp, y = (-1.84).dp)
+                    )
+                    Text(
+                        text = total.toString(),
+                        color = Color.White,
+                        lineHeight = 1.5.em,
+                        style = TextStyle(fontSize = 16.sp),
+                        modifier = Modifier
+                            .align(alignment = Alignment.TopStart)
+                            .offset(x = 0.dp, y = 15.dp)
+                    )
                 }
             }
+
             Box(
                 modifier = Modifier
                     .align(alignment = Alignment.TopStart)
-                    .offset(x = 119.47.dp,
-                        y = 17.49.dp)
+                    .offset(x = 119.47.dp, y = 17.49.dp)
                     .requiredWidth(width = 1.dp)
                     .requiredHeight(height = 32.dp)
-                    .background(color = Color.White.copy(alpha = 0.2f)))
+                    .background(color = Color.White.copy(alpha = 0.2f))
+            )
         }
     }
 }
@@ -387,5 +377,23 @@ fun NumeroDeCopias(modifier: Modifier = Modifier) {
 @Preview(widthDp = 393, heightDp = 803)
 @Composable
 private fun CompraPreview() {
-    Compra(Modifier)
+    // Preview con datos de ejemplo
+    val peliculaEjemplo = PeliculaDetalle(
+        id_pelicula = 1,
+        titulo = "Happy Gilmore 2",
+        anio = 2025,
+        duracion_min = 113,
+        descripcion = "...",
+        poster_path = "",
+        precio_alquiler = "15000",
+        calificacion = "13+",
+        director_nombre = "Director",
+        numerocopias = 5,
+        estado = "disponible",
+        actores = emptyList(),
+        generos = emptyList(),
+        trailers = emptyList(),
+        copias_disponibles = 3
+    )
+    Compra(pelicula = peliculaEjemplo)
 }

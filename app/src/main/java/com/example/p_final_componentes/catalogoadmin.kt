@@ -1,5 +1,6 @@
 package com.example.p_final_componentes
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -48,8 +49,18 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.width
+import com.android.volley.Request
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 
 class catalogoadmin : AppCompatActivity() {
+
+    private val URL_GET_PELICULAS = "http://192.168.2.4/androidComponentes/getPeliculas.php"
+
+    private val peliculasState = mutableStateOf<List<Pelicula>>(emptyList())
+    private val isLoadingState = mutableStateOf(true)
+    private val errorState = mutableStateOf<String?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -60,22 +71,99 @@ class catalogoadmin : AppCompatActivity() {
             insets
         }
 
+        // Cargar películas
+        cargarPeliculas()
+
         val composeView = findViewById<ComposeView>(R.id.render)
         composeView.setContent {
             MaterialTheme {
-                MainScreenWithSidebar()
+                MainScreenWithSidebar(
+                    peliculas = peliculasState.value,
+                    isLoading = isLoadingState.value,
+                    error = errorState.value,
+                    onRetry = { cargarPeliculas() },
+                    onPeliculaClick = { pelicula ->
+                        // Navegar a editar película
+                        val intent = Intent(this@catalogoadmin, editpeli::class.java).apply {
+                            putExtra("pelicula_id", pelicula.id_pelicula)
+                        }
+                        startActivity(intent)
+                    }
+                )
             }
         }
+    }
+
+    private fun cargarPeliculas() {
+        isLoadingState.value = true
+        errorState.value = null
+
+        val requestQueue = Volley.newRequestQueue(this)
+        val jsonObjectRequest = JsonObjectRequest(
+            Request.Method.GET, URL_GET_PELICULAS, null,
+            { response ->
+                try {
+                    val success = response.getBoolean("success")
+                    if (success) {
+                        val peliculasArray = response.getJSONArray("peliculas")
+                        val listaPeliculas = mutableListOf<Pelicula>()
+
+                        for (i in 0 until peliculasArray.length()) {
+                            val peliculaJson = peliculasArray.getJSONObject(i)
+                            val pelicula = Pelicula(
+                                id_pelicula = peliculaJson.getInt("id_pelicula"),
+                                titulo = peliculaJson.getString("titulo"),
+                                anio = peliculaJson.getInt("anio"),
+                                duracion_min = peliculaJson.getInt("duracion_min"),
+                                descripcion = peliculaJson.getString("descripcion"),
+                                poster_path = peliculaJson.getString("poster_path"),
+                                precio_alquiler = peliculaJson.getString("precio_alquiler"),
+                                calificacion = peliculaJson.getString("calificacion"),
+                                director_nombre = peliculaJson.getString("director_nombre")
+                            )
+                            listaPeliculas.add(pelicula)
+                        }
+
+                        peliculasState.value = listaPeliculas
+                        isLoadingState.value = false
+                    } else {
+                        errorState.value = response.optString("error", "Error desconocido")
+                        isLoadingState.value = false
+                    }
+                } catch (e: Exception) {
+                    errorState.value = "Error: ${e.message}"
+                    isLoadingState.value = false
+                }
+            },
+            { error ->
+                errorState.value = "Error de red: ${error.message}"
+                isLoadingState.value = false
+            }
+        )
+
+        requestQueue.add(jsonObjectRequest)
     }
 }
 
 @Composable
-fun MainScreenWithSidebar(modifier: Modifier = Modifier) {
+fun MainScreenWithSidebar(
+    peliculas: List<Pelicula>,
+    isLoading: Boolean,
+    error: String?,
+    onRetry: () -> Unit,
+    onPeliculaClick: (Pelicula) -> Unit,
+    modifier: Modifier = Modifier
+) {
     var showSidebar by remember { mutableStateOf(false) }
 
     Box(modifier = modifier.fillMaxSize()) {
         // Contenido principal
         AppPreview(
+            peliculas = peliculas,
+            isLoading = isLoading,
+            error = error,
+            onRetry = onRetry,
+            onPeliculaClick = onPeliculaClick,
             onMenuClick = { showSidebar = !showSidebar }
         )
 
@@ -401,6 +489,11 @@ fun App(
 
 @Composable
 fun AppPreview(
+    peliculas: List<Pelicula>,
+    isLoading: Boolean,
+    error: String?,
+    onRetry: () -> Unit,
+    onPeliculaClick: (Pelicula) -> Unit,
     modifier: Modifier = Modifier,
     onMenuClick: () -> Unit = {}
 ) {
@@ -413,12 +506,42 @@ fun AppPreview(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         App(Modifier, onMenuClick)
-        Catalogopeli()
+
+        // Catálogo en modo admin
+        CatalogoPeli(
+            peliculas = peliculas,
+            isLoading = isLoading,
+            error = error,
+            onPeliculaClick = onPeliculaClick,
+            onRetry = onRetry,
+            showHeader = false,  // Sin header porque ya tiene el App()
+            modoUsuario = false  // Modo admin
+        )
     }
 }
 
 @Preview(showBackground = true, showSystemUi = true, widthDp = 412, heightDp = 250)
 @Composable
 fun Admipeliculaprevie() {
-    MainScreenWithSidebar()
+    val peliculasEjemplo = listOf(
+        Pelicula(
+            id_pelicula = 1,
+            titulo = "Stranger Things",
+            anio = 2025,
+            duracion_min = 2400,
+            descripcion = "Fuerza maligna...",
+            poster_path = "./imgs/fondestringer.png",
+            precio_alquiler = "15000",
+            calificacion = "16+",
+            director_nombre = "The Duffer Brothers"
+        )
+    )
+
+    MainScreenWithSidebar(
+        peliculas = peliculasEjemplo,
+        isLoading = false,
+        error = null,
+        onRetry = {},
+        onPeliculaClick = {}
+    )
 }

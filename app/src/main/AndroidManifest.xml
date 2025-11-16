@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <uses-permission android:name="android.permission.INTERNET" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Permisos de red -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -15,47 +16,64 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.P_Final_Componentes"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="31">
 
-        android:usesCleartextTraffic="true">
-        <activity
-            android:name=".editpeli"
-            android:exported="false" />
-        <activity
-            android:name=".CatalogoPeliculas"
-            android:exported="false" />
-        <activity
-            android:name=".masinformacion"
-            android:exported="false" />
-        <activity
-            android:name=".catalogoadmin"
-            android:exported="false" />
-        <activity
-            android:name=".addpeli"
-            android:exported="false" />
-        <activity
-            android:name=".sidebar"
-            android:exported="false" />
-        <activity
-            android:name=".comprar"
-            android:exported="false" />
-        <activity
-            android:name=".menupeliculas"
-            android:exported="false" />
-        <activity
-            android:name=".registrarse"
-            android:exported="false" />
-        <activity
-            android:name=".PantallaUnida"
-            android:exported="false" />
+        <!-- ACTIVIDAD PRINCIPAL (Login) -->
         <activity
             android:name=".login"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Pantallas secundarias (exported="false") -->
+        <activity
+            android:name=".CatalogoPeliculas"
+            android:exported="false" />
+
+        <activity
+            android:name=".PantallaUnida"
+            android:exported="false" />
+
+        <activity
+            android:name=".catalogoadmin"
+            android:exported="false" />
+
+        <activity
+            android:name=".menupeliculas"
+            android:exported="false" />
+
+        <activity
+            android:name=".editpeli"
+            android:exported="false" />
+
+        <activity
+            android:name=".addpeli"
+            android:exported="false" />
+
+        <activity
+            android:name=".sidebar"
+            android:exported="false" />
+
+        <activity
+            android:name=".comprar"
+            android:exported="false" />
+
+        <activity
+            android:name=".masinformacion"
+            android:exported="false" />
+
+        <activity
+            android:name=".trailer"
+            android:exported="false" />
+
+        <activity
+            android:name=".registrarse"
+            android:exported="false" />
+
     </application>
 
 </manifest>
