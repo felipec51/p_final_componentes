@@ -1,5 +1,5 @@
 [versions]
-agp = "8.12.2"
+agp = "8.13.1"
 kotlin = "1.9.24"
 coreKtx = "1.17.0"
 junit = "4.13.2"
@@ -11,6 +11,8 @@ activity = "1.11.0"
 constraintlayout = "2.2.1"
 ui = "1.9.4"
 foundationLayout = "1.9.4"
+volley = "1.2.1"
+gamesActivity = "4.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -23,6 +25,8 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
 androidx-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
+volley = { group = "com.android.volley", name = "volley", version.ref = "volley" }
+androidx-games-activity = { group = "androidx.games", name = "games-activity", version.ref = "gamesActivity" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

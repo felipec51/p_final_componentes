@@ -55,6 +55,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.volley)
+    implementation(libs.androidx.games.activity)
 
     // --- BOM de COMPOSE ---
     val composeBom = platform("androidx.compose:compose-bom:2024.06.00")
@@ -77,7 +79,7 @@ dependencies {
     // Testing Compose
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-
+    implementation("com.android.volley:volley:1.2.1")
     // --- Testing clásico ---
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -30,16 +30,89 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import androidx.lifecycle.lifecycleScope
+import com.android.volley.AuthFailureError
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import java.util.Hashtable
+import com.android.volley.Response
+
 
 class login : AppCompatActivity() {
+
+    // 1. URL del servidor
+    private val URL_LOGIN = "http://192.168.20.35/androidComponentes/login.php"
+
+    private val isLoadingState = mutableStateOf(false)
+    private val errorMessageState = mutableStateOf<String?>(null)
+    private lateinit var requestQueue: RequestQueue
+
+    // Función que implementa la lógica de Volley
+    private fun attemptLogin(email: String, password: String) {
+        isLoadingState.value = true
+        errorMessageState.value = null
+
+        val stringRequest: StringRequest = object : StringRequest(
+            Method.POST, URL_LOGIN,
+            // Listener de Éxito
+            Response.Listener { response ->
+                isLoadingState.value = false
+                val res = response.trim() // Eliminar espacios en blanco
+
+                when (res) {
+                    "ERROR 1" -> {
+                        errorMessageState.value = "Faltan campos (email/contraseña)."
+                        Toast.makeText(this, "Debe llenar ambos campos.", Toast.LENGTH_LONG).show()
+                    }
+                    "ERROR 2" -> {
+                        errorMessageState.value = "Email o contraseña incorrecta."
+                        Toast.makeText(this, "Email o contraseña incorrecta.", Toast.LENGTH_LONG).show()
+                    }
+                    "LOGIN_SUCCESS" -> {
+                        // Éxito: Navegación a menupeliculas
+                        Toast.makeText(this, "Inicio de Sesión Exitoso", Toast.LENGTH_LONG).show()
+
+                        // Usamos la clase de menú que nos proporcionaste
+                        val intent = Intent(this@login, menupeliculas::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
+                    else -> {
+                        // Respuesta inesperada
+                        errorMessageState.value = "Respuesta inesperada: $res"
+                        Toast.makeText(this, "Respuesta inesperada del servidor.", Toast.LENGTH_LONG).show()
+                    }
+                }
+            },
+            // Listener de Error (Error de conexión, timeout, etc.)
+            Response.ErrorListener { volleyError ->
+                isLoadingState.value = false
+                val errorMsg = "Error de red: ${volleyError.message ?: "Verifique la conexión Wi-Fi y la IP del servidor."}"
+                errorMessageState.value = errorMsg
+                Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show()
+            }
+        ) {
+            // Envío de parámetros POST
+            @Throws(AuthFailureError::class)
+            override fun getParams(): Map<String, String> {
+                val parametros: MutableMap<String, String> = Hashtable()
+                // Claves de PHP: 'user' y 'passw'
+                parametros["user"] = email
+                parametros["passw"] = password
+                return parametros
+            }
+        }
+
+        requestQueue.add(stringRequest)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_login)
+
+        requestQueue = Volley.newRequestQueue(this)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -50,93 +123,66 @@ class login : AppCompatActivity() {
         val composeView = findViewById<ComposeView>(R.id.render)
         composeView.setContent {
             MaterialTheme {
-                var isLoading by remember { mutableStateOf(false) }
-
                 Login(
-                    isLoading = isLoading,
+                    isLoading = isLoadingState.value,
+                    errorMessage = errorMessageState.value,
+                    onClearError = { errorMessageState.value = null },
                     onLogin = { email, password ->
-                        if (email.isEmpty() || password.isEmpty()) {
-                            Toast.makeText(this, "Por favor completa todos los campos", Toast.LENGTH_SHORT).show()
-                            return@Login
-                        }
-
-                        isLoading = true
-
-                        // Llamar a la API usando ApiService
-                        CoroutineScope(Dispatchers.Main).launch {
-                            val response = ApiService.login(email, password)
-                            isLoading = false
-
-                            if (response.success) {
-                                Toast.makeText(this@login, "¡Bienvenido!", Toast.LENGTH_SHORT).show()
-
-                                // Obtener datos del usuario
-                                val user = response.data?.optJSONObject("user")
-                                val tipoUsuario = user?.optString("tipo_usuario", "socio") ?: "socio"
-                                val nombreUsuario = user?.optString("nombre", "") ?: ""
-                                val idUsuario = user?.optInt("id_usuario", 0) ?: 0
-
-                                // Redirigir según el tipo de usuario
-                                val intent = if (tipoUsuario == "admin") {
-                                    Intent(this@login, catalogoadmin::class.java)
-                                } else {
-                                    Intent(this@login, menupeliculas::class.java)
-                                }
-
-                                // Pasar datos del usuario
-                                intent.putExtra("user_id", idUsuario)
-                                intent.putExtra("user_email", email)
-                                intent.putExtra("user_name", nombreUsuario)
-                                intent.putExtra("user_type", tipoUsuario)
-
-                                startActivity(intent)
-                                finish()
-                            } else {
-                                Toast.makeText(this@login, response.message, Toast.LENGTH_LONG).show()
-                            }
-                        }
+                        attemptLogin(email, password)
                     }
                 )
             }
         }
     }
 }
-
 @Composable
 fun Login(
     modifier: Modifier = Modifier,
-    isLoading: Boolean = false,
+    isLoading: Boolean,
+    errorMessage: String?,
+    onClearError: () -> Unit,
     onLogin: (String, String) -> Unit
 ) {
+    // ESTADOS DE TEXTO
     var correo by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
 
+    // Mostrar Toast o Snackbar si hay error
+    if (errorMessage != null) {
+        LaunchedEffect(errorMessage) {
+            // Un simple Toast que se mostrará inmediatamente fuera de Compose
+            // (La lógica del Toast está en el Activity, este solo activa la señal)
+            onClearError() // Limpiamos el estado después de mostrarlo (en el Activity)
+        }
+    }
+
+
     Box(
         modifier = modifier
-            .requiredWidth(412.dp)
-            .requiredHeight(917.dp)
+            .fillMaxSize() // Usar fillMaxSize en lugar de requiredWidth/Height fijos
             .background(Color.Black.copy(alpha = 0.54f))
     ) {
         Image(
             painter = painterResource(id = R.drawable.fondo),
-            contentDescription = "",
+            contentDescription = "Fondo",
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .fillMaxHeight()
-                .requiredWidth(467.dp)
+                .fillMaxSize()
         )
 
+        // Centramos el formulario
         IniciarSesionAndroid(
             correo = correo,
             contrasena = contrasena,
-            onCorreoChange = { correo = it },
-            onContrasenaChange = { contrasena = it },
-            onLogin = onLogin,
+            onCorreoChange = { onClearError(); correo = it }, // Limpiar error al escribir
+            onContrasenaChange = { onClearError(); contrasena = it }, // Limpiar error al escribir
+            onLogin = { onLogin(correo, contrasena) },
             isLoading = isLoading,
             modifier = Modifier
-                .align(Alignment.TopStart)
-                .offset(x = (-11).dp, y = 38.dp)
+                .align(Alignment.Center)
+                .fillMaxWidth(0.9f) // El formulario toma el 90% del ancho
+                .padding(vertical = 50.dp)
         )
     }
 }
@@ -147,295 +193,165 @@ fun IniciarSesionAndroid(
     contrasena: String,
     onCorreoChange: (String) -> Unit,
     onContrasenaChange: (String) -> Unit,
-    onLogin: (String, String) -> Unit,
+    onLogin: () -> Unit,
     isLoading: Boolean,
     modifier: Modifier = Modifier
 ) {
-    Box(
+    // Usamos Column para un layout más adaptable y Box para el fondo oscuro
+    Column(
         modifier = modifier
-            .requiredWidth(436.dp)
-            .requiredHeight(844.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color.Black.copy(alpha = 0.85f)) // Fondo oscuro más compacto
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier
-                .offset(x = 30.dp)
-                .requiredWidth(395.dp)
-                .requiredHeight(844.dp)
-                .background(Color.Black.copy(alpha = 0.73f))
-        )
-
+        // TÍTULO
         Text(
-            text = " iniciar sesion",
+            text = "INICIAR SESIÓN",
             color = Color.White,
             fontStyle = FontStyle.Italic,
-            fontSize = 40.sp,
+            fontSize = 32.sp,
             fontWeight = FontWeight.Black,
-            modifier = Modifier.offset(x = 54.dp, y = 53.dp)
+            modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.offset(x = 36.dp, y = 117.dp)
-        ) {
-            Text(text = "Correo electrónico", color = Color.White)
-
-            Box(
-                modifier = Modifier
-                    .requiredWidth(366.dp)
-                    .requiredHeight(56.dp)
-                    .background(Color.White.copy(alpha = 0.1f), RoundedCornerShape(16.dp))
-            )
-
-            TextField(
-                value = correo,
-                onValueChange = onCorreoChange,
-                placeholder = { Text("tu@email.com") },
-                singleLine = true,
-                enabled = !isLoading,
-                colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    cursorColor = Color.White,
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White
-                ),
-                modifier = Modifier
-                    .offset(y = (-56).dp)
-                    .requiredWidth(366.dp)
-            )
-        }
-
-        Column(
-            modifier = Modifier.offset(x = 36.dp, y = 214.dp)
-        ) {
-            Text(text = "Contraseña", color = Color.White)
-
-            Box(
-                modifier = Modifier
-                    .requiredWidth(366.dp)
-                    .requiredHeight(56.dp)
-                    .offset(y = 22.dp)
-                    .background(Color.White.copy(alpha = 0.1f), RoundedCornerShape(16.dp))
-            )
-
-            TextField(
-                value = contrasena,
-                onValueChange = onContrasenaChange,
-                singleLine = true,
-                placeholder = { Text("••••••") },
-                visualTransformation = PasswordVisualTransformation(),
-                enabled = !isLoading,
-                colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    cursorColor = Color.White,
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White
-                ),
-                modifier = Modifier
-                    .offset(y = (-34).dp)
-                    .requiredWidth(366.dp)
-            )
-        }
-
-        Box(
-            modifier = Modifier
-                .offset(x = 57.dp, y = 298.dp)
-                .requiredWidth(318.dp)
-                .requiredHeight(75.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .offset(y = 12.dp)
-                    .requiredWidth(318.dp)
-                    .requiredHeight(50.dp)
-                    .background(
-                        if (isLoading) Color.Gray else Color(0xffe50914),
-                        RoundedCornerShape(10.dp)
-                    )
-            )
-
-            TextButton(
-                onClick = {
-                    if (!isLoading) {
-                        onLogin(correo, contrasena)
-                    }
-                },
-                enabled = !isLoading,
-                modifier = Modifier
-                    .requiredWidth(318.dp)
-                    .requiredHeight(75.dp)
-            ) {
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        color = Color.White,
-                        modifier = Modifier.size(24.dp)
-                    )
-                } else {
-                    Text(
-                        "Iniciar Sesion",
-                        color = Color.White,
-                        fontSize = 20.sp,
-                        modifier = Modifier
-                            .requiredWidth(width = 183.dp)
-                            .requiredHeight(height = 75.dp)
-                            .wrapContentHeight(align = Alignment.CenterVertically)
-                    )
-                }
-            }
-        }
-
-        Text(
-            text = "¿Olvidaste contraseña?",
-            color = Color.White,
-            textDecoration = TextDecoration.Underline,
-            textAlign = TextAlign.Center,
-            style = TextStyle(fontSize = 15.sp),
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 124.dp, y = 393.dp)
-                .requiredWidth(width = 191.dp)
-                .requiredHeight(height = 23.dp)
-                .wrapContentHeight(align = Alignment.CenterVertically)
+        // ----------- CAMPO CORREO ------------------------------------
+        Text(text = "Correo electrónico", color = Color.White, modifier = Modifier.align(Alignment.Start).padding(bottom = 4.dp))
+        TextField(
+            value = correo,
+            onValueChange = onCorreoChange,
+            placeholder = { Text("tu@email.com", color = Color.Gray) },
+            singleLine = true,
+            colors = TextFieldDefaults.colors(
+                unfocusedContainerColor = Color.White.copy(alpha = 0.1f),
+                focusedContainerColor = Color.White.copy(alpha = 0.2f),
+                unfocusedIndicatorColor = Color.Transparent,
+                focusedIndicatorColor = Color(0xffe50914),
+                cursorColor = Color.White,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White
+            ),
+            shape = RoundedCornerShape(10.dp),
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
         )
 
-        Box(
+        // ----------- CAMPO CONTRASEÑA ----------------------------
+        Text(text = "Contraseña", color = Color.White, modifier = Modifier.align(Alignment.Start).padding(bottom = 4.dp))
+        TextField(
+            value = contrasena,
+            onValueChange = onContrasenaChange,
+            singleLine = true,
+            placeholder = { Text("••••••", color = Color.Gray) },
+            visualTransformation = PasswordVisualTransformation(),
+            colors = TextFieldDefaults.colors(
+                unfocusedContainerColor = Color.White.copy(alpha = 0.1f),
+                focusedContainerColor = Color.White.copy(alpha = 0.2f),
+                unfocusedIndicatorColor = Color.Transparent,
+                focusedIndicatorColor = Color(0xffe50914),
+                cursorColor = Color.White,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White
+            ),
+            shape = RoundedCornerShape(10.dp),
+            modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
+        )
+
+        // ----------- BOTÓN INICIAR SESIÓN ------------------------
+        Button(
+            onClick = onLogin,
+            enabled = !isLoading && correo.isNotEmpty() && contrasena.isNotEmpty(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xffe50914),
+                disabledContainerColor = Color(0x80e50914)
+            ),
+            shape = RoundedCornerShape(10.dp),
             modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 43.dp, y = 443.dp)
-                .requiredWidth(width = 148.dp)
-                .requiredHeight(height = 24.dp)
+                .fillMaxWidth()
+                .height(50.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .requiredWidth(width = 18.dp)
-                    .requiredHeight(height = 24.dp)
-                    .clip(shape = RoundedCornerShape(5.dp))
-                    .background(color = Color(0xffd9d9d9))
-            )
-            Text(
-                text = "Recordarme",
-                color = Color.White,
-                textAlign = TextAlign.Center,
-                style = TextStyle(fontSize = 20.sp),
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 27.dp, y = 3.dp)
-                    .requiredWidth(width = 121.dp)
-                    .requiredHeight(height = 21.dp)
-                    .wrapContentHeight(align = Alignment.CenterVertically)
-            )
-        }
-
-        Text(
-            text = "¿Primera vez en rewindCodeFilm?",
-            color = Color.White,
-            style = TextStyle(fontSize = 14.sp),
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 36.dp, y = 487.dp)
-                .requiredWidth(width = 211.dp)
-                .requiredHeight(height = 30.dp)
-                .wrapContentHeight(align = Alignment.CenterVertically)
-        )
-
-        Text(
-            text = "Registrarse",
-            color = Color.White,
-            fontStyle = FontStyle.Italic,
-            style = TextStyle(fontSize = 20.sp),
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 256.dp, y = 487.dp)
-                .requiredWidth(width = 126.dp)
-                .requiredHeight(height = 30.dp)
-                .wrapContentHeight(align = Alignment.CenterVertically)
-        )
-
-        Text(
-            text = "Obtener ayuda",
-            color = Color.White,
-            style = TextStyle(fontSize = 20.sp),
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 37.dp, y = 537.dp)
-                .requiredWidth(width = 160.dp)
-                .requiredHeight(height = 24.dp)
-        )
-
-        Column(
-            verticalArrangement = Arrangement.spacedBy(28.dp, Alignment.CenterVertically),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 37.dp, y = 592.dp)
-                .requiredWidth(width = 351.dp)
-                .requiredHeight(height = 17.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .requiredWidth(width = 351.dp)
-                    .requiredHeight(height = 17.dp)
-            ) {
+            if (isLoading) {
+                // Indicador de carga si la petición está en curso
+                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
+            } else {
                 Text(
-                    text = "Or Login with",
-                    color = Color.Gray,
-                    style = TextStyle(fontSize = 14.sp),
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(x = 131.49.dp, y = 0.dp)
-                        .requiredWidth(width = 95.dp)
-                )
-                HorizontalDivider(
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(x = 0.dp, y = 9.dp)
-                        .requiredWidth(width = 119.dp)
-                )
-                HorizontalDivider(
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(x = 233.29.dp, y = 9.dp)
-                        .requiredWidth(width = 118.dp)
+                    "Iniciar Sesión",
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
 
+        // ¿Olvidaste contraseña?
+        TextButton(onClick = { /* TODO: Implementar navegación a recuperar contraseña */ }) {
+            Text(
+                text = "¿Olvidaste contraseña?",
+                color = Color.White,
+                textDecoration = TextDecoration.Underline,
+                fontSize = 15.sp,
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // ¿Primera vez en rewindCodeFilm? / Registrarse
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = "¿Primera vez en rewindCodeFilm? ",
+                color = Color.Gray,
+                style = TextStyle(fontSize = 14.sp)
+            )
+            TextButton(onClick = { /* TODO: Implementar navegación a registro */ }) {
+                Text(
+                    text = "Regístrate",
+                    color = Color.White,
+                    fontStyle = FontStyle.Italic,
+                    style = TextStyle(fontSize = 14.sp),
+                    textDecoration = TextDecoration.Underline
+                )
+            }
+        }
+
+        // Or Login with (Redes Sociales)
+        Spacer(modifier = Modifier.height(32.dp))
         Row(
-            horizontalArrangement = Arrangement.spacedBy(39.dp, Alignment.Start),
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 147.dp, y = 663.dp)
-                .requiredWidth(width = 168.dp)
-                .requiredHeight(height = 30.dp)
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
         ) {
+            HorizontalDivider(color = Color.Gray.copy(alpha = 0.5f), thickness = 1.dp, modifier = Modifier.weight(1f))
+            Text(
+                text = " O Iniciar Sesión con ",
+                color = Color.Gray,
+                style = TextStyle(fontSize = 14.sp)
+            )
+            HorizontalDivider(color = Color.Gray.copy(alpha = 0.5f), thickness = 1.dp, modifier = Modifier.weight(1f))
+        }
+
+        // Iconos sociales
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(39.dp, Alignment.CenterHorizontally),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 24.dp, bottom = 16.dp)
+        ) {
+            // Nota: Debes asegurar que los IDs de recursos (R.drawable.xxx) existan
             Image(
                 painter = painterResource(id = R.drawable.facebook_ic),
-                contentDescription = "facebook_ic",
+                contentDescription = "Facebook",
                 colorFilter = ColorFilter.tint(Color(0xff4092ff)),
                 modifier = Modifier.requiredSize(size = 30.dp)
             )
             Image(
                 painter = painterResource(id = R.drawable.google_ic),
-                contentDescription = "google_ic",
+                contentDescription = "Google",
                 modifier = Modifier.requiredSize(size = 30.dp)
             )
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(44.dp, Alignment.CenterHorizontally),
-                verticalAlignment = Alignment.CenterVertically,
+            Image(
+                painter = painterResource(id = R.drawable.twitterx),
+                contentDescription = "Twitter/X",
+                colorFilter = ColorFilter.tint(Color.White),
                 modifier = Modifier.requiredSize(size = 30.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.twitterx),
-                    contentDescription = "TwitterX",
-                    colorFilter = ColorFilter.tint(Color.White),
-                    modifier = Modifier.requiredSize(size = 26.dp)
-                )
-            }
+            )
         }
     }
 }
@@ -443,5 +359,10 @@ fun IniciarSesionAndroid(
 @Preview(widthDp = 412, heightDp = 917)
 @Composable
 private fun LoginPreview() {
-    Login(Modifier, false) { _, _ -> }
+    Login(
+        isLoading = false,
+        errorMessage = null,
+        onClearError = {},
+        onLogin = { _, _ -> }
+    )
 }
