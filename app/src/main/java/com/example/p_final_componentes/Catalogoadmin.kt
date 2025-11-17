@@ -59,6 +59,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.TextField
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
+import androidx.core.view.WindowCompat.enableEdgeToEdge
 
 class Catalogoadmin : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
