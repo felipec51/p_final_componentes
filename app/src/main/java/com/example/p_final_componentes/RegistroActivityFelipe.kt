@@ -74,7 +74,7 @@ class RegistroActivityFelipe : AppCompatActivity() { // O el nombre que uses, ej
                     if (success) {
                         Toast.makeText(this, "✅ Registro exitoso. Ahora inicia sesión.", Toast.LENGTH_LONG).show()
                         // Navegar de vuelta a la pantalla de Login
-                        val intent = Intent(this@RegistroActivityFelipe, registrarse::class.java)
+                        val intent = Intent(this@RegistroActivityFelipe, login::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                         startActivity(intent)
                         finish()

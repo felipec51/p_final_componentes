@@ -1,7 +1,9 @@
 package com.example.p_final_componentes
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -70,10 +72,23 @@ class Catalogoadmin : ComponentActivity() {
                 MaterialTheme {
                     admincompleto()
                 }
+
             }
             Log.d("Catalogoadmin", "✅ setContent ejecutado exitosamente")
         } catch (e: Exception) {
             Log.e("Catalogoadmin", "❌ ERROR al inicializar UI: ${e.message}", e)
+        }
+    }
+    private fun navigateToAdminUser() {
+        Log.d("LoginActivity", "Navegando a la pantalla de Registro")
+        try {
+            // *** IMPORTANTE: Cambia 'RegistroActivity' por tu Activity de registro/destino real (Ej. MenuAdmin, etc.) ***
+            val intent = Intent(this@Catalogoadmin, AdminUsuarios::class.java)
+            startActivity(intent)
+            // No usamos finish() aquí, para que el usuario pueda volver a login
+        } catch (e: Exception) {
+            Log.e("LoginActivity", "❌ ERROR al abrir RegistroActivity: ${e.message}", e)
+            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
 }
@@ -81,6 +96,7 @@ class Catalogoadmin : ComponentActivity() {
 
 @Composable
 fun MainAdmin(modifier: Modifier = Modifier) {
+
     Box(
         modifier = modifier
             .requiredWidth(width = 389.dp)
@@ -265,6 +281,7 @@ fun MainAdmin(modifier: Modifier = Modifier) {
 /** Composable principal que une tus tres composables con scroll vertical */
 @Composable
 fun admincompleto(modifier: Modifier = Modifier) {
+
     Column(
         modifier = modifier
             .fillMaxSize()

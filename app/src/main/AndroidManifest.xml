@@ -16,7 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.P_Final_Componentes"
         android:usesCleartextTraffic="true">
-
+        <activity
+            android:name=".edituser"
+            android:exported="false" />
         <activity
             android:name=".editpeli"
             android:exported="false" />
@@ -33,9 +35,6 @@
             android:name=".addpeli"
             android:exported="false" />
         <activity
-            android:name=".sidebar"
-            android:exported="false" />
-        <activity
             android:name=".comprar"
             android:exported="false" />
         <activity
@@ -49,6 +48,9 @@
             android:exported="false" />
         <activity
             android:name=".login"
+            android:exported="false" />
+        <activity
+            android:name=".AdminUsuarios"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
