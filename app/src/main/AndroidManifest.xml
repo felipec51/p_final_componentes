@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <uses-permission android:name="android.permission.INTERNET" />
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -15,8 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.P_Final_Componentes"
-
         android:usesCleartextTraffic="true">
+
         <activity
             android:name=".editpeli"
             android:exported="false" />
@@ -27,7 +27,7 @@
             android:name=".masinformacion"
             android:exported="false" />
         <activity
-            android:name=".catalogoadmin"
+            android:name=".Catalogoadmin"
             android:exported="false" />
         <activity
             android:name=".addpeli"
@@ -42,10 +42,10 @@
             android:name=".menupeliculas"
             android:exported="false" />
         <activity
-            android:name=".registrarse"
+            android:name=".PantallaUnida"
             android:exported="false" />
         <activity
-            android:name=".PantallaUnida"
+            android:name=".RegistroActivityFelipe"
             android:exported="false" />
         <activity
             android:name=".login"

@@ -258,5 +258,5 @@ fun Catalogopeli(modifier: Modifier = Modifier) {
 @Preview(widthDp = 367, heightDp = 691)
 @Composable
 private fun ContainerPreview() {
-    Catalogopeli(Modifier)
+    Catalogopeli()
 }

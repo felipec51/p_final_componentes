@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.volley)
     implementation(libs.androidx.games.activity)
+    implementation(libs.androidx.foundation)
 
     // --- BOM de COMPOSE ---
     val composeBom = platform("androidx.compose:compose-bom:2024.06.00")
@@ -66,7 +67,7 @@ dependencies {
     // Activity con soporte Compose
     implementation("androidx.activity:activity-compose")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
     // Módulos principales de Compose
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.foundation:foundation")

@@ -2,6 +2,7 @@ package com.example.p_final_componentes
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -23,7 +24,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,16 +37,37 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import java.util.Hashtable
 
+// Asegúrate de que esta Activity (RegistroActivity) exista o cámbiala por la correcta
+// Si quieres que vaya a MenuAdmin, usa Catalogoadmin::class.java
+class RegistroActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Puedes poner aquí el contenido de tu Activity de registro
+    }
+}
+
 class login : AppCompatActivity() {
 
-    // IMPORTANTE: Cambia esta IP según tu configuración
-    // Para EMULADOR: "http://10.0.2.2/androidComponentes/login.php"
-    // Para DISPOSITIVO REAL: "http://TU_IP_LOCAL/androidComponentes/login.php"
-    private val URL_LOGIN = "http://192.168.2.4/androidComponentes/login.php"
+    // 1. URL del servidor
+    private val URL_LOGIN = "http://192.168.20.35/androidComponentes/login.php"
 
     private val isLoadingState = mutableStateOf(false)
     private val errorMessageState = mutableStateOf<String?>(null)
     private lateinit var requestQueue: RequestQueue
+
+    // Función para manejar la navegación a la pantalla de registro
+    private fun navigateToRegistro() {
+        Log.d("LoginActivity", "Navegando a la pantalla de Registro")
+        try {
+            // *** IMPORTANTE: Cambia 'RegistroActivity' por tu Activity de registro/destino real (Ej. MenuAdmin, etc.) ***
+            val intent = Intent(this@login, RegistroActivityFelipe::class.java)
+            startActivity(intent)
+            // No usamos finish() aquí, para que el usuario pueda volver a login
+        } catch (e: Exception) {
+            Log.e("LoginActivity", "❌ ERROR al abrir RegistroActivity: ${e.message}", e)
+            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
 
     // Función que implementa la lógica de Volley
     private fun attemptLogin(email: String, password: String) {
@@ -70,34 +91,39 @@ class login : AppCompatActivity() {
                         Toast.makeText(this, "Email o contraseña incorrecta.", Toast.LENGTH_LONG).show()
                     }
                     "1" -> { // Rol 1: Admin
-                        Toast.makeText(this, "Bienvenido Admin!", Toast.LENGTH_SHORT).show()
+                        Log.d("LoginActivity", "✅ Login exitoso como ADMIN, abriendo Catalogoadmin")
+                        Toast.makeText(this, "Inicio de Sesión Exitoso (Admin)", Toast.LENGTH_LONG).show()
 
-                        val intent = Intent(this@login, catalogoadmin::class.java)
-                        intent.putExtra("user_email", email)
-                        intent.putExtra("user_type", "admin")
-                        startActivity(intent)
-                        finish()
+                        try {
+                            // Asumo que Catalogoadmin es la Activity que carga el admin
+                            val intent = Intent(this@login, Catalogoadmin::class.java)
+                            Log.d("LoginActivity", "Intent creado, iniciando actividad...")
+                            startActivity(intent)
+                            Log.d("LoginActivity", "startActivity ejecutado")
+                            finish()
+                        } catch (e: Exception) {
+                            Log.e("LoginActivity", "❌ ERROR al abrir Catalogoadmin: ${e.message}", e)
+                            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                        }
                     }
-                    "2" -> { // Rol 2: Socio/Usuario normal
-                        Toast.makeText(this, "Inicio de Sesión Exitoso", Toast.LENGTH_SHORT).show()
+                    "2" -> {
+                        Toast.makeText(this, "Inicio de Sesión Exitoso", Toast.LENGTH_LONG).show()
 
+                        // Asumo que menupeliculas es la Activity que carga el usuario normal
                         val intent = Intent(this@login, menupeliculas::class.java)
-                        intent.putExtra("user_email", email)
-                        intent.putExtra("user_type", "socio")
                         startActivity(intent)
                         finish()
                     }
                     else -> {
-                        // Respuesta inesperada (posible error SQL de PHP)
                         errorMessageState.value = "Respuesta inesperada: $res"
-                        Toast.makeText(this, "Error del servidor: $res", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "Respuesta inesperada del servidor: $res", Toast.LENGTH_LONG).show()
                     }
                 }
             },
             // Listener de Error (Error de conexión, timeout, etc.)
             Response.ErrorListener { volleyError ->
                 isLoadingState.value = false
-                val errorMsg = "Error de red: ${volleyError.message ?: "Verifique la conexión y la IP del servidor."}"
+                val errorMsg = "Error de red: ${volleyError.message ?: "Verifique la conexión Wi-Fi y la IP del servidor."}"
                 errorMessageState.value = errorMsg
                 Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show()
             }
@@ -106,6 +132,7 @@ class login : AppCompatActivity() {
             @Throws(AuthFailureError::class)
             override fun getParams(): Map<String, String> {
                 val parametros: MutableMap<String, String> = Hashtable()
+
                 parametros["user"] = email
                 parametros["passw"] = password
                 return parametros
@@ -137,6 +164,10 @@ class login : AppCompatActivity() {
                     onClearError = { errorMessageState.value = null },
                     onLogin = { email, password ->
                         attemptLogin(email, password)
+                    },
+                    // Nuevo callback para la navegación de registro
+                    onNavigateToRegister = {
+                        navigateToRegistro()
                     }
                 )
             }
@@ -150,16 +181,22 @@ fun Login(
     isLoading: Boolean,
     errorMessage: String?,
     onClearError: () -> Unit,
-    onLogin: (String, String) -> Unit
+    onLogin: (String, String) -> Unit,
+    // AÑADIDO: Callback para la acción de registro
+    onNavigateToRegister: () -> Unit
 ) {
+    // ESTADOS DE TEXTO
     var correo by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
 
+    // Mostrar Toast o Snackbar si hay error
     if (errorMessage != null) {
         LaunchedEffect(errorMessage) {
-            onClearError()
+            // Un simple Toast que se mostrará inmediatamente fuera de Compose
+            onClearError() // Limpiamos el estado después de mostrarlo (en el Activity)
         }
     }
+
 
     Box(
         modifier = modifier
@@ -175,16 +212,19 @@ fun Login(
                 .fillMaxSize()
         )
 
+        // Centramos el formulario
         IniciarSesionAndroid(
             correo = correo,
             contrasena = contrasena,
-            onCorreoChange = { onClearError(); correo = it },
-            onContrasenaChange = { onClearError(); contrasena = it },
+            onCorreoChange = { onClearError(); correo = it }, // Limpiar error al escribir
+            onContrasenaChange = { onClearError(); contrasena = it }, // Limpiar error al escribir
             onLogin = { onLogin(correo, contrasena) },
             isLoading = isLoading,
+            // PASADO: El callback de registro
+            onNavigateToRegister = onNavigateToRegister,
             modifier = Modifier
                 .align(Alignment.Center)
-                .fillMaxWidth(0.9f)
+                .fillMaxWidth(0.9f) // El formulario toma el 90% del ancho
                 .padding(vertical = 50.dp)
         )
     }
@@ -198,15 +238,18 @@ fun IniciarSesionAndroid(
     onContrasenaChange: (String) -> Unit,
     onLogin: () -> Unit,
     isLoading: Boolean,
+    onNavigateToRegister: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // Usamos Column para un layout más adaptable y Box para el fondo oscuro
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
-            .background(Color.Black.copy(alpha = 0.85f))
+            .background(Color.Black.copy(alpha = 0.85f)) // Fondo oscuro más compacto
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // TÍTULO
         Text(
             text = "INICIAR SESIÓN",
             color = Color.White,
@@ -216,19 +259,13 @@ fun IniciarSesionAndroid(
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        Text(
-            text = "Correo electrónico",
-            color = Color.White,
-            modifier = Modifier
-                .align(Alignment.Start)
-                .padding(bottom = 4.dp)
-        )
+        // ----------- CAMPO CORREO ------------------------------------
+        Text(text = "Correo electrónico", color = Color.White, modifier = Modifier.align(Alignment.Start).padding(bottom = 4.dp))
         TextField(
             value = correo,
             onValueChange = onCorreoChange,
             placeholder = { Text("tu@email.com", color = Color.Gray) },
             singleLine = true,
-            enabled = !isLoading,
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = Color.White.copy(alpha = 0.1f),
                 focusedContainerColor = Color.White.copy(alpha = 0.2f),
@@ -236,29 +273,20 @@ fun IniciarSesionAndroid(
                 focusedIndicatorColor = Color(0xffe50914),
                 cursorColor = Color.White,
                 focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
-                disabledTextColor = Color.White.copy(alpha = 0.5f)
+                unfocusedTextColor = Color.White
             ),
             shape = RoundedCornerShape(10.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
         )
 
-        Text(
-            text = "Contraseña",
-            color = Color.White,
-            modifier = Modifier
-                .align(Alignment.Start)
-                .padding(bottom = 4.dp)
-        )
+        // ----------- CAMPO CONTRASEÑA ----------------------------
+        Text(text = "Contraseña", color = Color.White, modifier = Modifier.align(Alignment.Start).padding(bottom = 4.dp))
         TextField(
             value = contrasena,
             onValueChange = onContrasenaChange,
             singleLine = true,
             placeholder = { Text("••••••", color = Color.Gray) },
             visualTransformation = PasswordVisualTransformation(),
-            enabled = !isLoading,
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = Color.White.copy(alpha = 0.1f),
                 focusedContainerColor = Color.White.copy(alpha = 0.2f),
@@ -266,15 +294,13 @@ fun IniciarSesionAndroid(
                 focusedIndicatorColor = Color(0xffe50914),
                 cursorColor = Color.White,
                 focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
-                disabledTextColor = Color.White.copy(alpha = 0.5f)
+                unfocusedTextColor = Color.White
             ),
             shape = RoundedCornerShape(10.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp)
+            modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
         )
 
+        // ----------- BOTÓN INICIAR SESIÓN ------------------------
         Button(
             onClick = onLogin,
             enabled = !isLoading && correo.isNotEmpty() && contrasena.isNotEmpty(),
@@ -288,10 +314,8 @@ fun IniciarSesionAndroid(
                 .height(50.dp)
         ) {
             if (isLoading) {
-                CircularProgressIndicator(
-                    color = Color.White,
-                    modifier = Modifier.size(24.dp)
-                )
+                // Indicador de carga si la petición está en curso
+                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
             } else {
                 Text(
                     "Iniciar Sesión",
@@ -302,7 +326,8 @@ fun IniciarSesionAndroid(
             }
         }
 
-        TextButton(onClick = { /* TODO: Implementar recuperar contraseña */ }) {
+        // ¿Olvidaste contraseña?
+        TextButton(onClick = { /* TODO: Implementar navegación a recuperar contraseña */ }) {
             Text(
                 text = "¿Olvidaste contraseña?",
                 color = Color.White,
@@ -313,13 +338,18 @@ fun IniciarSesionAndroid(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // ¿Primera vez en rewindCodeFilm? / Registrarse
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = "¿Primera vez en rewindCodeFilm? ",
                 color = Color.Gray,
                 style = TextStyle(fontSize = 14.sp)
             )
-            TextButton(onClick = { /* TODO: Implementar registro */ }) {
+            // *** AQUÍ ESTÁ EL CAMBIO PRINCIPAL ***
+            TextButton(
+                onClick = onNavigateToRegister // Ejecuta la función de navegación
+            )
+            {
                 Text(
                     text = "Regístrate",
                     color = Color.White,
@@ -330,34 +360,29 @@ fun IniciarSesionAndroid(
             }
         }
 
+        // Or Login with (Redes Sociales)
         Spacer(modifier = Modifier.height(32.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            HorizontalDivider(
-                color = Color.Gray.copy(alpha = 0.5f),
-                thickness = 1.dp,
-                modifier = Modifier.weight(1f)
-            )
+            HorizontalDivider(color = Color.Gray.copy(alpha = 0.5f), thickness = 1.dp, modifier = Modifier.weight(1f))
             Text(
                 text = " O Iniciar Sesión con ",
                 color = Color.Gray,
                 style = TextStyle(fontSize = 14.sp)
             )
-            HorizontalDivider(
-                color = Color.Gray.copy(alpha = 0.5f),
-                thickness = 1.dp,
-                modifier = Modifier.weight(1f)
-            )
+            HorizontalDivider(color = Color.Gray.copy(alpha = 0.5f), thickness = 1.dp, modifier = Modifier.weight(1f))
         }
 
+        // Iconos sociales
         Row(
             horizontalArrangement = Arrangement.spacedBy(39.dp, Alignment.CenterHorizontally),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 24.dp, bottom = 16.dp)
         ) {
+            // Nota: Debes asegurar que los IDs de recursos (R.drawable.xxx) existan
             Image(
                 painter = painterResource(id = R.drawable.facebook_ic),
                 contentDescription = "Facebook",
@@ -386,6 +411,7 @@ private fun LoginPreview() {
         isLoading = false,
         errorMessage = null,
         onClearError = {},
-        onLogin = { _, _ -> }
+        onLogin = { _, _ -> },
+        onNavigateToRegister = {} // Añadido para el Preview
     )
 }
