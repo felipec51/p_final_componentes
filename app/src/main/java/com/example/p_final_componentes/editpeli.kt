@@ -1,360 +1,377 @@
 package com.example.p_final_componentes
 
 import android.os.Bundle
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.em
-import androidx.compose.ui.unit.sp
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.ui.platform.ComposeView
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-
-
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+// 🚫 Eliminamos import androidx.compose.ui.text.input.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import org.json.JSONObject
+import java.util.HashMap
 
 class editpeli : AppCompatActivity() {
+
+    // 1. URL DE ACTUALIZACIÓN
+    private val URL_BASE = "http://192.168.20.35/androidComponentes/"
+    private val URL_ACTUALIZAR_PELICULA = URL_BASE + "actualizar_pelicula.php"
+
+    private lateinit var requestQueue: RequestQueue
+
+    // Almacenamos el objeto recibido para acceder a su ID y datos iniciales
+    private lateinit var initialPelicula: Pelicula
+    private val isLoading = mutableStateOf(false)
+
+    // Estados mutables inicializados en base al objeto Pelicula
+    private val tituloState = mutableStateOf("")
+    private val anioState = mutableStateOf("")
+    private val ratingState = mutableStateOf("") // Mapea a 'clasificacion'
+    private val idiomaState = mutableStateOf("") // Mapea a 'idioma'
+    private val descripcionState = mutableStateOf("")
+    private val duracionState = mutableStateOf("")
+    private val posterUrlState = mutableStateOf("")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_editpeli)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+
+        // 2. RECUPERAR EL OBJETO PELICULA
+        val peliculaSerializable = intent.getSerializableExtra("pelicula_data")
+        if (peliculaSerializable is Pelicula) {
+            initialPelicula = peliculaSerializable
+
+            // 3. INICIALIZAR LOS ESTADOS CON LOS DATOS DEL OBJETO
+            tituloState.value = initialPelicula.titulo
+            anioState.value = initialPelicula.anio_lanzamiento.toString()
+            ratingState.value = initialPelicula.clasificacion
+            idiomaState.value = initialPelicula.idioma
+            descripcionState.value = initialPelicula.descripcion
+            duracionState.value = initialPelicula.duracion.toString()
+            posterUrlState.value = initialPelicula.imagen_url
+
+        } else {
+            Toast.makeText(this, "Error: No se pudo cargar el objeto Película.", Toast.LENGTH_LONG).show()
+            finish()
+            return
         }
-        // Se busca el contenedor de Compose por su ID
-        val composeView = findViewById<ComposeView>(R.id.render)
 
-        composeView.setContent {
+        requestQueue = Volley.newRequestQueue(this)
 
+        setContent {
             MaterialTheme {
-                FormAeditarPelicula()
+                FormAeditarPelicula(
+                    id = initialPelicula.id_pelicula,
+                    titulo = tituloState.value,
+                    onTituloChange = { tituloState.value = it },
+                    anio = anioState.value,
+                    onAnioChange = { anioState.value = it },
+                    rating = ratingState.value,
+                    onRatingChange = { ratingState.value = it },
+                    idioma = idiomaState.value,
+                    onIdiomaChange = { idiomaState.value = it },
+                    descripcion = descripcionState.value,
+                    onDescripcionChange = { descripcionState.value = it },
+                    duracion = duracionState.value,
+                    onDuracionChange = { duracionState.value = it },
+                    posterUrl = posterUrlState.value,
+                    onPosterUrlChange = { posterUrlState.value = it },
+                    onSaveClick = { updatePelicula() },
+                    onCancelClick = { finish() },
+                    isLoading = isLoading.value
+                )
             }
         }
+    }
+
+    // 4. FUNCIÓN PARA ACTUALIZAR PELÍCULA
+    private fun updatePelicula() {
+        if (tituloState.value.isBlank() || anioState.value.isBlank()) {
+            Toast.makeText(this, "El título y el año son obligatorios.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        isLoading.value = true
+
+        val stringRequest: StringRequest = object : StringRequest(
+            Method.POST, URL_ACTUALIZAR_PELICULA,
+            { response ->
+                isLoading.value = false
+                try {
+                    val jsonResponse = JSONObject(response)
+                    val success = jsonResponse.getBoolean("success")
+                    val message = jsonResponse.getString("message")
+
+                    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+
+                    if (success) {
+                        finish()
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(this, "Error al procesar respuesta de actualización.", Toast.LENGTH_LONG).show()
+                    Log.e("EditPeli", "Error de parseo JSON al actualizar: ${e.message}", e)
+                }
+            },
+            { volleyError ->
+                isLoading.value = false
+                val errorMsg = "Error de red al actualizar: ${volleyError.message ?: "Verifique la conexión."}"
+                Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show()
+                Log.e("EditPeli", "Error Volley Actualizar: ${volleyError.message}")
+            }) {
+
+            override fun getParams(): Map<String, String> {
+                val params: MutableMap<String, String> = HashMap()
+                params["id_pelicula"] = initialPelicula.id_pelicula.toString()
+                params["titulo"] = tituloState.value
+                params["anio"] = anioState.value
+                params["calificacion"] = ratingState.value
+                params["idioma"] = idiomaState.value
+                params["descripcion"] = descripcionState.value
+                params["duracion_min"] = duracionState.value
+                params["poster_path"] = posterUrlState.value
+
+                return params
+            }
+        }
+        requestQueue.add(stringRequest)
     }
 }
 
 
+// --------------------------------------------------------------------------------
+// COMPOSABLE UI
+// --------------------------------------------------------------------------------
 
 @Composable
-fun FormAeditarPelicula(modifier: Modifier = Modifier) {
+fun FormAeditarPelicula(
+    id: Int,
+    titulo: String,
+    onTituloChange: (String) -> Unit,
+    anio: String,
+    onAnioChange: (String) -> Unit,
+    rating: String,
+    onRatingChange: (String) -> Unit,
+    idioma: String,
+    onIdiomaChange: (String) -> Unit,
+    descripcion: String,
+    onDescripcionChange: (String) -> Unit,
+    duracion: String,
+    onDuracionChange: (String) -> Unit,
+    posterUrl: String,
+    onPosterUrlChange: (String) -> Unit,
+    onSaveClick: () -> Unit,
+    onCancelClick: () -> Unit,
+    isLoading: Boolean,
+    modifier: Modifier = Modifier
+) {
     Surface(
-        shape = RoundedCornerShape(10.dp),
         color = Color(0xff141414),
-        border = BorderStroke(1.1204500198364258.dp, Color(0xff2f2f2f)),
-        modifier = modifier
-            .clip(shape = RoundedCornerShape(10.dp))
-            .shadow(elevation = 6.dp,
-                shape = RoundedCornerShape(10.dp))
+        modifier = modifier.fillMaxSize()
     ) {
-        Box(
+        Column(
             modifier = Modifier
-                .requiredWidth(width = 390.dp)
-                .requiredHeight(height = 563.dp)
+                .fillMaxSize()
+                .padding(25.dp)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 369.dp,
-                        y = 9.dp)
-                    .requiredSize(size = 16.dp)
-                    .clip(shape = RoundedCornerShape(2.dp))
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.icon),
-                    contentDescription = "Icon",
-                    modifier = Modifier
-                        .requiredSize(size = 16.dp))
-            }
-            Column(
-                verticalArrangement = Arrangement.spacedBy(11.97.dp, Alignment.Top),
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 25.dp,
-                        y = 25.dp)
-                    .requiredWidth(width = 344.dp)
-            ) {
+            Spacer(Modifier.height(40.dp))
+
+            Text(
+                text = "Editar Película ID: $id",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                modifier = Modifier.padding(bottom = 10.dp)
+            )
+
+            Text(
+                text = "Modifique los detalles de la película.",
+                color = Color(0xff99a1af),
+                fontSize = 14.sp,
+                modifier = Modifier.padding(bottom = 20.dp)
+            )
+
+            if (isLoading) {
                 Box(
-                    modifier = Modifier
-                        .requiredWidth(width = 398.dp)
-                        .requiredHeight(height = 18.dp)
+                    modifier = Modifier.fillMaxWidth().height(200.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "Editar Película",
-                        color = Color.White,
-                        textAlign = TextAlign.Center,
-                        lineHeight = 1.em,
-                        style = TextStyle(
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold),
-                        modifier = Modifier
-                            .align(alignment = Alignment.TopStart)
-                            .offset(x = 97.99.dp,
-                                y = (-1.36).dp))
+                    CircularProgressIndicator(color = Color(0xffe50914))
                 }
-                Box(
-                    modifier = Modifier
-                        .requiredWidth(width = 398.dp)
-                        .requiredHeight(height = 40.dp)
-                ) {
-                    Text(
-                        text = "Complete los detalles de la película para agregar al catálogo ",
-                        color = Color(0xff99a1af),
-                        textAlign = TextAlign.Center,
-                        lineHeight = 1.43.em,
-                        style = TextStyle(
-                            fontSize = 14.sp),
-                        modifier = Modifier
-                            .align(alignment = Alignment.TopStart)
-                            .offset(x = 3.dp,
-                                y = (-1.97).dp)
-                            .requiredWidth(width = 331.dp)
-                            .requiredHeight(height = 42.dp))
-                }
-            }
-            Column(
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 25.dp,
-                        y = 118.dp)
-                    .requiredWidth(width = 348.dp)
-                    .requiredHeight(height = 426.dp)
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(15.98.dp, Alignment.Top),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .requiredHeight(height = 346.dp)
-                        .padding(top = 15.983917236328125.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .requiredWidth(width = 340.dp)
-                            .requiredHeight(height = 50.dp)
-                    ) {
-                        Text(
-                            text = "Título",
-                            color = Color(0xffd1d5dc),
-                            lineHeight = 1.em,
-                            style = TextStyle(
-                                fontSize = 14.sp))
-                        Box(
-                            modifier = Modifier
-                                .align(alignment = Alignment.TopStart)
-                                .offset(x = 2.dp,
-                                    y = 16.dp)
-                                .requiredWidth(width = 340.dp)
-                                .requiredHeight(height = 36.dp)
-                                .clip(shape = RoundedCornerShape(6.dp))
-                                .background(color = Color(0xff2f2f2f)))
-                    }
-                    Box(
-                        modifier = Modifier
-                            .requiredWidth(width = 340.dp)
-                            .requiredHeight(height = 50.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .requiredWidth(width = 150.dp)
-                                .requiredHeight(height = 50.dp)
-                        ) {
-                            Text(
-                                text = "Año",
-                                color = Color(0xffd1d5dc),
-                                lineHeight = 1.em,
-                                style = TextStyle(
-                                    fontSize = 14.sp))
-                            Box(
-                                modifier = Modifier
-                                    .align(alignment = Alignment.TopStart)
-                                    .offset(x = 1.dp,
-                                        y = 18.dp)
-                                    .requiredWidth(width = 149.dp)
-                                    .requiredHeight(height = 36.dp)
-                                    .clip(shape = RoundedCornerShape(6.dp))
-                                    .background(color = Color(0xff2f2f2f)))
-                        }
-                        Box(
-                            modifier = Modifier
-                                .align(alignment = Alignment.TopStart)
-                                .offset(x = 175.dp,
-                                    y = 0.dp)
-                                .requiredWidth(width = 165.dp)
-                                .requiredHeight(height = 50.dp)
-                        ) {
-                            Text(
-                                text = "Rating",
-                                color = Color(0xffd1d5dc),
-                                lineHeight = 1.em,
-                                style = TextStyle(
-                                    fontSize = 14.sp))
-                            Box(
-                                modifier = Modifier
-                                    .align(alignment = Alignment.TopStart)
-                                    .offset(x = 0.dp,
-                                        y = 18.dp)
-                                    .requiredWidth(width = 165.dp)
-                                    .requiredHeight(height = 36.dp)
-                                    .clip(shape = RoundedCornerShape(6.dp))
-                                    .background(color = Color(0xff2f2f2f)))
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .requiredWidth(width = 348.dp)
-                            .requiredHeight(height = 50.dp)
-                    ) {
-                        Text(
-                            text = "Género",
-                            color = Color(0xffd1d5dc),
-                            lineHeight = 1.em,
-                            style = TextStyle(
-                                fontSize = 14.sp),
-                            modifier = Modifier
-                                .align(alignment = Alignment.TopStart)
-                                .offset(x = 0.dp,
-                                    y = (-7).dp))
-                        Box(
-                            modifier = Modifier
-                                .align(alignment = Alignment.TopStart)
-                                .offset(x = 0.dp,
-                                    y = 15.dp)
-                                .requiredWidth(width = 340.dp)
-                                .requiredHeight(height = 36.dp)
-                                .clip(shape = RoundedCornerShape(6.dp))
-                                .background(color = Color(0xff2f2f2f)))
-                    }
-                    Box(
-                        modifier = Modifier
-                            .requiredWidth(width = 348.dp)
-                            .requiredHeight(height = 50.dp)
-                    ) {
-                        Text(
-                            text = "Director",
-                            color = Color(0xffd1d5dc),
-                            lineHeight = 1.em,
-                            style = TextStyle(
-                                fontSize = 14.sp))
-                        Box(
-                            modifier = Modifier
-                                .align(alignment = Alignment.TopStart)
-                                .offset(x = (-1).dp,
-                                    y = 20.dp)
-                                .requiredWidth(width = 340.dp)
-                                .requiredHeight(height = 36.dp)
-                                .clip(shape = RoundedCornerShape(6.dp))
-                                .background(color = Color(0xff2f2f2f)))
-                    }
-                    Column(
-                        modifier = Modifier
-                            .requiredWidth(width = 348.dp)
-                            .requiredHeight(height = 50.dp)
-                    ) {
-                        Text(
-                            text = "URL del Póster",
-                            color = Color(0xffd1d5dc),
-                            lineHeight = 1.em,
-                            style = TextStyle(
-                                fontSize = 14.sp))
-                        Box(
-                            modifier = Modifier
-                                .requiredWidth(width = 340.dp)
-                                .requiredHeight(height = 36.dp)
-                                .clip(shape = RoundedCornerShape(6.dp))
-                                .background(color = Color(0xff2f2f2f)))
-                    }
-                }
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(7.98.dp, Alignment.Bottom),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .requiredHeight(height = 80.dp)
-                ) {
+            } else {
+                Column(verticalArrangement = Arrangement.spacedBy(15.dp)) {
+
+                    OutlinedTextFieldWithLabel("Título", titulo, onTituloChange)
+
+                    // Fila de Año y Rating
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .requiredHeight(height = 36.dp)
-                            .clip(shape = RoundedCornerShape(8.dp))
-                            .background(color = Color(0xffe50914))
-                            .padding(horizontal = 16.dp,
-                                vertical = 8.dp)
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(
-                            text = "Editar Película",
-                            color = Color.White,
-                            lineHeight = 1.43.em,
-                            style = TextStyle(
-                                fontSize = 14.sp))
+                        OutlinedTextFieldWithLabel(
+                            label = "Año",
+                            value = anio,
+                            onValueChange = onAnioChange,
+                            modifier = Modifier.weight(1f).padding(end = 8.dp),
+                            // El KeyboardType.Number se mantiene para referencia visual/lógica si se desea.
+                            keyboardType = KeyboardType.Number
+                        )
+                        OutlinedTextFieldWithLabel(
+                            label = "Rating (Clasificación)",
+                            value = rating,
+                            onValueChange = onRatingChange,
+                            modifier = Modifier.weight(1f).padding(start = 8.dp)
+                        )
                     }
+
+                    // Fila de Idioma y Duración
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .requiredHeight(height = 36.dp)
-                            .clip(shape = RoundedCornerShape(8.dp))
-                            .background(color = Color(0xff2f2f2f))
-                            .border(border = BorderStroke(1.1204500198364258.dp, Color(0xff2f2f2f)),
-                                shape = RoundedCornerShape(8.dp))
-                            .padding(horizontal = 16.dp,
-                                vertical = 8.dp)
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(
-                            text = "Cancelar",
-                            color = Color.White,
-                            lineHeight = 1.43.em,
-                            style = TextStyle(
-                                fontSize = 14.sp))
+                        OutlinedTextFieldWithLabel(
+                            label = "Idioma",
+                            value = idioma,
+                            onValueChange = onIdiomaChange,
+                            modifier = Modifier.weight(1f).padding(end = 8.dp)
+                        )
+                        OutlinedTextFieldWithLabel(
+                            label = "Duración (Minutos)",
+                            value = duracion,
+                            onValueChange = onDuracionChange,
+                            modifier = Modifier.weight(1f).padding(start = 8.dp),
+                            keyboardType = KeyboardType.Number
+                        )
                     }
+
+                    // Descripción (Usa un TextField multilínea para mejor UX)
+                    OutlinedTextFieldWithLabel(
+                        label = "Descripción",
+                        value = descripcion,
+                        onValueChange = onDescripcionChange,
+                        singleLine = false,
+                        maxLines = 4
+                    )
+
+                    OutlinedTextFieldWithLabel("URL del Póster", posterUrl, onPosterUrlChange)
+                }
+
+                Spacer(modifier = Modifier.height(30.dp))
+
+                Button(
+                    onClick = onSaveClick,
+                    enabled = !isLoading,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xffe50914)),
+                    modifier = Modifier.fillMaxWidth().height(48.dp)
+                ) {
+                    Text("Guardar Cambios")
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Button(
+                    onClick = onCancelClick,
+                    enabled = !isLoading,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2F2F2F)),
+                    border = BorderStroke(1.dp, Color(0xFF2F2F2F)),
+                    modifier = Modifier.fillMaxWidth().height(48.dp)
+                ) {
+                    Text("Cancelar", color = Color.White)
                 }
             }
         }
     }
 }
 
-@Preview(widthDp = 390, heightDp = 563)
+// Componente reutilizable para el TextField
 @Composable
-private fun FormAeditarPeliculaPreview() {
-    FormAeditarPelicula(Modifier)
+fun OutlinedTextFieldWithLabel(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    // Eliminamos KeyboardType como parámetro si no lo vamos a usar
+    keyboardType: KeyboardType = KeyboardType.Text,
+    singleLine: Boolean = true,
+    maxLines: Int = 1
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        Text(
+            text = label,
+            color = Color(0xffd1d5dc),
+            fontSize = 14.sp,
+            modifier = Modifier.padding(bottom = 4.dp)
+        )
+        OutlinedTextField(
+            value = value,
+            onValueChange = onValueChange,
+            // 🚫 Eliminamos la propiedad keyboardOptions
+            singleLine = singleLine,
+            maxLines = maxLines,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color(0xff2f2f2f),
+                unfocusedContainerColor = Color(0xff2f2f2f),
+                cursorColor = Color.White,
+                focusedIndicatorColor = Color(0xffe50914),
+                unfocusedIndicatorColor = Color.Transparent,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                disabledContainerColor = Color(0xff2f2f2f),
+                disabledTextColor = Color.Gray,
+                disabledIndicatorColor = Color.Transparent
+            ),
+            shape = RoundedCornerShape(6.dp),
+            modifier = Modifier.fillMaxWidth().heightIn(min = 50.dp, max = if(maxLines > 1) 120.dp else 50.dp)
+        )
+    }
+}
+
+// --------------------------------------------------------------------------------
+// 🖼️ PREVIEW (Se mantiene)
+// --------------------------------------------------------------------------------
+@Preview(showBackground = true)
+@Composable
+private fun PreviewEditPelicula() {
+    FormAeditarPelicula(
+        id = 42,
+        titulo = "Stranger Things 5",
+        onTituloChange = {},
+        anio = "2025",
+        onAnioChange = {},
+        rating = "PG-13",
+        onRatingChange = {},
+        idioma = "Inglés",
+        onIdiomaChange = {},
+        descripcion = "La última temporada de la serie de ciencia ficción de Netflix. Incluye el regreso de Vecna y los niños de Hawkins.",
+        onDescripcionChange = {},
+        duracion = "140",
+        onDuracionChange = {},
+        posterUrl = "https://example.com/poster.jpg",
+        onPosterUrlChange = {},
+        onSaveClick = {},
+        onCancelClick = {},
+        isLoading = false
+    )
 }

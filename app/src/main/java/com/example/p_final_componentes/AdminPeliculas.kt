@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -33,59 +32,65 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.Serializable
 import java.util.HashMap
+import androidx.compose.runtime.snapshots.SnapshotStateList
 
-class AdminUsuarios : AppCompatActivity() {
+class AdminPeliculas : AppCompatActivity() {
 
-    // 1. CONFIGURACIÓN DE URLS
+    // 1. CONFIGURACIÓN DE URLS (Asegúrate que la IP sea correcta)
     private val URL_BASE = "http://192.168.20.35/androidComponentes/"
-    private val URL_OBTENER_USUARIOS = URL_BASE + "obtener_usuarios.php"
-    private val URL_ELIMINAR_USUARIO = URL_BASE + "eliminar_usuario.php"
+    private val URL_OBTENER_PELICULAS = URL_BASE + "obtener_peliculas.php"
+    private val URL_ELIMINAR_PELICULA = URL_BASE + "eliminar_pelicula.php"
 
     private lateinit var requestQueue: RequestQueue
-    // La lista ahora contiene objetos de la clase Java
-    private val listadoUsuarios = mutableStateListOf<Usuario>()
+    private val listadoPeliculas = mutableStateListOf<Pelicula>()
     private val isLoading = mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
 
         requestQueue = Volley.newRequestQueue(this)
-        fetchUsuarios() // Iniciar la carga de datos
 
         try {
             setContent {
                 MaterialTheme {
-                    AdminUserView(
-                        usuarios = listadoUsuarios,
+                    AdminPeliculasView(
+                        peliculas = listadoPeliculas,
                         isLoading = isLoading.value,
-                        onUpdateClick = { usuario ->
-                            // Lógica para navegar a edituser
-                            val intent = Intent(this, edituser::class.java).apply {
-                                // Pasamos el objeto, casteando a Serializable (requerido para Java POJOs)
-                                putExtra("usuario_data", usuario as java.io.Serializable)
+                        onUpdateClick = { pelicula ->
+                            // 🚀 CAMBIO APLICADO: Pasar el objeto Pelicula completo
+                            val intent = Intent(this, editpeli::class.java).apply {
+                                // Usamos la clave "pelicula_data" y casteamos a Serializable
+                                putExtra("pelicula_data", pelicula as java.io.Serializable)
                             }
                             startActivity(intent)
                         },
-                        onDeleteClick = { usuario ->
-                            deleteUsuario(usuario)
+                        onDeleteClick = { pelicula ->
+                            deletePelicula(pelicula)
                         }
                     )
                 }
-                Log.d("AdminUsuarios", "✅ setContent ejecutado exitosamente")
+                Log.d("AdminPeliculas", "✅ setContent ejecutado exitosamente")
             }
         } catch (e: Exception) {
-            Log.e("AdminUsuarios", "❌ ERROR al inicializar UI: ${e.message}", e)
+            Log.e("AdminPeliculas", "❌ ERROR al inicializar UI: ${e.message}", e)
         }
     }
 
-    private fun fetchUsuarios() {
+    override fun onResume() {
+        super.onResume()
+        fetchPeliculas()
+    }
+
+
+    // 2. FUNCIÓN PARA OBTENER PELÍCULAS
+    private fun fetchPeliculas() {
         isLoading.value = true
-        listadoUsuarios.clear()
+        listadoPeliculas.clear()
 
         val stringRequest = StringRequest(
-            Request.Method.GET, URL_OBTENER_USUARIOS,
+            Request.Method.GET, URL_OBTENER_PELICULAS,
             { response ->
                 isLoading.value = false
                 try {
@@ -93,8 +98,8 @@ class AdminUsuarios : AppCompatActivity() {
                     val success = jsonResponse.getBoolean("success")
 
                     if (success) {
-                        val usuariosArray = jsonResponse.getJSONArray("usuarios")
-                        listadoUsuarios.addAll(parseUsuarios(usuariosArray))
+                        val peliculasArray = jsonResponse.getJSONArray("peliculas")
+                        listadoPeliculas.addAll(parsePeliculas(peliculasArray))
                     } else {
                         val message = jsonResponse.getString("message")
                         Toast.makeText(this, "Error al cargar: $message", Toast.LENGTH_LONG).show()
@@ -102,52 +107,47 @@ class AdminUsuarios : AppCompatActivity() {
                 } catch (e: Exception) {
                     val errorMsg = "Error de parseo JSON al obtener. ¿El script PHP tiene errores de sintaxis?"
                     Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show()
-                    Log.e("AdminUsuarios", errorMsg, e)
+                    Log.e("AdminPeliculas", errorMsg, e)
                 }
             },
             { volleyError ->
                 isLoading.value = false
                 val errorMsg = "Error de red al obtener: ${volleyError.message ?: "Verifique la conexión Wi-Fi y la IP."}"
                 Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show()
-                Log.e("AdminUsuarios", "Error Volley Obtener: ${volleyError.message}")
+                Log.e("AdminPeliculas", "Error Volley Obtener: ${volleyError.message}")
             })
 
         requestQueue.add(stringRequest)
     }
 
-    // FUNCIÓN PARSEADORA ACTUALIZADA PARA LA CLASE JAVA
-    private fun parseUsuarios(jsonArray: JSONArray): List<Usuario> {
-        val list = mutableListOf<Usuario>()
+    // FUNCIÓN PARSEADORA PARA LA CLASE JAVA Pelicula
+    private fun parsePeliculas(jsonArray: JSONArray): List<Pelicula> {
+        val list = mutableListOf<Pelicula>()
         for (i in 0 until jsonArray.length()) {
             val obj = jsonArray.getJSONObject(i)
 
-            // Creamos una instancia de la clase Java Usuario
-            val user = Usuario()
+            val pelicula = Pelicula()
 
-            // Usamos los setters de Java (o la sintaxis de propiedad de Kotlin)
-            user.id = obj.getInt("id_usuario")
-            user.username = obj.getString("username")
-            user.nombre = obj.getString("nombre")
-            user.direccion = obj.optString("direccion", "N/A")
-            user.telefono = obj.optString("telefono", "N/A")
-            user.email = obj.getString("email")
-            user.fechaCreacion = obj.getString("fecha_creacion")
-            user.nombreRol = obj.getString("nombre_rol")
-            user.rolIdRol = obj.getInt("rol_id_rol")
+            pelicula.id_pelicula = obj.getInt("id_pelicula")
+            pelicula.titulo = obj.getString("titulo")
+            pelicula.descripcion = obj.optString("descripcion", "Sin descripción")
+            pelicula.anio_lanzamiento = obj.getInt("anio_lanzamiento")
+            pelicula.duracion = obj.getInt("duracion")
+            pelicula.clasificacion = obj.optString("clasificacion", "N/A")
+            pelicula.idioma = obj.optString("idioma", "N/A")
+            pelicula.imagen_url = obj.optString("imagen_url", "")
 
-            list.add(user)
+            list.add(pelicula)
         }
         return list
     }
 
-    // FUNCIÓN CLAVE PARA LA ELIMINACIÓN
-    private fun deleteUsuario(usuario: Usuario) {
+    // 3. FUNCIÓN PARA ELIMINAR PELÍCULA
+    private fun deletePelicula(pelicula: Pelicula) {
         isLoading.value = true
 
-        Log.d("DELETE_USER", "Intentando eliminar el usuario ID: ${usuario.id}, Username: ${usuario.username}")
-
         val stringRequest: StringRequest = object : StringRequest(
-            Request.Method.POST, URL_ELIMINAR_USUARIO,
+            Request.Method.POST, URL_ELIMINAR_PELICULA,
             { response ->
                 isLoading.value = false
                 try {
@@ -158,26 +158,24 @@ class AdminUsuarios : AppCompatActivity() {
                     Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 
                     if (success) {
-                        fetchUsuarios()
+                        fetchPeliculas()
                     }
                 } catch (e: Exception) {
                     val errorMsg = "Error al procesar la respuesta de eliminación. (Server issue)"
                     Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show()
-                    Log.e("AdminUsuarios", errorMsg, e)
+                    Log.e("AdminPeliculas", errorMsg, e)
                 }
             },
             { volleyError ->
                 isLoading.value = false
                 val errorMsg = "Error de red al eliminar: ${volleyError.message ?: "Verifique la conexión Wi-Fi o la IP."}"
                 Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show()
-                Log.e("AdminUsuarios", "Error Volley Eliminar: ${volleyError.message}")
+                Log.e("AdminPeliculas", "Error Volley Eliminar: ${volleyError.message}")
             }) {
 
-            // Envío del parámetro POST
             override fun getParams(): Map<String, String> {
                 val parametros: MutableMap<String, String> = HashMap()
-                // Usamos la propiedad 'id' (accede al método getId() de la clase Java)
-                parametros["id_usuario"] = usuario.id.toString()
+                parametros["id_pelicula"] = pelicula.id_pelicula.toString()
                 return parametros
             }
         }
@@ -185,8 +183,12 @@ class AdminUsuarios : AppCompatActivity() {
     }
 }
 
+// --------------------------------------------------------------------------------
+// COMPOSABLES
+// --------------------------------------------------------------------------------
+
 @Composable
-fun AdminHeader(modifier: Modifier = Modifier) {
+fun AdminHeaderPeliculas(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -194,7 +196,7 @@ fun AdminHeader(modifier: Modifier = Modifier) {
             .background(color = Color(0xff141414))
     ) {
         Text(
-            text = "ADMINISTRACIÓN DE USUARIOS",
+            text = "ADMINISTRACIÓN DE PELÍCULAS",
             color = Color.White,
             lineHeight = 1.5.em,
             style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
@@ -206,11 +208,11 @@ fun AdminHeader(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun AdminUserView(
-    usuarios: List<Usuario>,
+fun AdminPeliculasView(
+    peliculas: SnapshotStateList<Pelicula>,
     isLoading: Boolean,
-    onUpdateClick: (Usuario) -> Unit,
-    onDeleteClick: (Usuario) -> Unit,
+    onUpdateClick: (Pelicula) -> Unit,
+    onDeleteClick: (Pelicula) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -218,7 +220,7 @@ fun AdminUserView(
             .fillMaxSize()
             .background(Color(0xFF141414))
     ) {
-        AdminHeader()
+        AdminHeaderPeliculas()
 
         if (isLoading) {
             Box(
@@ -227,12 +229,12 @@ fun AdminUserView(
             ) {
                 CircularProgressIndicator(color = Color(0xffe50914))
             }
-        } else if (usuarios.isEmpty()) {
+        } else if (peliculas.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Text("No hay usuarios registrados.", color = Color.White)
+                Text("No hay películas registradas.", color = Color.White)
             }
         } else {
             LazyColumn(
@@ -241,9 +243,9 @@ fun AdminUserView(
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(usuarios, key = { it.id }) { usuario ->
-                    UserRow(
-                        usuario = usuario,
+                items(peliculas, key = { it.id_pelicula }) { pelicula ->
+                    PeliculaRow(
+                        pelicula = pelicula,
                         onUpdateClick = onUpdateClick,
                         onDeleteClick = onDeleteClick
                     )
@@ -252,11 +254,12 @@ fun AdminUserView(
         }
     }
 }
+
 @Composable
-fun UserRow(
-    usuario: Usuario,
-    onUpdateClick: (Usuario) -> Unit,
-    onDeleteClick: (Usuario) -> Unit
+fun PeliculaRow(
+    pelicula: Pelicula,
+    onUpdateClick: (Pelicula) -> Unit,
+    onDeleteClick: (Pelicula) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -270,19 +273,19 @@ fun UserRow(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = "${usuario.username} (${usuario.nombreRol})",
-                color = Color.White,
+                text = pelicula.titulo,
+                color = Color(0xffe50914),
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "Nombre: ${usuario.nombre}",
+                text = "ID: ${pelicula.id_pelicula} | Año: ${pelicula.anio_lanzamiento} | Duración: ${pelicula.duracion} min",
                 color = Color.Gray,
                 fontSize = 12.sp
             )
             Text(
-                text = "Email: ${usuario.email}",
+                text = "Clasificación: ${pelicula.clasificacion} | Idioma: ${pelicula.idioma}",
                 color = Color.Gray,
                 fontSize = 12.sp
             )
@@ -291,15 +294,13 @@ fun UserRow(
         Spacer(modifier = Modifier.width(16.dp))
 
         Row(
-            horizontalArrangement = Arrangement.spacedBy(20.dp), // 🔥 separación mejorada
+            horizontalArrangement = Arrangement.spacedBy(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-
-            // Botón Editar
             IconButton(
-                onClick = { onUpdateClick(usuario) },
+                onClick = { onUpdateClick(pelicula) },
                 modifier = Modifier
-                    .size(40.dp) // un poco más grande
+                    .size(40.dp)
                     .clip(RoundedCornerShape(6.dp))
                     .background(Color(0xFF007bff))
             ) {
@@ -311,9 +312,8 @@ fun UserRow(
                 )
             }
 
-            // Botón Eliminar
             IconButton(
-                onClick = { onDeleteClick(usuario) },
+                onClick = { onDeleteClick(pelicula) },
                 modifier = Modifier
                     .size(40.dp)
                     .clip(RoundedCornerShape(6.dp))
@@ -333,16 +333,17 @@ fun UserRow(
 
 @Preview(showBackground = true)
 @Composable
-private fun PreviewAdminView() {
-    // Para el preview, podemos instanciar la clase Java directamente
-    val dummyUsers = listOf(
-        Usuario(1, "admin", "Administrador", "", "Sede", "0000", "admin@local.com", "2025-11-01", "admin", 1),
-        Usuario(2, "felipec51", "Felipe Murillo", "", "Cll 123", "30012", "felipe@ex.com", "2025-11-15", "socio", 2),
+private fun PreviewAdminPeliculasView() {
+    val dummyPeliculas = listOf(
+        Pelicula(1, "Interestelar", "Ciencia ficción", 2014, 169, "PG-13", "Inglés", ""),
+        Pelicula(2, "Matrix", "Acción/Sci-Fi", 1999, 136, "R", "Inglés", ""),
     )
-    AdminUserView(
-        usuarios = dummyUsers,
-        isLoading = false,
-        onUpdateClick = {},
-        onDeleteClick = {}
-    )
+    MaterialTheme {
+        AdminPeliculasView(
+            peliculas = remember { mutableStateListOf(*dummyPeliculas.toTypedArray()) },
+            isLoading = false,
+            onUpdateClick = {},
+            onDeleteClick = {}
+        )
+    }
 }

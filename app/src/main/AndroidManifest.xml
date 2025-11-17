@@ -16,6 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.P_Final_Componentes"
         android:usesCleartextTraffic="true">
+
         <activity
             android:name=".edituser"
             android:exported="false" />
@@ -47,10 +48,13 @@
             android:name=".RegistroActivityFelipe"
             android:exported="false" />
         <activity
-            android:name=".login"
+            android:name=".AdminPeliculas"
             android:exported="false" />
         <activity
             android:name=".AdminUsuarios"
+            android:exported="false" />
+        <activity
+            android:name=".login"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
