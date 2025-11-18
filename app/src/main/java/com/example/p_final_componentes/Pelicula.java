@@ -13,13 +13,14 @@ public class Pelicula implements Serializable {
     private String idioma;
     private String imagen_url;
     // Opcional: private String generos; // Si decides incluirlo en la consulta PHP
-
+    private double precio_alquiler;
+    private int copias_disponibles;
     // 2. Constructor Vacío
     public Pelicula() {
     }
 
     // 3. Constructor Completo
-    public Pelicula(int id_pelicula, String titulo, String descripcion, int anio_lanzamiento, int duracion, String clasificacion, String idioma, String imagen_url) {
+    public Pelicula(int id_pelicula, String titulo, String descripcion, int anio_lanzamiento, int duracion, String clasificacion, String idioma, String imagen_url, double precio_alquiler, int copias_disponibles) {
         this.id_pelicula = id_pelicula;
         this.titulo = titulo;
         this.descripcion = descripcion;
@@ -28,6 +29,8 @@ public class Pelicula implements Serializable {
         this.clasificacion = clasificacion;
         this.idioma = idioma;
         this.imagen_url = imagen_url;
+        this.precio_alquiler = precio_alquiler; // <--- Inicialización
+        this.copias_disponibles = copias_disponibles; // <--- Inicialización
     }
 
     // 4. Getters y Setters
@@ -86,7 +89,21 @@ public class Pelicula implements Serializable {
     public void setIdioma(String idioma) {
         this.idioma = idioma;
     }
+    public double getPrecio_alquiler() {
+        return precio_alquiler;
+    }
 
+    public void setPrecio_alquiler(double precio_alquiler) {
+        this.precio_alquiler = precio_alquiler;
+    }
+
+    public int getCopias_disponibles() {
+        return copias_disponibles;
+    }
+
+    public void setCopias_disponibles(int copias_disponibles) {
+        this.copias_disponibles = copias_disponibles;
+    }
     public String getImagen_url() {
         return imagen_url;
     }

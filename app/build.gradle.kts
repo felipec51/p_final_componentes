@@ -76,12 +76,15 @@ dependencies {
     // Previews y tooling
     implementation("androidx.compose.ui:ui-tooling-preview")
     debugImplementation("androidx.compose.ui:ui-tooling")
-
+    // Coil para cargar imágenes desde URL (Alternativa a Glide)
+    implementation("io.coil-kt:coil-compose:2.4.0")
     // Testing Compose
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     implementation("com.android.volley:volley:1.2.1")
-    // --- Testing clásico ---
+
+
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

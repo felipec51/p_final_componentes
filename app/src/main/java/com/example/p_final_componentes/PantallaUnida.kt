@@ -51,7 +51,7 @@ fun PantallaCompleta(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         // Llama tus composables existentes (ya definidos en tus otros archivos)
-        Compra()        // del archivo comprar.kt
+             // del archivo comprar.kt
         Informacio()    // del archivo masinformacion.kt
         Trailer()     // del archivo trailer.kt
     }}

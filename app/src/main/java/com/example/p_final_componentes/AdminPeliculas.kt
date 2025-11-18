@@ -330,20 +330,3 @@ fun PeliculaRow(
     }
 }
 
-
-@Preview(showBackground = true)
-@Composable
-private fun PreviewAdminPeliculasView() {
-    val dummyPeliculas = listOf(
-        Pelicula(1, "Interestelar", "Ciencia ficción", 2014, 169, "PG-13", "Inglés", ""),
-        Pelicula(2, "Matrix", "Acción/Sci-Fi", 1999, 136, "R", "Inglés", ""),
-    )
-    MaterialTheme {
-        AdminPeliculasView(
-            peliculas = remember { mutableStateListOf(*dummyPeliculas.toTypedArray()) },
-            isLoading = false,
-            onUpdateClick = {},
-            onDeleteClick = {}
-        )
-    }
-}

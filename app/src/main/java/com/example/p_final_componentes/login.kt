@@ -360,7 +360,7 @@ fun IniciarSesionAndroid(
             }
         }
 
-        // Or Login with (Redes Sociales)
+
         Spacer(modifier = Modifier.height(32.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically,

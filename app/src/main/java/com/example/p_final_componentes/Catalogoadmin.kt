@@ -11,108 +11,112 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.material3.TextField
-import androidx.compose.ui.draw.shadow
+import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
-import androidx.core.view.WindowCompat.enableEdgeToEdge
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+
 
 class Catalogoadmin : ComponentActivity() {
+    private fun navigateToAdminUser() {
+        try {
+            val intent = Intent(this@Catalogoadmin, AdminUsuarios::class.java)
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error al navegar: ${e.message}", Toast.LENGTH_LONG).show()
+            Log.e("Catalogoadmin", "Error al navegar: ${e.message}", e)
+        }
+    }
+    private fun navigateToAdminPeli() {
+        try {
+            val intent = Intent(this@Catalogoadmin, AdminPeliculas::class.java)
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error al navegar: ${e.message}", Toast.LENGTH_LONG).show()
+            Log.e("Catalogoadmin", "Error al navegar: ${e.message}", e)
+        }
+    }
+    private fun navigateToAddPeli() {
+        try {
+            val intent = Intent(this@Catalogoadmin, addpeli::class.java)
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error al navegar: ${e.message}", Toast.LENGTH_LONG).show()
+            Log.e("Catalogoadmin", "Error al navegar: ${e.message}", e)
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        setContentView(R.layout.activity_catalogoadmin2)
+        val composeView = findViewById<ComposeView>(R.id.render)
+        composeView.setContent {
+            MaterialTheme {
+                admincompleto(
 
-        Log.d("Catalogoadmin", "✅ Activity iniciada correctamente")
-
-        try {
-            setContent {
-                MaterialTheme {
-                    admincompleto()
-                }
-
+                    onNavigateToadminuser = {
+                        navigateToAdminUser()
+                    },
+                    onNavigateToadminPeli = {
+                        navigateToAdminPeli()
+                    },
+                    onNavigateToAddPeli = {
+                        navigateToAddPeli()
+                    }
+                )
             }
-            Log.d("Catalogoadmin", "✅ setContent ejecutado exitosamente")
-        } catch (e: Exception) {
-            Log.e("Catalogoadmin", "❌ ERROR al inicializar UI: ${e.message}", e)
-        }
-    }
-    private fun navigateToAdminUser() {
-        Log.d("LoginActivity", "Navegando a la pantalla de Registro")
-        try {
-            // *** IMPORTANTE: Cambia 'RegistroActivity' por tu Activity de registro/destino real (Ej. MenuAdmin, etc.) ***
-            val intent = Intent(this@Catalogoadmin, AdminUsuarios::class.java)
-            startActivity(intent)
-            // No usamos finish() aquí, para que el usuario pueda volver a login
-        } catch (e: Exception) {
-            Log.e("LoginActivity", "❌ ERROR al abrir RegistroActivity: ${e.message}", e)
-            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
 }
 
-
 @Composable
-fun MainAdmin(modifier: Modifier = Modifier) {
+fun MainAdmin(
+    modifier: Modifier = Modifier,
+    onNavigateToadminuser: () -> Unit,
+    onNavigateToadminPeli: () -> Unit,
+    onNavigateToAddPeli: () -> Unit
+
+){
 
     Box(
         modifier = modifier
             .requiredWidth(width = 389.dp)
             .requiredHeight(height = 365.dp)
             .background(color = Color(0xff141414))
+
     ) {
-        Box(
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 30.dp,
-                    y = 43.dp)
-                .requiredWidth(width = 99.dp)
-                .requiredHeight(height = 33.dp)
-                .clip(shape = RoundedCornerShape(8.dp))
-                .background(color = Color(0xff383838).copy(alpha = 0.5f)))
+
         Box(
             modifier = Modifier
                 .align(alignment = Alignment.TopStart)
@@ -121,7 +125,15 @@ fun MainAdmin(modifier: Modifier = Modifier) {
                 .requiredWidth(width = 116.dp)
                 .requiredHeight(height = 33.dp)
                 .clip(shape = RoundedCornerShape(8.dp))
-                .background(color = Color(0xffe50914)))
+                .background(color = Color(0xffe50914)).clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = rememberRipple(bounded = true, color = Color.White.copy(alpha = 0.5f)),
+                    onClick = { onNavigateToAddPeli() }
+                )
+        )
+
+
+
         Box(
             modifier = Modifier
                 .align(alignment = Alignment.TopStart)
@@ -138,41 +150,61 @@ fun MainAdmin(modifier: Modifier = Modifier) {
             style = TextStyle(
                 fontSize = 14.sp),
             modifier = Modifier
+
                 .align(alignment = Alignment.TopCenter)
                 .offset(x = 0.dp,
                     y = 50.dp)
                 .requiredWidth(width = 107.dp))
-        Text(
-            text = "Admin users",
-            color = Color.White,
-            lineHeight = 1.5.em,
-            style = TextStyle(
-                fontSize = 14.sp),
+
+        Box(
             modifier = Modifier
                 .align(alignment = Alignment.TopStart)
-                .offset(x = 263.dp,
-                    y = 50.dp)
-                .requiredWidth(width = 79.dp))
-        Text(
-            text = "Buscar",
-            color = Color.White,
-            lineHeight = 1.5.em,
-            style = TextStyle(
-                fontSize = 14.sp),
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 65.32.dp,
-                    y = 51.5.dp))
-        Image(
-            painter = painterResource(id = R.drawable.icon_1n),
-            contentDescription = "Vector",
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 41.66.dp,
-                    y = 50.dp)
-                .requiredWidth(width = 18.dp)
-                .requiredHeight(height = 19.dp)
+                .offset(x = 259.dp, y = 43.dp)
+                .requiredWidth(width = 87.dp)
+                .requiredHeight(height = 33.dp)
+                .clip(shape = RoundedCornerShape(8.dp))
+                .background(color = Color(0xff474747))
+                .clickable(
+
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = rememberRipple(bounded = true, color = Color.White.copy(alpha = 0.5f)),
+                    onClick = { onNavigateToadminuser() }
                 )
+        ) {
+            Text(
+                text = "Admin users",
+                color = Color.White,
+                lineHeight = 1.5.em,
+                style = TextStyle(fontSize = 14.sp),
+                modifier = Modifier
+                    .align(Alignment.Center)
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .align(alignment = Alignment.TopStart)
+                .offset(x = 19.dp, y = 43.dp)
+                .requiredWidth(width = 109.dp)
+                .requiredHeight(height = 33.dp)
+                .clip(shape = RoundedCornerShape(8.dp))
+                .background(color = Color(0xff474747))
+                .clickable(
+
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = rememberRipple(bounded = true, color = Color.White.copy(alpha = 0.5f)),
+                    onClick = { onNavigateToadminPeli() }
+                )
+        ) {
+            Text(
+                text = "Admin Peliculas",
+                color = Color.White,
+                lineHeight = 1.5.em,
+                style = TextStyle(fontSize = 14.sp),
+                modifier = Modifier
+                    .align(Alignment.Center)
+            )
+        }
         Box(
             modifier = Modifier
                 .align(alignment = Alignment.TopStart)
@@ -281,22 +313,38 @@ fun MainAdmin(modifier: Modifier = Modifier) {
 
 /** Composable principal que une tus tres composables con scroll vertical */
 @Composable
-fun admincompleto(modifier: Modifier = Modifier) {
+fun admincompleto(
+    modifier: Modifier = Modifier,
+    onNavigateToadminuser: () -> Unit,
+    onNavigateToadminPeli: () -> Unit,
+    onNavigateToAddPeli: () -> Unit
 
+
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFF141414))      // ajusta fondo si quieres
+            .background(Color(0xFF141414))
             .verticalScroll(rememberScrollState())
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        MainAdmin()
+        // Pasa la función de navegación
+        MainAdmin(
+            onNavigateToadminuser = onNavigateToadminuser,
+            onNavigateToadminPeli = onNavigateToadminPeli,
+            onNavigateToAddPeli = onNavigateToAddPeli)
         Catalogopeli()
-    }}
-
-@Preview(widthDp = 390, heightDp = 950)
-@Composable
-private fun MainContentPreview() {
-    admincompleto()
+    }
 }
+
+    @Preview(widthDp = 390, heightDp = 950)
+    @Composable
+    private fun MainContentPreview() {
+        admincompleto(
+            onNavigateToadminuser = {},
+            onNavigateToadminPeli = {},
+            onNavigateToAddPeli = {}
+
+        )
+    }
