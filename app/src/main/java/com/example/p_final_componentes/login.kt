@@ -37,14 +37,6 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import java.util.Hashtable
 
-// Asegúrate de que esta Activity (RegistroActivity) exista o cámbiala por la correcta
-// Si quieres que vaya a MenuAdmin, usa Catalogoadmin::class.java
-class RegistroActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        // Puedes poner aquí el contenido de tu Activity de registro
-    }
-}
 
 class login : AppCompatActivity() {
 
@@ -55,31 +47,43 @@ class login : AppCompatActivity() {
     private val errorMessageState = mutableStateOf<String?>(null)
     private lateinit var requestQueue: RequestQueue
 
-    // Función para manejar la navegación a la pantalla de registro
     private fun navigateToRegistro() {
         Log.d("LoginActivity", "Navegando a la pantalla de Registro")
         try {
-            // *** IMPORTANTE: Cambia 'RegistroActivity' por tu Activity de registro/destino real (Ej. MenuAdmin, etc.) ***
             val intent = Intent(this@login, RegistroActivityFelipe::class.java)
             startActivity(intent)
-            // No usamos finish() aquí, para que el usuario pueda volver a login
         } catch (e: Exception) {
-            Log.e("LoginActivity", "❌ ERROR al abrir RegistroActivity: ${e.message}", e)
-            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+            Log.e("LoginActivity", "❌ ERROR al abrir RegistroActivityFelipe: ${e.message}", e)
+            Toast.makeText(this, "Error: ${e.message}. Verifique que la clase exista.", Toast.LENGTH_LONG).show()
         }
     }
 
-    // Función que implementa la lógica de Volley
+    private fun navigateToPassword() {
+        Log.d("LoginActivity", "Navegando a la pantalla de Recuperar Contraseña")
+        try {
+            val intent = Intent(this@login, RecuperarContrasena::class.java)
+            startActivity(intent)
+        } catch (e: Exception) {
+            Log.e("LoginActivity", "❌ ERROR al abrir RecuperarContrasena: ${e.message}", e)
+            Toast.makeText(this, "Error: ${e.message}. Verifique que la clase exista.", Toast.LENGTH_LONG).show()
+        }
+    }
+
     private fun attemptLogin(email: String, password: String) {
+        if (email.isBlank() || password.isBlank()) {
+            errorMessageState.value = "Debe ingresar email y contraseña."
+            Toast.makeText(this, "Debe llenar ambos campos.", Toast.LENGTH_LONG).show()
+            return
+        }
+
         isLoadingState.value = true
         errorMessageState.value = null
 
         val stringRequest: StringRequest = object : StringRequest(
             Method.POST, URL_LOGIN,
-            // Listener de Éxito
             Response.Listener { response ->
                 isLoadingState.value = false
-                val res = response.trim() // Eliminar espacios en blanco
+                val res = response.trim()
 
                 when (res) {
                     "ERROR 1" -> {
@@ -91,28 +95,27 @@ class login : AppCompatActivity() {
                         Toast.makeText(this, "Email o contraseña incorrecta.", Toast.LENGTH_LONG).show()
                     }
                     "1" -> { // Rol 1: Admin
-                        Log.d("LoginActivity", "✅ Login exitoso como ADMIN, abriendo Catalogoadmin")
+                        Log.d("LoginActivity", "✅ Login exitoso como ADMIN")
                         Toast.makeText(this, "Inicio de Sesión Exitoso (Admin)", Toast.LENGTH_LONG).show()
-
                         try {
-                            // Asumo que Catalogoadmin es la Activity que carga el admin
                             val intent = Intent(this@login, Catalogoadmin::class.java)
-                            Log.d("LoginActivity", "Intent creado, iniciando actividad...")
                             startActivity(intent)
-                            Log.d("LoginActivity", "startActivity ejecutado")
                             finish()
                         } catch (e: Exception) {
                             Log.e("LoginActivity", "❌ ERROR al abrir Catalogoadmin: ${e.message}", e)
                             Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
                         }
                     }
-                    "2" -> {
-                        Toast.makeText(this, "Inicio de Sesión Exitoso", Toast.LENGTH_LONG).show()
-
-                        // Asumo que menupeliculas es la Activity que carga el usuario normal
-                        val intent = Intent(this@login, menupeliculas::class.java)
-                        startActivity(intent)
-                        finish()
+                    "2" -> { // Rol 2: Usuario
+                        Toast.makeText(this, "Inicio de Sesión Exitoso (Usuario)", Toast.LENGTH_LONG).show()
+                        try {
+                            val intent = Intent(this@login, menupeliculas::class.java)
+                            startActivity(intent)
+                            finish()
+                        } catch (e: Exception) {
+                            Log.e("LoginActivity", "❌ ERROR al abrir menupeliculas: ${e.message}", e)
+                            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                        }
                     }
                     else -> {
                         errorMessageState.value = "Respuesta inesperada: $res"
@@ -120,7 +123,6 @@ class login : AppCompatActivity() {
                     }
                 }
             },
-            // Listener de Error (Error de conexión, timeout, etc.)
             Response.ErrorListener { volleyError ->
                 isLoadingState.value = false
                 val errorMsg = "Error de red: ${volleyError.message ?: "Verifique la conexión Wi-Fi y la IP del servidor."}"
@@ -128,11 +130,9 @@ class login : AppCompatActivity() {
                 Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show()
             }
         ) {
-            // Envío de parámetros POST
             @Throws(AuthFailureError::class)
             override fun getParams(): Map<String, String> {
                 val parametros: MutableMap<String, String> = Hashtable()
-
                 parametros["user"] = email
                 parametros["passw"] = password
                 return parametros
@@ -145,6 +145,7 @@ class login : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        // Asegúrate de que R.layout.activity_login exista y contenga ComposeView (R.id.render)
         setContentView(R.layout.activity_login)
 
         requestQueue = Volley.newRequestQueue(this)
@@ -165,9 +166,11 @@ class login : AppCompatActivity() {
                     onLogin = { email, password ->
                         attemptLogin(email, password)
                     },
-                    // Nuevo callback para la navegación de registro
                     onNavigateToRegister = {
                         navigateToRegistro()
+                    },
+                    onNavigateToPass = {
+                        navigateToPassword()
                     }
                 )
             }
@@ -175,6 +178,7 @@ class login : AppCompatActivity() {
     }
 }
 
+// Composables para la UI de Login
 @Composable
 fun Login(
     modifier: Modifier = Modifier,
@@ -182,21 +186,17 @@ fun Login(
     errorMessage: String?,
     onClearError: () -> Unit,
     onLogin: (String, String) -> Unit,
-    // AÑADIDO: Callback para la acción de registro
-    onNavigateToRegister: () -> Unit
+    onNavigateToRegister: () -> Unit,
+    onNavigateToPass:() -> Unit
 ) {
-    // ESTADOS DE TEXTO
     var correo by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
 
-    // Mostrar Toast o Snackbar si hay error
     if (errorMessage != null) {
         LaunchedEffect(errorMessage) {
-            // Un simple Toast que se mostrará inmediatamente fuera de Compose
-            onClearError() // Limpiamos el estado después de mostrarlo (en el Activity)
+            onClearError()
         }
     }
-
 
     Box(
         modifier = modifier
@@ -212,19 +212,18 @@ fun Login(
                 .fillMaxSize()
         )
 
-        // Centramos el formulario
         IniciarSesionAndroid(
             correo = correo,
             contrasena = contrasena,
-            onCorreoChange = { onClearError(); correo = it }, // Limpiar error al escribir
-            onContrasenaChange = { onClearError(); contrasena = it }, // Limpiar error al escribir
+            onCorreoChange = { onClearError(); correo = it },
+            onContrasenaChange = { onClearError(); contrasena = it },
             onLogin = { onLogin(correo, contrasena) },
             isLoading = isLoading,
-            // PASADO: El callback de registro
             onNavigateToRegister = onNavigateToRegister,
+            onNavigateToPass = onNavigateToPass,
             modifier = Modifier
                 .align(Alignment.Center)
-                .fillMaxWidth(0.9f) // El formulario toma el 90% del ancho
+                .fillMaxWidth(0.9f)
                 .padding(vertical = 50.dp)
         )
     }
@@ -239,13 +238,13 @@ fun IniciarSesionAndroid(
     onLogin: () -> Unit,
     isLoading: Boolean,
     onNavigateToRegister: () -> Unit,
+    onNavigateToPass: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Usamos Column para un layout más adaptable y Box para el fondo oscuro
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
-            .background(Color.Black.copy(alpha = 0.85f)) // Fondo oscuro más compacto
+            .background(Color.Black.copy(alpha = 0.85f))
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -259,7 +258,7 @@ fun IniciarSesionAndroid(
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        // ----------- CAMPO CORREO ------------------------------------
+        // Campo Correo
         Text(text = "Correo electrónico", color = Color.White, modifier = Modifier.align(Alignment.Start).padding(bottom = 4.dp))
         TextField(
             value = correo,
@@ -279,7 +278,7 @@ fun IniciarSesionAndroid(
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
         )
 
-        // ----------- CAMPO CONTRASEÑA ----------------------------
+        // Campo Contraseña
         Text(text = "Contraseña", color = Color.White, modifier = Modifier.align(Alignment.Start).padding(bottom = 4.dp))
         TextField(
             value = contrasena,
@@ -300,7 +299,7 @@ fun IniciarSesionAndroid(
             modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
         )
 
-        // ----------- BOTÓN INICIAR SESIÓN ------------------------
+        // BOTÓN DE INICIAR SESIÓN
         Button(
             onClick = onLogin,
             enabled = !isLoading && correo.isNotEmpty() && contrasena.isNotEmpty(),
@@ -312,13 +311,13 @@ fun IniciarSesionAndroid(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
+                .padding(bottom = 16.dp)
         ) {
             if (isLoading) {
-                // Indicador de carga si la petición está en curso
                 CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
             } else {
                 Text(
-                    "Iniciar Sesión",
+                    "INICIAR SESIÓN",
                     color = Color.White,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
@@ -326,28 +325,40 @@ fun IniciarSesionAndroid(
             }
         }
 
-        // ¿Olvidaste contraseña?
-        TextButton(onClick = { /* TODO: Implementar navegación a recuperar contraseña */ }) {
+        // Recuperar Contraseña (Recordatorio)
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = "¿Olvidaste contraseña?",
-                color = Color.White,
-                textDecoration = TextDecoration.Underline,
-                fontSize = 15.sp,
+                text = "¿Olvidaste la contraseña? ",
+                color = Color.Gray,
+                style = TextStyle(fontSize = 14.sp)
             )
+
+            TextButton(
+                onClick = onNavigateToPass
+            )
+            {
+                Text(
+                    text = "Recuperar",
+                    color = Color.White,
+                    fontStyle = FontStyle.Italic,
+                    style = TextStyle(fontSize = 14.sp),
+                    textDecoration = TextDecoration.Underline
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // ¿Primera vez en rewindCodeFilm? / Registrarse
+        // Registrarse
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = "¿Primera vez en rewindCodeFilm? ",
                 color = Color.Gray,
                 style = TextStyle(fontSize = 14.sp)
             )
-            // *** AQUÍ ESTÁ EL CAMBIO PRINCIPAL ***
+
             TextButton(
-                onClick = onNavigateToRegister // Ejecuta la función de navegación
+                onClick = onNavigateToRegister
             )
             {
                 Text(
@@ -360,8 +371,9 @@ fun IniciarSesionAndroid(
             }
         }
 
-
         Spacer(modifier = Modifier.height(32.dp))
+
+        // Separador social
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
@@ -382,7 +394,6 @@ fun IniciarSesionAndroid(
                 .fillMaxWidth()
                 .padding(top = 24.dp, bottom = 16.dp)
         ) {
-            // Nota: Debes asegurar que los IDs de recursos (R.drawable.xxx) existan
             Image(
                 painter = painterResource(id = R.drawable.facebook_ic),
                 contentDescription = "Facebook",
@@ -412,6 +423,7 @@ private fun LoginPreview() {
         errorMessage = null,
         onClearError = {},
         onLogin = { _, _ -> },
-        onNavigateToRegister = {} // Añadido para el Preview
+        onNavigateToRegister = {},
+        onNavigateToPass = {}
     )
 }

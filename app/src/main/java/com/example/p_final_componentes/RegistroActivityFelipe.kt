@@ -10,6 +10,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,6 +25,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,12 +38,15 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONObject
 import java.util.Hashtable
+// 💡 NUEVAS IMPORTACIONES PARA SCROLL
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+
 
 // 1. ** Activity Principal de Registro **
-class RegistroActivityFelipe : AppCompatActivity() { // O el nombre que uses, ej. 'registrarse'
+class RegistroActivityFelipe : AppCompatActivity() {
 
     // 2. URL del servidor para el registro
-    // ¡IMPORTANTE! Reemplaza esta IP con la IP correcta de tu servidor (donde está registro.php)
     private val URL_REGISTRO = "http://192.168.20.35/androidComponentes/registro.php"
 
     private val isLoadingState = mutableStateOf(false)
@@ -54,7 +60,9 @@ class RegistroActivityFelipe : AppCompatActivity() { // O el nombre que uses, ej
         nombre: String,
         direccion: String,
         telefono: String,
-        email: String
+        email: String,
+        preguntaSeguridad: String,
+        respuestaSeguridad: String
     ) {
         isLoadingState.value = true
         errorMessageState.value = null
@@ -109,6 +117,9 @@ class RegistroActivityFelipe : AppCompatActivity() { // O el nombre que uses, ej
                 parametros["direccion"] = direccion
                 parametros["telefono"] = telefono
                 parametros["email"] = email
+                // PARÁMETROS NUEVOS ENVIADOS
+                parametros["pregunta_seguridad"] = preguntaSeguridad
+                parametros["respuesta_seguridad"] = respuestaSeguridad
                 return parametros
             }
         }
@@ -119,11 +130,9 @@ class RegistroActivityFelipe : AppCompatActivity() { // O el nombre que uses, ej
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Inicializa la cola de Volley
         requestQueue = Volley.newRequestQueue(this)
 
-        // Asume que tienes un layout con un ComposeView con id 'render' (como en tu login)
-        setContentView(R.layout.activity_login) // Ajusta si usas un layout diferente para registro
+        setContentView(R.layout.activity_login)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -138,10 +147,11 @@ class RegistroActivityFelipe : AppCompatActivity() { // O el nombre que uses, ej
                     isLoading = isLoadingState.value,
                     errorMessage = errorMessageState.value,
                     onClearError = { errorMessageState.value = null },
-                    onRegister = { user, pass, nom, dir, tel, mail ->
-                        attemptRegister(user, pass, nom, dir, tel, mail)
+                    // Se actualiza la llamada con los nuevos 2 campos
+                    onRegister = { user, pass, nom, dir, tel, mail, preg, resp ->
+                        attemptRegister(user, pass, nom, dir, tel, mail, preg, resp)
                     },
-                    onNavigateToLogin = { finish() } // Simplemente cierra la Activity para volver al Login
+                    onNavigateToLogin = { finish() }
                 )
             }
         }
@@ -155,7 +165,7 @@ fun RegisterScreen(
     isLoading: Boolean,
     errorMessage: String?,
     onClearError: () -> Unit,
-    onRegister: (String, String, String, String, String, String) -> Unit,
+    onRegister: (String, String, String, String, String, String, String, String) -> Unit,
     onNavigateToLogin: () -> Unit
 ) {
     // ESTADOS DE TEXTO para todos los campos
@@ -165,17 +175,29 @@ fun RegisterScreen(
     var direccion by remember { mutableStateOf("") }
     var telefono by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
+    // ESTADOS NUEVOS para Pregunta de Seguridad
+    var respuestaSeguridad by remember { mutableStateOf("") }
+
+    val preguntas = listOf(
+        "¿Cuál es el nombre de tu primera mascota?",
+        "¿En qué ciudad naciste?"
+    )
+    var preguntaSeleccionada by remember { mutableStateOf(preguntas.first()) }
+    var expanded by remember { mutableStateOf(false) }
+
 
     // Validación simple para habilitar el botón
-    val isFormValid = username.isNotEmpty() && password.isNotEmpty() && nombre.isNotEmpty() && email.isNotEmpty()
+    val isFormValid = username.isNotEmpty() && password.isNotEmpty() && nombre.isNotEmpty() && email.isNotEmpty() && respuestaSeguridad.isNotEmpty()
 
     // Manejo de errores (similar al Login)
     if (errorMessage != null) {
         LaunchedEffect(errorMessage) {
-            // Aquí se limpia el estado después de que el Toast lo muestre en la Activity
             onClearError()
         }
     }
+
+    // 💡 Estado de Scroll
+    val scrollState = rememberScrollState()
 
     // Fondo y estructura
     Box(
@@ -185,20 +207,22 @@ fun RegisterScreen(
     ) {
         //
         Image(
-            painter = painterResource(id = R.drawable.fondo), // Usando el mismo fondo de tu ejemplo
+            painter = painterResource(id = R.drawable.fondo),
             contentDescription = "Fondo",
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
 
-        // Centramos el formulario de registro y usamos ScrollableColumn si hay muchos campos
+        // Centramos el formulario de registro en la pantalla
         Column(
+            // 💡 AÑADIMOS EL MODIFICADOR DE SCROLL A LA COLUMNA
             modifier = Modifier
                 .align(Alignment.Center)
                 .fillMaxWidth(0.9f)
                 .clip(RoundedCornerShape(16.dp))
                 .background(Color.Black.copy(alpha = 0.85f))
-                .padding(24.dp),
+                .padding(24.dp)
+                .verticalScroll(scrollState), // <--- ¡AQUÍ ESTÁ EL CAMBIO!
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // TÍTULO
@@ -256,11 +280,72 @@ fun RegisterScreen(
                 onValueChange = { onClearError(); telefono = it }
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // -----------------------------------------------------------------
+            // CAMPOS DE SEGURIDAD
+            // -----------------------------------------------------------------
+
+            // SELECTOR DE PREGUNTA
+            Text("Pregunta de Seguridad", color = Color.White, modifier = Modifier.align(Alignment.Start).padding(bottom = 4.dp))
+            Box(
+                modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
+            ) {
+                OutlinedButton(
+                    onClick = { expanded = true },
+                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = Color.White.copy(alpha = 0.1f),
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text(preguntaSeleccionada, modifier = Modifier.weight(1f), textAlign = TextAlign.Start)
+                    Icon(Icons.Default.ArrowDropDown, contentDescription = "Seleccionar Pregunta")
+                }
+
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier.fillMaxWidth(0.85f).background(Color(0xff2a2a2a))
+                ) {
+                    preguntas.forEach { pregunta ->
+                        DropdownMenuItem(
+                            text = { Text(pregunta, color = Color.White) },
+                            onClick = {
+                                preguntaSeleccionada = pregunta
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            // CAMPO RESPUESTA
+            InputField(
+                label = "Respuesta de Seguridad",
+                value = respuestaSeguridad,
+                onValueChange = { onClearError(); respuestaSeguridad = it }
+            )
+            // -----------------------------------------------------------------
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             // ----------- BOTÓN REGISTRARSE ------------------------
             Button(
-                onClick = { onRegister(username, password, nombre, direccion, telefono, email) },
+                onClick = {
+                    // Se pasan los nuevos campos de seguridad
+                    onRegister(
+                        username,
+                        password,
+                        nombre,
+                        direccion,
+                        telefono,
+                        email,
+                        preguntaSeleccionada,
+                        respuestaSeguridad
+                    )
+                },
                 enabled = !isLoading && isFormValid,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xffe50914),
@@ -305,7 +390,7 @@ fun RegisterScreen(
     }
 }
 
-// 4. Componente de Campo de Entrada Reutilizable
+// 4. Componente de Campo de Entrada Reutilizable (Se mantiene igual)
 @Composable
 fun InputField(
     label: String,
@@ -342,7 +427,7 @@ private fun RegisterScreenPreview() {
         isLoading = false,
         errorMessage = null,
         onClearError = {},
-        onRegister = { _, _, _, _, _, _ -> },
+        onRegister = { _, _, _, _, _, _, _, _ -> },
         onNavigateToLogin = {}
     )
 }

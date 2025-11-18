@@ -27,7 +27,7 @@
             android:name=".CatalogoPeliculas"
             android:exported="false" />
         <activity
-            android:name=".masinformacion"
+            android:name=".RecuperarContrasena"
             android:exported="false" />
         <activity
             android:name=".Catalogoadmin"
@@ -40,9 +40,6 @@
             android:exported="false" />
         <activity
             android:name=".menupeliculas"
-            android:exported="false" />
-        <activity
-            android:name=".PantallaUnida"
             android:exported="false" />
         <activity
             android:name=".RegistroActivityFelipe"

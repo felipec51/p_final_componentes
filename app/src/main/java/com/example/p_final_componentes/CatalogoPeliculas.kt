@@ -20,7 +20,7 @@ import androidx.compose.material.ripple.rememberRipple // Necesario para la corr
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember // Necesario para la corrección del error
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -110,9 +110,6 @@ fun Catalogopeli(modifier: Modifier = Modifier) {
             }
         }
 
-        // --- Todas las imágenes son clickeables, usan el fix de clickable y pasan el ID ---
-
-        // Imagen 1 (ID 1)
         Box(
             modifier = Modifier
                 .align(alignment = Alignment.TopStart)
