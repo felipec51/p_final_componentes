@@ -15,25 +15,17 @@ public class Pelicula implements Serializable {
     // Opcional: private String generos; // Si decides incluirlo en la consulta PHP
     private double precio_alquiler;
     private int copias_disponibles;
+    private int copias_totales;
+    private String generos_detalle; // Para la lista de géneros concatenada
+    private String elenco;
+    private String director_nombre;
     // 2. Constructor Vacío
+    private int id_trailer;
+    private String  url_trailer;
+    private String titulo_trailer;
     public Pelicula() {
     }
 
-    // 3. Constructor Completo
-    public Pelicula(int id_pelicula, String titulo, String descripcion, int anio_lanzamiento, int duracion, String clasificacion, String idioma, String imagen_url, double precio_alquiler, int copias_disponibles) {
-        this.id_pelicula = id_pelicula;
-        this.titulo = titulo;
-        this.descripcion = descripcion;
-        this.anio_lanzamiento = anio_lanzamiento;
-        this.duracion = duracion;
-        this.clasificacion = clasificacion;
-        this.idioma = idioma;
-        this.imagen_url = imagen_url;
-        this.precio_alquiler = precio_alquiler; // <--- Inicialización
-        this.copias_disponibles = copias_disponibles; // <--- Inicialización
-    }
-
-    // 4. Getters y Setters
     public int getId_pelicula() {
         return id_pelicula;
     }
@@ -112,6 +104,45 @@ public class Pelicula implements Serializable {
         this.imagen_url = imagen_url;
     }
 
+    public void setcopiasTotales(int copias_totales){
+        this.copias_totales=copias_totales;
+    }
+    public int getcopiasTotales(){
+        return copias_totales;
+    }
+    // 3. Getters y Setters (Añadir a la sección 4.)
+    public String getGeneros_detalle() {
+        return generos_detalle;
+    }
+
+    public void setGeneros_detalle(String generos_detalle) {
+        this.generos_detalle = generos_detalle;
+    }
+
+    public String getElenco() {
+        return elenco;
+    }
+
+    public void setElenco(String elenco) {
+        this.elenco = elenco;
+    }
+    public String getDirector_nombre() {
+        return director_nombre;
+    }
+    public int getid_trailer() {
+        return id_trailer;
+    }
+    public String getUrl_trailer() {
+        return url_trailer;
+    }
+    public String getTitulo_trailer() {
+        return titulo_trailer;
+    }
+
+
+    public void setDirector_nombre(String director_nombre) {
+        this.director_nombre = director_nombre;
+    }
     @Override
     public String toString() {
         return "Pelicula{" +

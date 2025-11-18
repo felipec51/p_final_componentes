@@ -126,7 +126,7 @@ fun Catalogopeli(modifier: Modifier = Modifier) {
                 )
         ) {
             Image(
-                painter = painterResource(id = R.drawable.image_13),
+                painter = painterResource(id = R.drawable.stranger),
                 contentDescription = "image_13",
                 modifier = Modifier
                     .requiredWidth(width = 175.dp)
@@ -148,7 +148,7 @@ fun Catalogopeli(modifier: Modifier = Modifier) {
                 )
         ) {
             Image(
-                painter = painterResource(id = R.drawable.image),
+                painter = painterResource(id = R.drawable.thecrown),
                 contentDescription = "image_18",
                 modifier = Modifier
                     .requiredWidth(width = 175.dp)
@@ -170,7 +170,7 @@ fun Catalogopeli(modifier: Modifier = Modifier) {
                 )
         ) {
             Image(
-                painter = painterResource(id = R.drawable.image_14),
+                painter = painterResource(id = R.drawable.image_13),
                 contentDescription = "image 14",
                 modifier = Modifier
                     .requiredWidth(width = 175.dp)
@@ -192,7 +192,7 @@ fun Catalogopeli(modifier: Modifier = Modifier) {
                 )
         ) {
             Image(
-                painter = painterResource(id = R.drawable.image_15),
+                painter = painterResource(id = R.drawable.mission),
                 contentDescription = "image_15",
                 modifier = Modifier
                     .requiredWidth(width = 175.dp)
@@ -214,7 +214,7 @@ fun Catalogopeli(modifier: Modifier = Modifier) {
                 )
         ) {
             Image(
-                painter = painterResource(id = R.drawable.vistaprevia9),
+                painter = painterResource(id = R.drawable.bad),
                 contentDescription = "vista previa 9",
                 modifier = Modifier
                     .requiredWidth(width = 176.dp)
@@ -236,7 +236,7 @@ fun Catalogopeli(modifier: Modifier = Modifier) {
                 )
         ) {
             Image(
-                painter = painterResource(id = R.drawable.image_16),
+                painter = painterResource(id = R.drawable.vistaprevia9),
                 contentDescription = "image_16",
                 modifier = Modifier
                     .requiredWidth(width = 175.dp)
@@ -258,7 +258,7 @@ fun Catalogopeli(modifier: Modifier = Modifier) {
                 )
         ) {
             Image(
-                painter = painterResource(id = R.drawable.vistaprevia14),
+                painter = painterResource(id = R.drawable.laprimera),
                 contentDescription = "vista previa 14",
                 modifier = Modifier
                     .requiredWidth(width = 176.dp)
@@ -280,7 +280,7 @@ fun Catalogopeli(modifier: Modifier = Modifier) {
                 )
         ) {
             Image(
-                painter = painterResource(id = R.drawable.image_17),
+                painter = painterResource(id = R.drawable.vistaprevia14),
                 contentDescription = "image_17",
                 modifier = Modifier
                     .requiredWidth(width = 175.dp)
@@ -298,7 +298,7 @@ fun Catalogopeli(modifier: Modifier = Modifier) {
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(bounded = true),
-                    onClick = { navigateToComprar(9) } // **ID 9**
+                    onClick = { navigateToComprar(17) }
                 )
         ) {
             Image(
