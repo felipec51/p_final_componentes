@@ -8,11 +8,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-// Importaciones de Compose
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll // 🚨 Nueva Importación CLAVE
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,7 +33,6 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.Surface
 import androidx.compose.ui.layout.ContentScale
-// Importaciones de Volley y Coil
 import com.android.volley.AuthFailureError
 import com.android.volley.RequestQueue
 import com.android.volley.Response
@@ -45,10 +43,7 @@ import java.util.Hashtable
 import java.util.Locale
 import coil.compose.AsyncImage
 
-
-
 class comprar : AppCompatActivity() {
-    // ... (El contenido de la Activity comprar permanece SIN CAMBIOS)
     private val URL_DETALLE_PELICULA = "http://192.168.20.35/androidComponentes/obtener_detalle_pelicula.php"
     private lateinit var requestQueue: RequestQueue
     private var peliculaState by mutableStateOf(Pelicula())
@@ -148,16 +143,13 @@ class comprar : AppCompatActivity() {
     }
 }
 
-// 4. Composable Compra adaptado para usar el objeto Pelicula de Java
 @Composable
 fun Compra(pelicula: Pelicula, isLoading: Boolean, modifier: Modifier = Modifier) {
-    // 1. El Box principal solo se ajusta al ancho y toma la altura máxima de la pantalla
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .fillMaxHeight() // Permite que el contenido tome toda la altura
+            .fillMaxHeight()
     ) {
-        // Elementos estáticos de la interfaz (parte superior) - Se mantienen fuera del scroll
         Text(
             text = "RewindCodeFilm",
             color = Color(0xffe50914),
@@ -189,26 +181,23 @@ fun Compra(pelicula: Pelicula, isLoading: Boolean, modifier: Modifier = Modifier
             )
         }
 
-        // 2. Columna Scrollable (Contenido Dinámico)
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 50.dp) // Deja espacio para los elementos estáticos superiores
+                .padding(top = 50.dp)
                 .background(color = Color(0xff1a1a1a))
-                .verticalScroll(rememberScrollState()), // 🚨 CLAVE: Habilita el scroll
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (isLoading) {
-                // Mostrar indicador de carga
                 CircularProgressIndicator(
                     modifier = Modifier.padding(top = 200.dp),
                     color = Color(0xffe50914)
                 )
             } else {
-                // --- 2.1 CONTENIDO PRINCIPAL: POSTER ---
                 Column(
                     modifier = Modifier
-                        .padding(top = 10.dp) // Espacio respecto a la parte superior de la columna
+                        .padding(top = 10.dp)
                         .requiredWidth(width = 300.dp)
                         .height(450.dp)
                         .clip(shape = RoundedCornerShape(10.dp))
@@ -225,14 +214,12 @@ fun Compra(pelicula: Pelicula, isLoading: Boolean, modifier: Modifier = Modifier
                     )
                 }
 
-                // --- 2.2 INFORMACIÓN DE PRECIO/COPIAS ---
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp)
                         .padding(top = 15.dp, bottom = 10.dp)
                 ) {
-                    // Título, Año, Duración, Clasificación
                     Text(
                         text = pelicula.getTitulo() ?: "N/A",
                         color = Color.White,
@@ -262,8 +249,7 @@ fun Compra(pelicula: Pelicula, isLoading: Boolean, modifier: Modifier = Modifier
                             style = TextStyle(fontSize = 14.sp)
                         )
                     }
-
-                    // Snackbar de Precio Dinámico
+                    
                     Snackbar(
                         containerColor = Color(0xffe7000b),
                         contentColor = Color.White,
@@ -278,32 +264,26 @@ fun Compra(pelicula: Pelicula, isLoading: Boolean, modifier: Modifier = Modifier
                         )
                     }
 
-                    // NumeroDeCopias Dinámico
                     NumeroDeCopias(
                         disponibles = pelicula.getCopias_disponibles(),
                         totalCopias = pelicula.getcopiasTotales(),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 16.dp)
-                            .align(Alignment.Start) // Alineado a la izquierda dentro del Column
+                            .align(Alignment.Start)
                     )
                 }
 
-                // --- 2.3 MasInformacionDetalle ---
-                // Se coloca directamente y se ajustará debajo del contenido anterior
                 MasInformacionDetalle(
                     pelicula = pelicula,
                     modifier = Modifier.fillMaxWidth()
                 )
-
-                // Espacio extra al final para scroll
                 Spacer(modifier = Modifier.height(40.dp))
             }
         }
     }
 }
 
-// 5. Composable NumeroDeCopias (Ajustado el modificador interno para fillMaxWidth)
 @Composable
 fun NumeroDeCopias(disponibles: Int, totalCopias: Int, modifier: Modifier = Modifier) {
     Surface(
@@ -312,15 +292,13 @@ fun NumeroDeCopias(disponibles: Int, totalCopias: Int, modifier: Modifier = Modi
         border = BorderStroke(0.841.dp, Color.White.copy(alpha = 0.2f)),
         modifier = modifier.clip(shape = RoundedCornerShape(16.dp)).height(67.dp)
     ) {
-        // Usamos Row para la distribución horizontal y Padding para el espaciado
         Row(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 13.dp),
-            horizontalArrangement = Arrangement.SpaceAround, // Centra el contenido
+            horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Sección Disponibles
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
                     painter = painterResource(id = R.drawable.icon_3n),
@@ -342,15 +320,12 @@ fun NumeroDeCopias(disponibles: Int, totalCopias: Int, modifier: Modifier = Modi
                 }
             }
 
-            // Separador vertical
             Box(
                 modifier = Modifier
                     .width(1.dp)
                     .height(32.dp)
                     .background(color = Color.White.copy(alpha = 0.2f))
             )
-
-            // Sección Total copias
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
                     painter = painterResource(id = R.drawable.icon_2n),
@@ -374,8 +349,6 @@ fun NumeroDeCopias(disponibles: Int, totalCopias: Int, modifier: Modifier = Modi
         }
     }
 }
-
-
 
 @Preview(widthDp = 393, heightDp = 803)
 @Composable

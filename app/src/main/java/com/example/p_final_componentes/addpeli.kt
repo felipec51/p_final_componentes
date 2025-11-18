@@ -46,7 +46,6 @@ class addpeli : AppCompatActivity() {
     private val errorMessageState = mutableStateOf<String?>(null)
     private lateinit var requestQueue: RequestQueue
 
-    // 1. FUNCIÓN ACTUALIZADA: Ahora acepta 12 parámetros (incluyendo ncopias)
     private fun attemptAddPelicula(
         titulo: String,
         anio_lanzamiento: String,
@@ -57,7 +56,7 @@ class addpeli : AppCompatActivity() {
         clasificacion: String,
         director_id_director: String,
         idioma: String,
-        ncopias: String, // <--- NUEVO PARÁMETRO
+        ncopias: String,
         actores_ids: String,
         generos_ids: String
     ) {
@@ -121,7 +120,6 @@ class addpeli : AppCompatActivity() {
             override fun getParams(): Map<String, String> {
                 val parametros: MutableMap<String, String> = Hashtable()
 
-                // 10 Parámetros de la tabla pelicula (incluyendo ncopias)
                 parametros["titulo"] = titulo
                 parametros["anio"] = anio_lanzamiento
                 parametros["duracion_min"] = duracion
@@ -131,9 +129,7 @@ class addpeli : AppCompatActivity() {
                 parametros["calificacion"] = clasificacion
                 parametros["director_id_director"] = director_id_director
                 parametros["idioma"] = idioma
-                parametros["ncopias"] = ncopias // <--- ENVIAMOS EL NÚMERO DE COPIAS
-
-                // 2 Parámetros de las tablas de relación (Clave para la transacción)
+                parametros["ncopias"] = ncopias
                 parametros["actores_ids"] = actores_ids
                 parametros["generos_ids"] = generos_ids
 
@@ -151,7 +147,7 @@ class addpeli : AppCompatActivity() {
 
         requestQueue = Volley.newRequestQueue(this)
 
-        setContentView(R.layout.activity_addpeli) // Asumiendo que usas un layout XML simple con ComposeView
+        setContentView(R.layout.activity_addpeli)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -167,7 +163,6 @@ class addpeli : AppCompatActivity() {
                         isLoading = isLoadingState.value,
                         errorMessage = errorMessageState.value,
                         onClearError = { errorMessageState.value = null },
-                        // 2. La función ahora acepta 12 parámetros
                         onAddPelicula = { tit, anioLan, dur, desc, imgUrl, prec, clasif, dirId, idiom, ncop, actIds, genIds ->
                             attemptAddPelicula(tit, anioLan, dur, desc, imgUrl, prec, clasif, dirId, idiom, ncop, actIds, genIds)
                         },
@@ -180,14 +175,12 @@ class addpeli : AppCompatActivity() {
     }
 }
 
-// 2. Composable de la Pantalla de Agregar Película (Interfaz)
 @Composable
 fun FormAadirPelicula(
     modifier: Modifier = Modifier,
     isLoading: Boolean,
     errorMessage: String?,
     onClearError: () -> Unit,
-    // 2. LA FUNCIÓN AHORA ACEPTA 12 PARÁMETROS
     onAddPelicula: (
         String, String, String, String, String, String, String, String, String,
         String, // ncopias
@@ -195,7 +188,6 @@ fun FormAadirPelicula(
     ) -> Unit,
     onCancel: () -> Unit
 ) {
-    // ESTADOS DE TEXTO para los campos (10 de película + 2 de relación)
     var titulo by remember { mutableStateOf("") }
     var anioLanzamiento by remember { mutableStateOf("") }
     var duracionMinutos by remember { mutableStateOf("") }
@@ -206,13 +198,9 @@ fun FormAadirPelicula(
     var directorId by remember { mutableStateOf("") }
     var idioma by remember { mutableStateOf("") }
     var nCopias by remember { mutableStateOf("") } // <--- NUEVO ESTADO
-
-    // ESTADOS PARA LAS RELACIONES
     var actoresInput by remember { mutableStateOf("") }
     var generosInput by remember { mutableStateOf("") }
-
-
-    // Validación de todos los 12 campos requeridos
+    //validaciones
     val isFormValid = titulo.isNotEmpty() && anioLanzamiento.isNotEmpty() && duracionMinutos.isNotEmpty() &&
             descripcion.isNotEmpty() && imagenURL.isNotEmpty() && precioAlquiler.isNotEmpty() &&
             clasificacionPeli.isNotEmpty() && directorId.isNotEmpty() && idioma.isNotEmpty() &&
@@ -257,7 +245,6 @@ fun FormAadirPelicula(
                 modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
             )
 
-            // CAMPOS DE ENTRADA (10 de Película)
             InputFieldPeli(label = "Título (*)", value = titulo, onValueChange = { titulo = it })
 
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.fillMaxWidth()) {
@@ -398,7 +385,6 @@ fun FormAadirPelicula(
     }
 }
 
-// 3. Componente de Campo de Entrada Reutilizable (Sin cambios)
 @Composable
 fun InputFieldPeli(
     label: String,
@@ -429,7 +415,7 @@ fun InputFieldPeli(
     }
 }
 
-@Preview(widthDp = 390, heightDp = 1000) // Ajusté la altura del preview para que quepa todo
+@Preview(widthDp = 390, heightDp = 1000)
 @Composable
 private fun FormAadirPeliculaPreview() {
     Box(modifier = Modifier.fillMaxSize().background(Color(0xFF141414))) {
@@ -437,7 +423,6 @@ private fun FormAadirPeliculaPreview() {
             isLoading = false,
             errorMessage = null,
             onClearError = {},
-            // Ahora 12 parámetros en el Preview también
             onAddPelicula = { _, _, _, _, _, _, _, _, _, _, _, _ -> },
             onCancel = {},
             modifier = Modifier.align(Alignment.Center)

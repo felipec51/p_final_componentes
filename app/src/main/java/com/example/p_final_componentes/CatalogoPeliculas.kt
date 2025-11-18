@@ -56,10 +56,9 @@ class CatalogoPeliculas : AppCompatActivity() {
 fun Catalogopeli(modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
-    // FUNCIÓN DE NAVEGACIÓN A LA ACTIVIDAD 'comprar' QUE ACEPTA UN ID
+
     val navigateToComprar: (Int) -> Unit = { movieId ->
         val intent = Intent(context, comprar::class.java)
-        // **PASANDO EL ID DE LA PELÍCULA**
         intent.putExtra("MOVIE_ID", movieId)
         context.startActivity(intent)
     }
@@ -185,7 +184,7 @@ fun Catalogopeli(modifier: Modifier = Modifier) {
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(bounded = true),
-                    onClick = { navigateToComprar(4) } // **ID 4**
+                    onClick = { navigateToComprar(4) }
                 )
         ) {
             Image(
@@ -207,7 +206,7 @@ fun Catalogopeli(modifier: Modifier = Modifier) {
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(bounded = true),
-                    onClick = { navigateToComprar(5) } // **ID 5**
+                    onClick = { navigateToComprar(5) }
                 )
         ) {
             Image(
@@ -229,7 +228,7 @@ fun Catalogopeli(modifier: Modifier = Modifier) {
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(bounded = true),
-                    onClick = { navigateToComprar(6) } // **ID 6**
+                    onClick = { navigateToComprar(6) }
                 )
         ) {
             Image(
@@ -251,7 +250,7 @@ fun Catalogopeli(modifier: Modifier = Modifier) {
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(bounded = true),
-                    onClick = { navigateToComprar(7) } // **ID 7**
+                    onClick = { navigateToComprar(7) }
                 )
         ) {
             Image(
@@ -273,7 +272,7 @@ fun Catalogopeli(modifier: Modifier = Modifier) {
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(bounded = true),
-                    onClick = { navigateToComprar(8) } // **ID 8**
+                    onClick = { navigateToComprar(8) }
                 )
         ) {
             Image(
@@ -285,7 +284,6 @@ fun Catalogopeli(modifier: Modifier = Modifier) {
             )
         }
 
-        // Imagen 9 (ID 9) - Mantenido aunque solo pediste IDs del 1 al 8
         Box(
             modifier = Modifier
                 .align(alignment = Alignment.TopStart)
@@ -307,7 +305,6 @@ fun Catalogopeli(modifier: Modifier = Modifier) {
             )
         }
 
-        // Imagen 10 (ID 10) - Mantenido aunque solo pediste IDs del 1 al 8
         Box(
             modifier = Modifier
                 .align(alignment = Alignment.TopStart)

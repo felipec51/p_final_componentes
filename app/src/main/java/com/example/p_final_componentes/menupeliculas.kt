@@ -41,13 +41,8 @@ class menupeliculas : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        // Se busca el contenedor de Compose por su ID
         val composeView = findViewById<ComposeView>(R.id.render)
-
-
         composeView.setContent {
-
             MaterialTheme {
                 Menupeliculasrender()
             }
@@ -133,7 +128,7 @@ fun Menupeliculasrender(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFF141414))      // ajusta fondo si quieres
+            .background(Color(0xFF141414))
             .verticalScroll(rememberScrollState())
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)

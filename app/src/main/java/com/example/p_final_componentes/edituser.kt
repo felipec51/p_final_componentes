@@ -49,12 +49,8 @@ import com.android.volley.toolbox.Volley
 import org.json.JSONObject
 import java.util.HashMap
 
-// Nota: La clase Usuario.java es usada directamente, no necesitamos redefinirla.
-
 class edituser : AppCompatActivity() {
 
-    // 1. CONFIGURACIÓN DE URLS Y VOLLEY
-    // ¡RECUERDA AJUSTAR ESTA IP A LA DE TU SERVIDOR LOCAL!
     private val URL_BASE = "http://192.168.20.35/androidComponentes/"
     private val URL_ACTUALIZAR_USUARIO = URL_BASE + "editar_usuario.php"
 

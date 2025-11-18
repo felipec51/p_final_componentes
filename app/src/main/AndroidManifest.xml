@@ -30,7 +30,7 @@
             android:name=".RecuperarContrasena"
             android:exported="false" />
         <activity
-            android:name=".Catalogoadmin"
+            android:name=".Administrador"
             android:exported="false" />
         <activity
             android:name=".addpeli"

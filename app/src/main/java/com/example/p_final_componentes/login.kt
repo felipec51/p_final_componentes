@@ -37,12 +37,8 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import java.util.Hashtable
 
-
 class login : AppCompatActivity() {
-
-    // 1. URL del servidor
     private val URL_LOGIN = "http://192.168.20.35/androidComponentes/login.php"
-
     private val isLoadingState = mutableStateOf(false)
     private val errorMessageState = mutableStateOf<String?>(null)
     private lateinit var requestQueue: RequestQueue
@@ -53,7 +49,7 @@ class login : AppCompatActivity() {
             val intent = Intent(this@login, RegistroActivityFelipe::class.java)
             startActivity(intent)
         } catch (e: Exception) {
-            Log.e("LoginActivity", "❌ ERROR al abrir RegistroActivityFelipe: ${e.message}", e)
+            Log.e("LoginActivity", " ERROR al abrir RegistroActivityFelipe: ${e.message}", e)
             Toast.makeText(this, "Error: ${e.message}. Verifique que la clase exista.", Toast.LENGTH_LONG).show()
         }
     }
@@ -64,7 +60,7 @@ class login : AppCompatActivity() {
             val intent = Intent(this@login, RecuperarContrasena::class.java)
             startActivity(intent)
         } catch (e: Exception) {
-            Log.e("LoginActivity", "❌ ERROR al abrir RecuperarContrasena: ${e.message}", e)
+            Log.e("LoginActivity", "ERROR al abrir RecuperarContrasena: ${e.message}", e)
             Toast.makeText(this, "Error: ${e.message}. Verifique que la clase exista.", Toast.LENGTH_LONG).show()
         }
     }
@@ -95,14 +91,14 @@ class login : AppCompatActivity() {
                         Toast.makeText(this, "Email o contraseña incorrecta.", Toast.LENGTH_LONG).show()
                     }
                     "1" -> { // Rol 1: Admin
-                        Log.d("LoginActivity", "✅ Login exitoso como ADMIN")
+                        Log.d("LoginActivity", " Login exitoso como ADMIN")
                         Toast.makeText(this, "Inicio de Sesión Exitoso (Admin)", Toast.LENGTH_LONG).show()
                         try {
-                            val intent = Intent(this@login, Catalogoadmin::class.java)
+                            val intent = Intent(this@login, Administrador::class.java)
                             startActivity(intent)
                             finish()
                         } catch (e: Exception) {
-                            Log.e("LoginActivity", "❌ ERROR al abrir Catalogoadmin: ${e.message}", e)
+                            Log.e("LoginActivity", " ERROR al abrir Catalogoadmin: ${e.message}", e)
                             Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
                         }
                     }
@@ -145,7 +141,6 @@ class login : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        // Asegúrate de que R.layout.activity_login exista y contenga ComposeView (R.id.render)
         setContentView(R.layout.activity_login)
 
         requestQueue = Volley.newRequestQueue(this)
@@ -178,7 +173,6 @@ class login : AppCompatActivity() {
     }
 }
 
-// Composables para la UI de Login
 @Composable
 fun Login(
     modifier: Modifier = Modifier,
@@ -248,7 +242,7 @@ fun IniciarSesionAndroid(
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // TÍTULO
+
         Text(
             text = "INICIAR SESIÓN",
             color = Color.White,
@@ -258,7 +252,6 @@ fun IniciarSesionAndroid(
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        // Campo Correo
         Text(text = "Correo electrónico", color = Color.White, modifier = Modifier.align(Alignment.Start).padding(bottom = 4.dp))
         TextField(
             value = correo,

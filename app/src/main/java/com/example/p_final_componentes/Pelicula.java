@@ -3,7 +3,6 @@ import java.io.Serializable;
 
 public class Pelicula implements Serializable {
 
-    // 1. Atributos (Campos de la tabla pelicula)
     private int id_pelicula;
     private String titulo;
     private String descripcion;
@@ -12,14 +11,13 @@ public class Pelicula implements Serializable {
     private String clasificacion;
     private String idioma;
     private String imagen_url;
-    // Opcional: private String generos; // Si decides incluirlo en la consulta PHP
     private double precio_alquiler;
     private int copias_disponibles;
     private int copias_totales;
-    private String generos_detalle; // Para la lista de géneros concatenada
+    private String generos_detalle;
     private String elenco;
     private String director_nombre;
-    // 2. Constructor Vacío
+
     private int id_trailer;
     private String  url_trailer;
     private String titulo_trailer;
@@ -110,7 +108,6 @@ public class Pelicula implements Serializable {
     public int getcopiasTotales(){
         return copias_totales;
     }
-    // 3. Getters y Setters (Añadir a la sección 4.)
     public String getGeneros_detalle() {
         return generos_detalle;
     }

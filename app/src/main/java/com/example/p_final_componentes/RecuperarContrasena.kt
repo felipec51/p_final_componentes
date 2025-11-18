@@ -115,10 +115,6 @@ class RecuperarContrasena : AppCompatActivity() {
     }
 }
 
-// =================================================================================
-// COMPOSABLE UI CORREGIDO
-// =================================================================================
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecuperacionForm(
@@ -167,7 +163,7 @@ fun RecuperacionForm(
                 modifier = Modifier.padding(bottom = 32.dp)
             )
 
-            // ----------- CAMPO USUARIO/CORREO ------------------------------------
+            //CAMPO USUARIO/CORREO
             Text("Usuario/Correo", color = Color.White, modifier = Modifier.align(Alignment.Start).padding(bottom = 4.dp))
             TextField(
                 value = usuario,
@@ -186,7 +182,7 @@ fun RecuperacionForm(
                 modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
             )
 
-            // ----------- SELECTOR DE PREGUNTA ------------------------------------
+            // SELECTOR DE PREGUNTA
             Text("Pregunta de Seguridad", color = Color.White, modifier = Modifier.align(Alignment.Start).padding(bottom = 4.dp))
             Box(
                 modifier = Modifier.fillMaxWidth()
@@ -210,8 +206,6 @@ fun RecuperacionForm(
                     modifier = Modifier.fillMaxWidth(0.85f).background(Color(0xff2a2a2a))
                 ) {
                     preguntas.forEach { pregunta ->
-                        // ❌ CORRECCIÓN: Se elimina el parámetro 'colors' problemático.
-                        // El color del texto se mantiene blanco porque ya se especificó en 'Text'.
                         DropdownMenuItem(
                             text = { Text(pregunta, color = Color.White) },
                             onClick = {
@@ -225,7 +219,7 @@ fun RecuperacionForm(
 
             Spacer(Modifier.height(16.dp))
 
-            // ----------- CAMPO RESPUESTA ------------------------------------
+            //  CAMPO RESPUESTA
             Text("Respuesta", color = Color.White, modifier = Modifier.align(Alignment.Start).padding(bottom = 4.dp))
             TextField(
                 value = respuesta,

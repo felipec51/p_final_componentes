@@ -1,25 +1,22 @@
 package com.example.p_final_componentes;
 
-// Esta es una clase POJO (Plain Old Java Object) para modelar la tabla Usuario.
 public class Usuario implements java.io.Serializable {
 
-    // 1. Atributos (Campos de la tabla Usuario)
+
     private int id;
     private String username;
     private String nombre;
-    private String password; // Aunque no se usa en la UI de la lista, es parte del modelo.
+    private String password;
     private String direccion;
     private String telefono;
     private String email;
     private String fechaCreacion;
-    private String nombreRol; // Campo extraído de la tabla 'rol'
+    private String nombreRol;
     private int rolIdRol;
 
-    // 2. Constructor Vacío (Necesario para ciertas librerías, como GSON o Jackson)
     public Usuario() {
     }
 
-    // 3. Constructor Completo (Para inicializar todos los campos)
     public Usuario(int id, String username, String nombre, String password, String direccion, String telefono, String email, String fechaCreacion, String nombreRol, int rolIdRol) {
         this.id = id;
         this.username = username;
@@ -32,8 +29,6 @@ public class Usuario implements java.io.Serializable {
         this.nombreRol = nombreRol;
         this.rolIdRol = rolIdRol;
     }
-
-    // 4. Getters y Setters
 
     public int getId() {
         return id;
@@ -115,7 +110,6 @@ public class Usuario implements java.io.Serializable {
         this.rolIdRol = rolIdRol;
     }
 
-    // Opcional: Método toString para facilitar la depuración
     @Override
     public String toString() {
         return "Usuario{" +

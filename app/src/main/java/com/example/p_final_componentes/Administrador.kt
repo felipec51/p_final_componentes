@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -35,23 +34,17 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 
 
-class Catalogoadmin : ComponentActivity() {
+class Administrador : ComponentActivity() {
     private fun navigateToAdminUser() {
         try {
-            val intent = Intent(this@Catalogoadmin, AdminUsuarios::class.java)
+            val intent = Intent(this@Administrador, AdminUsuarios::class.java)
             startActivity(intent)
         } catch (e: Exception) {
             Toast.makeText(this, "Error al navegar: ${e.message}", Toast.LENGTH_LONG).show()
@@ -60,7 +53,7 @@ class Catalogoadmin : ComponentActivity() {
     }
     private fun navigateToAdminPeli() {
         try {
-            val intent = Intent(this@Catalogoadmin, AdminPeliculas::class.java)
+            val intent = Intent(this@Administrador, AdminPeliculas::class.java)
             startActivity(intent)
         } catch (e: Exception) {
             Toast.makeText(this, "Error al navegar: ${e.message}", Toast.LENGTH_LONG).show()
@@ -69,7 +62,7 @@ class Catalogoadmin : ComponentActivity() {
     }
     private fun navigateToAddPeli() {
         try {
-            val intent = Intent(this@Catalogoadmin, addpeli::class.java)
+            val intent = Intent(this@Administrador, addpeli::class.java)
             startActivity(intent)
         } catch (e: Exception) {
             Toast.makeText(this, "Error al navegar: ${e.message}", Toast.LENGTH_LONG).show()

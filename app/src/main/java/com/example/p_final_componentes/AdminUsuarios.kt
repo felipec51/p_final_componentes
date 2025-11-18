@@ -37,13 +37,13 @@ import java.util.HashMap
 
 class AdminUsuarios : AppCompatActivity() {
 
-    // 1. CONFIGURACIÓN DE URLS
+
     private val URL_BASE = "http://192.168.20.35/androidComponentes/"
     private val URL_OBTENER_USUARIOS = URL_BASE + "obtener_usuarios.php"
     private val URL_ELIMINAR_USUARIO = URL_BASE + "eliminar_usuario.php"
 
     private lateinit var requestQueue: RequestQueue
-    // La lista ahora contiene objetos de la clase Java
+
     private val listadoUsuarios = mutableStateListOf<Usuario>()
     private val isLoading = mutableStateOf(false)
 

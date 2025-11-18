@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,16 +15,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-// 🚫 Eliminamos import androidx.compose.ui.text.input.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
@@ -34,17 +29,11 @@ import java.util.HashMap
 
 class editpeli : AppCompatActivity() {
 
-    // 1. URL DE ACTUALIZACIÓN
     private val URL_BASE = "http://192.168.20.35/androidComponentes/"
     private val URL_ACTUALIZAR_PELICULA = URL_BASE + "actualizar_pelicula.php"
-
     private lateinit var requestQueue: RequestQueue
-
-    // Almacenamos el objeto recibido para acceder a su ID y datos iniciales
     private lateinit var initialPelicula: Pelicula
     private val isLoading = mutableStateOf(false)
-
-    // Estados mutables inicializados en base al objeto Pelicula
     private val tituloState = mutableStateOf("")
     private val anioState = mutableStateOf("")
     private val ratingState = mutableStateOf("") // Mapea a 'clasificacion'
@@ -57,12 +46,12 @@ class editpeli : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // 2. RECUPERAR EL OBJETO PELICULA
+        //  RECUPERAR EL OBJETO PELICULA
         val peliculaSerializable = intent.getSerializableExtra("pelicula_data")
         if (peliculaSerializable is Pelicula) {
             initialPelicula = peliculaSerializable
 
-            // 3. INICIALIZAR LOS ESTADOS CON LOS DATOS DEL OBJETO
+            // INICIALIZAR LOS ESTADOS CON LOS DATOS DEL OBJETO
             tituloState.value = initialPelicula.titulo
             anioState.value = initialPelicula.anio_lanzamiento.toString()
             ratingState.value = initialPelicula.clasificacion
@@ -105,7 +94,6 @@ class editpeli : AppCompatActivity() {
         }
     }
 
-    // 4. FUNCIÓN PARA ACTUALIZAR PELÍCULA
     private fun updatePelicula() {
         if (tituloState.value.isBlank() || anioState.value.isBlank()) {
             Toast.makeText(this, "El título y el año son obligatorios.", Toast.LENGTH_SHORT).show()
@@ -157,11 +145,6 @@ class editpeli : AppCompatActivity() {
         requestQueue.add(stringRequest)
     }
 }
-
-
-// --------------------------------------------------------------------------------
-// COMPOSABLE UI
-// --------------------------------------------------------------------------------
 
 @Composable
 fun FormAeditarPelicula(
@@ -225,7 +208,6 @@ fun FormAeditarPelicula(
 
                     OutlinedTextFieldWithLabel("Título", titulo, onTituloChange)
 
-                    // Fila de Año y Rating
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
@@ -235,7 +217,6 @@ fun FormAeditarPelicula(
                             value = anio,
                             onValueChange = onAnioChange,
                             modifier = Modifier.weight(1f).padding(end = 8.dp),
-                            // El KeyboardType.Number se mantiene para referencia visual/lógica si se desea.
                             keyboardType = KeyboardType.Number
                         )
                         OutlinedTextFieldWithLabel(
@@ -246,7 +227,6 @@ fun FormAeditarPelicula(
                         )
                     }
 
-                    // Fila de Idioma y Duración
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
@@ -266,7 +246,6 @@ fun FormAeditarPelicula(
                         )
                     }
 
-                    // Descripción (Usa un TextField multilínea para mejor UX)
                     OutlinedTextFieldWithLabel(
                         label = "Descripción",
                         value = descripcion,
@@ -305,14 +284,12 @@ fun FormAeditarPelicula(
     }
 }
 
-// Componente reutilizable para el TextField
 @Composable
 fun OutlinedTextFieldWithLabel(
     label: String,
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    // Eliminamos KeyboardType como parámetro si no lo vamos a usar
     keyboardType: KeyboardType = KeyboardType.Text,
     singleLine: Boolean = true,
     maxLines: Int = 1
@@ -327,7 +304,6 @@ fun OutlinedTextFieldWithLabel(
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
-            // 🚫 Eliminamos la propiedad keyboardOptions
             singleLine = singleLine,
             maxLines = maxLines,
             colors = TextFieldDefaults.colors(
@@ -348,9 +324,6 @@ fun OutlinedTextFieldWithLabel(
     }
 }
 
-// --------------------------------------------------------------------------------
-// 🖼️ PREVIEW (Se mantiene)
-// --------------------------------------------------------------------------------
 @Preview(showBackground = true)
 @Composable
 private fun PreviewEditPelicula() {

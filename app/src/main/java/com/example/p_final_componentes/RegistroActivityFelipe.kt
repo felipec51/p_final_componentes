@@ -53,7 +53,6 @@ class RegistroActivityFelipe : AppCompatActivity() {
     private val errorMessageState = mutableStateOf<String?>(null)
     private lateinit var requestQueue: RequestQueue
 
-    // Función que implementa la lógica de Volley para el registro
     private fun attemptRegister(
         username: String,
         password: String,
@@ -80,7 +79,7 @@ class RegistroActivityFelipe : AppCompatActivity() {
                     val message = jsonResponse.getString("message")
 
                     if (success) {
-                        Toast.makeText(this, "✅ Registro exitoso. Ahora inicia sesión.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, " Registro exitoso. Ahora inicia sesión.", Toast.LENGTH_LONG).show()
                         // Navegar de vuelta a la pantalla de Login
                         val intent = Intent(this@RegistroActivityFelipe, login::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
@@ -88,7 +87,7 @@ class RegistroActivityFelipe : AppCompatActivity() {
                         finish()
                     } else {
                         errorMessageState.value = message
-                        Toast.makeText(this, "❌ Error al registrar: $message", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, " Error al registrar: $message", Toast.LENGTH_LONG).show()
                     }
                 } catch (e: Exception) {
                     val errorMsg = "Error de parseo JSON o respuesta inesperada: $response"
@@ -97,7 +96,6 @@ class RegistroActivityFelipe : AppCompatActivity() {
                     Log.e("RegistroActivity", "Error de parseo: ${e.message}", e)
                 }
             },
-            // Listener de Error (Error de conexión, timeout, etc.)
             Response.ErrorListener { volleyError ->
                 isLoadingState.value = false
                 val errorMsg = "Error de red: ${volleyError.message ?: "Verifique la conexión Wi-Fi y la IP."}"
@@ -106,7 +104,6 @@ class RegistroActivityFelipe : AppCompatActivity() {
                 Log.e("RegistroActivity", "Error Volley: ${volleyError.message}")
             }
         ) {
-            // Envío de parámetros POST
             @Throws(AuthFailureError::class)
             override fun getParams(): Map<String, String> {
                 val parametros: MutableMap<String, String> = Hashtable()
@@ -158,7 +155,6 @@ class RegistroActivityFelipe : AppCompatActivity() {
     }
 }
 
-// 3. ** Composable de la Pantalla de Registro **
 @Composable
 fun RegisterScreen(
     modifier: Modifier = Modifier,
@@ -196,16 +192,14 @@ fun RegisterScreen(
         }
     }
 
-    // 💡 Estado de Scroll
     val scrollState = rememberScrollState()
 
-    // Fondo y estructura
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(Color.Black.copy(alpha = 0.54f))
     ) {
-        //
+
         Image(
             painter = painterResource(id = R.drawable.fondo),
             contentDescription = "Fondo",
@@ -213,9 +207,8 @@ fun RegisterScreen(
             modifier = Modifier.fillMaxSize()
         )
 
-        // Centramos el formulario de registro en la pantalla
         Column(
-            // 💡 AÑADIMOS EL MODIFICADOR DE SCROLL A LA COLUMNA
+
             modifier = Modifier
                 .align(Alignment.Center)
                 .fillMaxWidth(0.9f)
@@ -235,7 +228,6 @@ fun RegisterScreen(
                 modifier = Modifier.padding(bottom = 24.dp)
             )
 
-            // ---------- CAMPOS DEL FORMULARIO ----------
 
             // Nombre Completo
             InputField(
@@ -282,11 +274,7 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // -----------------------------------------------------------------
-            // CAMPOS DE SEGURIDAD
-            // -----------------------------------------------------------------
-
-            // SELECTOR DE PREGUNTA
+            //  PREGUNTA
             Text("Pregunta de Seguridad", color = Color.White, modifier = Modifier.align(Alignment.Start).padding(bottom = 4.dp))
             Box(
                 modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
@@ -321,20 +309,16 @@ fun RegisterScreen(
                 }
             }
 
-            // CAMPO RESPUESTA
             InputField(
                 label = "Respuesta de Seguridad",
                 value = respuestaSeguridad,
                 onValueChange = { onClearError(); respuestaSeguridad = it }
             )
-            // -----------------------------------------------------------------
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // ----------- BOTÓN REGISTRARSE ------------------------
             Button(
                 onClick = {
-                    // Se pasan los nuevos campos de seguridad
                     onRegister(
                         username,
                         password,
@@ -390,7 +374,6 @@ fun RegisterScreen(
     }
 }
 
-// 4. Componente de Campo de Entrada Reutilizable (Se mantiene igual)
 @Composable
 fun InputField(
     label: String,
