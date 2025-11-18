@@ -1,9 +1,12 @@
 <?php
+// Asegúrate de que no haya NADA antes de esta etiqueta.
+
 function Conectar(){
+    // 1. Configuración de la conexión (AJUSTA ESTOS VALORES)
     $host="localhost";
     $user="root";
-    $pass="2005Fe123";
-    $dbname="mydb";
+    $pass="2005Fe123"; // Tus datos reales
+    $dbname="mydb"; // Tu BD real
     
     // Conecta y selecciona la BD en un solo paso
     $link = mysqli_connect($host, $user, $pass, $dbname);
@@ -13,7 +16,7 @@ function Conectar(){
         die("ERROR DE CONEXIÓN A MYSQL: " . mysqli_connect_error());
     }
     
+    // Configurar el set de caracteres a UTF8
     mysqli_set_charset($link, "utf8"); 
     return $link;
 }
-?>
