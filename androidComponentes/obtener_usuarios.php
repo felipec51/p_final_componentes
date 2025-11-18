@@ -1,13 +1,9 @@
 <?php
 // obtener_usuarios.php - Versión de carga corregida
 
-// Incluir el archivo de conexión.
 require_once 'conexion.php'; 
 
-// NO incluimos ninguna verificación estricta de $_SERVER['REQUEST_METHOD']
-// para evitar el error "Método no permitido".
 
-// Conectar a la base de datos
 $link = Conectar();
 
 if (!$link) {
@@ -37,7 +33,7 @@ $sql = "SELECT
 // Ejecutar la consulta
 $resultado = mysqli_query($link, $sql);
 
-// Verificar si se encontraron resultados
+
 if ($resultado) {
     $usuarios = array();
     
@@ -47,10 +43,8 @@ if ($resultado) {
         $usuarios[] = $fila;
     }
 
-    // Liberar el conjunto de resultados
     mysqli_free_result($resultado);
 
-    // Éxito: devolver el array de usuarios
     header('Content-Type: application/json');
     echo json_encode(['success' => true, 'usuarios' => $usuarios]);
 } else {
@@ -59,7 +53,6 @@ if ($resultado) {
     echo json_encode(['success' => false, 'message' => 'Error al consultar usuarios: ' . mysqli_error($link)]);
 }
 
-// Cerrar la conexión
 mysqli_close($link);
 
 ?>

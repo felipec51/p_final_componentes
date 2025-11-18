@@ -1,8 +1,8 @@
 <?php
-// Asegúrate de que no haya NADA antes de esta etiqueta.
+
 
 function Conectar(){
-    // 1. Configuración de la conexión (AJUSTA ESTOS VALORES)
+
     $host="localhost";
     $user="root";
     $pass="2005Fe123"; // Tus datos reales

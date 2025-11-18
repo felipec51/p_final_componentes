@@ -23,8 +23,6 @@ if (!isset($_POST['id_pelicula'])) {
 
 $id_pelicula = (int)$_POST['id_pelicula'];
 
-// 🔑 CONSULTA SQL CORREGIDA: Se han movido las columnas p.titulo, p.descripcion, etc., al GROUP BY.
-// También se eliminaron los comentarios estilo C (//) de la consulta, ya que pueden causar problemas en algunos drivers.
 $sql = "SELECT 
             p.id_pelicula, 
             p.titulo, 
@@ -57,7 +55,6 @@ $sql = "SELECT
         
         WHERE p.id_pelicula = ?
         
-        -- CLÁUSULA GROUP BY CORREGIDA: Incluye todas las columnas no agregadas
         GROUP BY 
             p.id_pelicula, p.titulo, p.descripcion, p.anio, p.duracion_min, 
             p.calificacion, p.idioma, p.poster_path, p.precio_alquiler, 
@@ -79,7 +76,6 @@ $result = mysqli_stmt_get_result($stmt);
 if (mysqli_num_rows($result) === 1) {
     $pelicula = mysqli_fetch_assoc($result);
 
-    // Casting a entero y doble para asegurar los tipos en el JSON
     $pelicula['id_pelicula'] = (int)$pelicula['id_pelicula'];
     $pelicula['anio_lanzamiento'] = (int)$pelicula['anio_lanzamiento'];
     $pelicula['duracion'] = (int)$pelicula['duracion'];

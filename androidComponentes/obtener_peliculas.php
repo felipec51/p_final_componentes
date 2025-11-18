@@ -1,10 +1,9 @@
 <?php
 // obtener_peliculas.php
 
-// Incluir el archivo de conexión (asegúrate de que esta ruta sea correcta)
 require_once 'conexion.php'; 
 
-// Conectar a la base de datos
+
 $link = Conectar();
 
 if (!$link) {
@@ -13,8 +12,6 @@ if (!$link) {
     exit;
 }
 
-// Consulta SQL. Se selecciona SÓLO de la tabla 'pelicula'.
-// Si la tabla tiene 10 filas, esta consulta SÓLO devolverá 10.
 $sql = "SELECT 
             p.id_pelicula,
             p.titulo,
@@ -55,11 +52,9 @@ if ($resultado) {
     mysqli_free_result($resultado);
     mysqli_close($link);
 
-    // Éxito: devolver el array de películas en formato JSON
     header('Content-Type: application/json');
     echo json_encode(['success' => true, 'peliculas' => $peliculas]);
 } else {
-    // Error en la consulta SQL
     header('Content-Type: application/json');
     http_response_code(500); 
     echo json_encode(['success' => false, 'message' => 'Error al consultar películas: ' . mysqli_error($link)]);

@@ -7,7 +7,7 @@ $link = Conectar();
 
 header('Content-Type: application/json');
 
-// 1. Verificación inicial y sanitización
+//  Verificación inicial y sanitización
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['id_pelicula']) || empty($_POST['id_pelicula'])) {
     $message = ($_SERVER['REQUEST_METHOD'] !== 'POST') ? 'Método no permitido. Use POST.' : 'Falta el parámetro id_pelicula.';
     echo json_encode(['success' => false, 'message' => $message]);
@@ -17,16 +17,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['id_pelicula']) || em
 
 $id_pelicula = mysqli_real_escape_string($link, $_POST['id_pelicula']);
 
-// 2. Iniciar Transacción
+
 mysqli_begin_transaction($link);
 $success = true;
 $message = 'Película y todos los datos relacionados (cintas, préstamos, etc.) eliminados correctamente.';
 
 try {
-    
-    // 3. ELIMINAR REGISTROS DEPENDIENTES EN ORDEN INVERSO DE DEPENDENCIA
 
-    // PASO CRUCIAL 1: Obtener todos los IDs de cinta de esta película
     $cinta_ids_query = "SELECT id_cinta FROM cinta WHERE pelicula_id_pelicula = '$id_pelicula'";
     $cinta_result = mysqli_query($link, $cinta_ids_query);
     
@@ -45,34 +42,30 @@ try {
             throw new Exception("Error al eliminar préstamos: " . mysqli_error($link));
         }
 
-        // PASO CRUCIAL 3: Eliminar las cintas (copias) de la película
+
         $sql_cintas = "DELETE FROM cinta WHERE pelicula_id_pelicula = '$id_pelicula'";
         if (!mysqli_query($link, $sql_cintas)) {
             throw new Exception("Error al eliminar cintas: " . mysqli_error($link));
         }
     }
     
-    // 4. ELIMINAR OTRAS RELACIONES (que dependen solo de pelicula)
 
-    // a) Eliminar relaciones con actores
     $sql_actores = "DELETE FROM pelicula_actor WHERE pelicula_id_pelicula = '$id_pelicula'";
     if (!mysqli_query($link, $sql_actores)) {
         throw new Exception("Error al eliminar actores relacionados: " . mysqli_error($link));
     }
 
-    // b) Eliminar relaciones con géneros
+
     $sql_generos = "DELETE FROM pelicula_genero WHERE pelicula_id_pelicula = '$id_pelicula'";
     if (!mysqli_query($link, $sql_generos)) {
         throw new Exception("Error al eliminar géneros relacionados: " . mysqli_error($link));
     }
 
-    // c) Eliminar tráileres
     $sql_traileres = "DELETE FROM traileres WHERE pelicula_id_pelicula = '$id_pelicula'";
     if (!mysqli_query($link, $sql_traileres)) {
         throw new Exception("Error al eliminar tráileres: " . mysqli_error($link));
     }
 
-    // 5. ELIMINAR LA PELÍCULA PRINCIPAL
     $sql_pelicula = "DELETE FROM pelicula WHERE id_pelicula = '$id_pelicula'";
     
     if (mysqli_query($link, $sql_pelicula)) {
@@ -97,9 +90,7 @@ try {
     error_log("Error de eliminación de película: " . $e->getMessage()); 
 }
 
-// 7. Enviar respuesta JSON
 echo json_encode(['success' => $success, 'message' => $message]);
 
-// 8. Cerrar conexión
 mysqli_close($link);
 ?>

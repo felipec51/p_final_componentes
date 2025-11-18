@@ -11,7 +11,7 @@ if (!$link) {
     exit;
 }
 
-// 1. Validar campos necesarios
+// Validar campos necesarios
 if (
     !isset($_POST['id_pelicula']) || 
     !isset($_POST['titulo']) || 
@@ -28,7 +28,6 @@ if (
     exit;
 }
 
-// 2. Sanitizar y obtener datos
 $id_pelicula = mysqli_real_escape_string($link, $_POST['id_pelicula']);
 $titulo = mysqli_real_escape_string($link, $_POST['titulo']);
 $anio = mysqli_real_escape_string($link, $_POST['anio']);
@@ -38,7 +37,7 @@ $descripcion = mysqli_real_escape_string($link, $_POST['descripcion']);
 $duracion_min = mysqli_real_escape_string($link, $_POST['duracion_min']);
 $poster_path = mysqli_real_escape_string($link, $_POST['poster_path']);
 
-// 3. Consulta SQL de ACTUALIZACIÓN (incluyendo duracion_min y descripcion)
+//  Consulta SQL de ACTUALIZACIÓN (incluyendo duracion_min y descripcion)
 $sql = "UPDATE pelicula SET 
             titulo = '$titulo',
             descripcion = '$descripcion',

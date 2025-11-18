@@ -26,15 +26,14 @@ if (!$link) {
     exit;
 }
 
-// Iniciar una transacción
+
 mysqli_begin_transaction($link); 
 $id_usuario = mysqli_real_escape_string($link, $_POST['id_usuario']);
 $error_found = false;
 $error_message = '';
 
-// 3. Limpiar registros relacionados (Claves Foráneas)
 $sqls_delete_related = [
-    // Tablas que referencian a Usuario: gusta_director, gusto_actor, gusto_genero, lista_espera, prestamo
+
     "DELETE FROM gusta_director WHERE Usuario_id_usuario = '$id_usuario'",
     "DELETE FROM gusto_actor WHERE Usuario_id_usuario = '$id_usuario'",
     "DELETE FROM gusto_genero WHERE Usuario_id_usuario = '$id_usuario'",
@@ -47,12 +46,12 @@ foreach ($sqls_delete_related as $sql_related) {
     if (!mysqli_query($link, $sql_related)) {
         $error_found = true;
         // Capturamos el error específico de MySQL
-        $error_message = "❌ Error al limpiar: " . mysqli_error($link);
+        $error_message = "Error al limpiar: " . mysqli_error($link);
         break; 
     }
 }
 
-// 4. Intentar eliminar el usuario principal
+// Intentar eliminar el usuario principal
 if (!$error_found) {
     $sql_delete_user = "DELETE FROM Usuario WHERE id_usuario = '$id_usuario'";
 
@@ -61,7 +60,7 @@ if (!$error_found) {
             // Éxito total: confirmar la transacción
             mysqli_commit($link);
             $response['success'] = true;
-            $response['message'] = '✅ Usuario eliminado correctamente.';
+            $response['message'] = 'Usuario eliminado correctamente.';
         } else {
             // Usuario no encontrado: deshacer la limpieza (si se hizo)
             mysqli_rollback($link); 
@@ -72,16 +71,15 @@ if (!$error_found) {
         // Error al eliminar el usuario: deshacer todo
         mysqli_rollback($link); 
         $response['success'] = false;
-        $response['message'] = '❌ Error al eliminar el usuario: ' . mysqli_error($link);
+        $response['message'] = 'Error al eliminar el usuario: ' . mysqli_error($link);
     }
 } else {
-    // Error durante la limpieza: deshacer todo
+
     mysqli_rollback($link); 
     $response['success'] = false;
     $response['message'] = $error_message; 
 }
 
-// 5. Cerrar la conexión y devolver la respuesta
 mysqli_close($link);
 header('Content-Type: application/json');
 echo json_encode($response);
