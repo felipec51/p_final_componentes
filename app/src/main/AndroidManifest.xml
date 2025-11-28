@@ -17,6 +17,10 @@
         android:theme="@style/Theme.P_Final_Componentes"
         android:usesCleartextTraffic="true">
 
+
+        <activity
+            android:name=".Rentar"
+            android:exported="false" />
         <activity
             android:name=".edituser"
             android:exported="false" />
@@ -36,7 +40,7 @@
             android:name=".addpeli"
             android:exported="false" />
         <activity
-            android:name=".comprar"
+            android:name=".Comprar"
             android:exported="false" />
         <activity
             android:name=".menupeliculas"

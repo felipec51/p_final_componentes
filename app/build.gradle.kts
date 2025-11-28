@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.volley)
     implementation(libs.androidx.games.activity)
     implementation(libs.androidx.foundation)
+    implementation(libs.foundation)
 
     // --- BOM de COMPOSE ---
     val composeBom = platform("androidx.compose:compose-bom:2024.06.00")
@@ -82,7 +83,7 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     implementation("com.android.volley:volley:1.2.1")
-
+    implementation("com.google.code.gson:gson:2.10.1")
 
 
     testImplementation(libs.junit)

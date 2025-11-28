@@ -58,7 +58,7 @@ fun Catalogopeli(modifier: Modifier = Modifier) {
 
 
     val navigateToComprar: (Int) -> Unit = { movieId ->
-        val intent = Intent(context, comprar::class.java)
+        val intent = Intent(context, Comprar::class.java)
         intent.putExtra("MOVIE_ID", movieId)
         context.startActivity(intent)
     }

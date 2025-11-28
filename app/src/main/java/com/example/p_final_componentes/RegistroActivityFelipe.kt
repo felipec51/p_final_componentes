@@ -43,10 +43,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 
 
-// 1. ** Activity Principal de Registro **
 class RegistroActivityFelipe : AppCompatActivity() {
 
-    // 2. URL del servidor para el registro
+
     private val URL_REGISTRO = "http://192.168.20.35/androidComponentes/registro.php"
 
     private val isLoadingState = mutableStateOf(false)

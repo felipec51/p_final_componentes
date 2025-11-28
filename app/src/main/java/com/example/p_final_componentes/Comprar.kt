@@ -1,38 +1,38 @@
 package com.example.p_final_componentes
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.ui.platform.ComposeView
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.Text
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.compose.material3.Surface
-import androidx.compose.ui.layout.ContentScale
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import coil.compose.AsyncImage
 import com.android.volley.AuthFailureError
 import com.android.volley.RequestQueue
 import com.android.volley.Response
@@ -41,10 +41,12 @@ import com.android.volley.toolbox.Volley
 import org.json.JSONObject
 import java.util.Hashtable
 import java.util.Locale
-import coil.compose.AsyncImage
 
-class comprar : AppCompatActivity() {
-    private val URL_DETALLE_PELICULA = "http://192.168.20.35/androidComponentes/obtener_detalle_pelicula.php"
+class Comprar : AppCompatActivity() {
+
+    private val URL_DETALLE_PELICULA =
+        "http://192.168.20.35/androidComponentes/obtener_detalle_pelicula.php"
+
     private lateinit var requestQueue: RequestQueue
     private var peliculaState by mutableStateOf(Pelicula())
     private val isLoadingState = mutableStateOf(true)
@@ -53,10 +55,19 @@ class comprar : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         requestQueue = Volley.newRequestQueue(this)
+
         val movieId = intent.getIntExtra("MOVIE_ID", 1)
-        peliculaState.setTitulo("Cargando Película ID: $movieId")
-        peliculaState.setId_pelicula(movieId)
+        val userId = intent.getIntExtra("USER_ID", 1)
+        val userName = intent.getStringExtra("USER_NAME") ?: "Usuario"
+
+        // Estado inicial
+        peliculaState = Pelicula().apply {
+            setTitulo("Cargando Película ID: $movieId")
+            setId_pelicula(movieId)
+        }
+
         fetchPeliculaDetails(movieId)
+
         setContentView(R.layout.activity_comprar)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -68,13 +79,21 @@ class comprar : AppCompatActivity() {
         val composeView = findViewById<ComposeView>(R.id.render)
         composeView.setContent {
             MaterialTheme {
-                Compra(
-                    pelicula = peliculaState,
-                    isLoading = isLoadingState.value
-                )
+                // Se agrega un Box para que el fondo sea consistente
+                // y se añade padding para bajar todo el contenido.
+                Column(modifier = Modifier.fillMaxSize().padding(top = 50.dp).background(color = Color(0xff1a1a1a))) {
+                    Compra(
+                        pelicula = peliculaState,
+                        isLoading = isLoadingState.value,
+                        userId = userId,
+                        userName = userName,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
             }
         }
     }
+
 
     private fun fetchPeliculaDetails(movieId: Int) {
         isLoadingState.value = true
@@ -85,32 +104,28 @@ class comprar : AppCompatActivity() {
             Response.Listener { response ->
                 isLoadingState.value = false
                 Log.d("ComprarActivity", "Respuesta PHP Detalle: $response")
-
                 try {
                     val jsonResponse = JSONObject(response)
                     val success = jsonResponse.getBoolean("success")
 
                     if (success) {
                         val peliculaJson = jsonResponse.getJSONObject("pelicula")
-                        val nuevaPelicula = Pelicula()
-
-                        // Asignar todos los campos
-                        nuevaPelicula.setId_pelicula(peliculaJson.getInt("id_pelicula"))
-                        nuevaPelicula.setTitulo(peliculaJson.getString("titulo"))
-                        nuevaPelicula.setDescripcion(peliculaJson.getString("descripcion"))
-                        nuevaPelicula.setAnio_lanzamiento(peliculaJson.getInt("anio_lanzamiento"))
-                        nuevaPelicula.setDuracion(peliculaJson.getInt("duracion"))
-                        nuevaPelicula.setClasificacion(peliculaJson.getString("clasificacion"))
-                        nuevaPelicula.setIdioma(peliculaJson.getString("idioma"))
-                        nuevaPelicula.setImagen_url(peliculaJson.getString("imagen_url"))
-                        nuevaPelicula.setPrecio_alquiler(peliculaJson.getDouble("precio_alquiler"))
-                        nuevaPelicula.setCopias_disponibles(peliculaJson.getInt("copias_disponibles"))
-                        nuevaPelicula.setcopiasTotales(peliculaJson.getInt("copias_totales"))
-                        nuevaPelicula.setGeneros_detalle(peliculaJson.optString("generos_detalle", "Géneros no especificados"))
-                        nuevaPelicula.setElenco(peliculaJson.optString("elenco", "Elenco no disponible"))
-                        nuevaPelicula.setElenco(peliculaJson.optString("elenco", "Elenco no disponible"))
-                        nuevaPelicula.setDirector_nombre(peliculaJson.optString("director_nombre", "Director no disponible")) // 🚨 NUEVA LÍNEA AÑADIDA
-
+                        val nuevaPelicula = Pelicula().apply {
+                            setId_pelicula(peliculaJson.getInt("id_pelicula"))
+                            setTitulo(peliculaJson.getString("titulo"))
+                            setDescripcion(peliculaJson.getString("descripcion"))
+                            setAnio_lanzamiento(peliculaJson.getInt("anio_lanzamiento"))
+                            setDuracion(peliculaJson.getInt("duracion"))
+                            setClasificacion(peliculaJson.getString("clasificacion"))
+                            setIdioma(peliculaJson.getString("idioma"))
+                            setImagen_url(peliculaJson.getString("imagen_url"))
+                            setPrecio_alquiler(peliculaJson.getDouble("precio_alquiler"))
+                            setCopias_disponibles(peliculaJson.getInt("copias_disponibles"))
+                            setcopiasTotales(peliculaJson.getInt("copias_totales"))
+                            setGeneros_detalle(peliculaJson.optString("generos_detalle", "Géneros no especificados"))
+                            setElenco(peliculaJson.optString("elenco", "Elenco no disponible"))
+                            setDirector_nombre(peliculaJson.optString("director_nombre", "Director no disponible"))
+                        }
                         peliculaState = nuevaPelicula
                     } else {
                         val message = jsonResponse.getString("message")
@@ -144,7 +159,15 @@ class comprar : AppCompatActivity() {
 }
 
 @Composable
-fun Compra(pelicula: Pelicula, isLoading: Boolean, modifier: Modifier = Modifier) {
+fun Compra(
+    pelicula: Pelicula,
+    isLoading: Boolean,
+    userId: Int,
+    userName: String,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -160,6 +183,7 @@ fun Compra(pelicula: Pelicula, isLoading: Boolean, modifier: Modifier = Modifier
                 .offset(x = 9.99.dp, y = 7.5.dp)
                 .requiredWidth(width = 204.dp)
         )
+
         Row(
             horizontalArrangement = Arrangement.spacedBy(15.99.dp, Alignment.Start),
             verticalAlignment = Alignment.CenterVertically,
@@ -184,7 +208,6 @@ fun Compra(pelicula: Pelicula, isLoading: Boolean, modifier: Modifier = Modifier
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 50.dp)
                 .background(color = Color(0xff1a1a1a))
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -224,7 +247,7 @@ fun Compra(pelicula: Pelicula, isLoading: Boolean, modifier: Modifier = Modifier
                         text = pelicula.getTitulo() ?: "N/A",
                         color = Color.White,
                         lineHeight = 1.2.em,
-                        style = TextStyle(fontSize = 30.sp),
+                        style = TextStyle(fontSize = 30.sp, fontWeight = FontWeight.Bold),
                         modifier = Modifier.padding(top = 10.dp)
                     )
                     Row(
@@ -249,21 +272,35 @@ fun Compra(pelicula: Pelicula, isLoading: Boolean, modifier: Modifier = Modifier
                             style = TextStyle(fontSize = 14.sp)
                         )
                     }
-                    
-                    Snackbar(
-                        containerColor = Color(0xffe7000b),
-                        contentColor = Color.White,
+
+                    Button(
+                        onClick = {
+                            try {
+                                val intent = Intent(context, Rentar::class.java)
+                                intent.putExtra("PELICULA_OBJ", pelicula)
+                                intent.putExtra("USER_ID", userId)
+                                intent.putExtra("USER_NAME", userName)
+                                context.startActivity(intent)
+                            } catch (e: Exception) {
+                                Toast.makeText(context, "Error al navegar: ${e.message}", Toast.LENGTH_SHORT).show()
+                                Log.e("Comprar", "Error navigation", e)
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xffe7000b)
+                        ),
                         shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 10.dp)
                     ) {
                         Text(
                             text = "Rentar por \$${String.format(Locale.US, "%.2f", pelicula.getPrecio_alquiler())}",
                             color = Color.White,
-                            style = TextStyle(fontSize = 18.sp),
-                            modifier = Modifier.fillMaxWidth()
+                            style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
+                            modifier = Modifier.padding(vertical = 4.dp)
                         )
                     }
-
                     NumeroDeCopias(
                         disponibles = pelicula.getCopias_disponibles(),
                         totalCopias = pelicula.getcopiasTotales(),
@@ -273,7 +310,6 @@ fun Compra(pelicula: Pelicula, isLoading: Boolean, modifier: Modifier = Modifier
                             .align(Alignment.Start)
                     )
                 }
-
                 MasInformacionDetalle(
                     pelicula = pelicula,
                     modifier = Modifier.fillMaxWidth()
@@ -290,7 +326,9 @@ fun NumeroDeCopias(disponibles: Int, totalCopias: Int, modifier: Modifier = Modi
         shape = RoundedCornerShape(16.dp),
         color = Color.White.copy(alpha = 0.15f),
         border = BorderStroke(0.841.dp, Color.White.copy(alpha = 0.2f)),
-        modifier = modifier.clip(shape = RoundedCornerShape(16.dp)).height(67.dp)
+        modifier = modifier
+            .clip(shape = RoundedCornerShape(16.dp))
+            .height(67.dp)
     ) {
         Row(
             modifier = Modifier
@@ -350,7 +388,8 @@ fun NumeroDeCopias(disponibles: Int, totalCopias: Int, modifier: Modifier = Modi
     }
 }
 
-@Preview(widthDp = 393, heightDp = 803)
+
+@Preview(widthDp = 393, heightDp = 1503)
 @Composable
 private fun CompraPreview() {
     val mockPelicula = Pelicula().apply {
@@ -361,13 +400,13 @@ private fun CompraPreview() {
         setDuracion(102)
         setClasificacion("R")
         setIdioma("EN")
-        setImagen_url("https://github.com/felipec51/ProyectoFinalWEB/blob/main/imgs/thecrow.webp?raw=true")
+        setImagen_url("https://via.placeholder.com/150")
         setPrecio_alquiler(19.99)
         setCopias_disponibles(3)
         setcopiasTotales(10)
-        setGeneros_detalle("Acción, Fantasía Oscura, Thriller, Drama, Crimen, Culto")
-        setElenco("Brandon Lee, Rochelle Davis, Ernie Hudson, Michael Wincott")
+        setGeneros_detalle("Acción")
+        setElenco("Brandon Lee")
     }
 
-    Compra(pelicula = mockPelicula, isLoading = false)
+    Compra(pelicula = mockPelicula, isLoading = false, userId = 1, userName = "Test User")
 }

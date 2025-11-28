@@ -36,6 +36,7 @@ import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import java.util.Hashtable
+import org.json.JSONObject
 
 class login : AppCompatActivity() {
     private val URL_LOGIN = "http://192.168.20.35/androidComponentes/login.php"
@@ -68,70 +69,78 @@ class login : AppCompatActivity() {
     private fun attemptLogin(email: String, password: String) {
         if (email.isBlank() || password.isBlank()) {
             errorMessageState.value = "Debe ingresar email y contraseña."
-            Toast.makeText(this, "Debe llenar ambos campos.", Toast.LENGTH_LONG).show()
             return
         }
 
         isLoadingState.value = true
         errorMessageState.value = null
 
-        val stringRequest: StringRequest = object : StringRequest(
+        val stringRequest = object : StringRequest(
             Method.POST, URL_LOGIN,
             Response.Listener { response ->
                 isLoadingState.value = false
-                val res = response.trim()
+                Log.d("LOGIN", "Respuesta: $response")
 
-                when (res) {
-                    "ERROR 1" -> {
-                        errorMessageState.value = "Faltan campos (email/contraseña)."
-                        Toast.makeText(this, "Debe llenar ambos campos.", Toast.LENGTH_LONG).show()
-                    }
-                    "ERROR 2" -> {
-                        errorMessageState.value = "Email o contraseña incorrecta."
-                        Toast.makeText(this, "Email o contraseña incorrecta.", Toast.LENGTH_LONG).show()
-                    }
-                    "1" -> { // Rol 1: Admin
-                        Log.d("LoginActivity", " Login exitoso como ADMIN")
-                        Toast.makeText(this, "Inicio de Sesión Exitoso (Admin)", Toast.LENGTH_LONG).show()
-                        try {
+                try {
+                    // 1. Convertimos la respuesta a JSON
+                    val json = JSONObject(response)
+                    val success = json.optBoolean("success")
+
+                    if (success) {
+                        // 2. Extraemos los datos del usuario del JSON
+                        val userJson = json.getJSONObject("usuario")
+                        val rol = json.getString("rol")
+
+                        // 3. Creamos el objeto Usuario de Java
+                        // Asegúrate de que el constructor de Usuario.java coincida o usa setters
+                        val usuarioLogueado = Usuario()
+                        usuarioLogueado.id = userJson.getInt("id")
+                        usuarioLogueado.username = userJson.getString("username")
+                        usuarioLogueado.nombre = userJson.getString("nombre")
+                        usuarioLogueado.email = userJson.getString("email")
+                        usuarioLogueado.rolIdRol = userJson.getInt("rolIdRol")
+                        // Puedes setear el resto de campos si los necesitas (direccion, telefono)
+
+                        // 4. GUARDAMOS EN LA SESIÓN GLOBAL
+                        Sesion.usuarioActual = usuarioLogueado
+
+                        Toast.makeText(this, "Bienvenido ${usuarioLogueado.nombre}", Toast.LENGTH_SHORT).show()
+
+                        // 5. Navegación basada en Rol
+                        if (rol == "1") {
                             val intent = Intent(this@login, Administrador::class.java)
                             startActivity(intent)
                             finish()
-                        } catch (e: Exception) {
-                            Log.e("LoginActivity", " ERROR al abrir Catalogoadmin: ${e.message}", e)
-                            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
-                        }
-                    }
-                    "2" -> { // Rol 2: Usuario
-                        Toast.makeText(this, "Inicio de Sesión Exitoso (Usuario)", Toast.LENGTH_LONG).show()
-                        try {
+                        } else {
                             val intent = Intent(this@login, menupeliculas::class.java)
                             startActivity(intent)
                             finish()
-                        } catch (e: Exception) {
-                            Log.e("LoginActivity", "❌ ERROR al abrir menupeliculas: ${e.message}", e)
-                            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
                         }
+
+                    } else {
+                        val msg = json.optString("message", "Error de credenciales")
+                        errorMessageState.value = msg
+                        Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
                     }
-                    else -> {
-                        errorMessageState.value = "Respuesta inesperada: $res"
-                        Toast.makeText(this, "Respuesta inesperada del servidor: $res", Toast.LENGTH_LONG).show()
-                    }
+
+                } catch (e: Exception) {
+                    Log.e("LOGIN", "Error parsing JSON", e)
+                    // Fallback por si el PHP devuelve un error no JSON o falla el parseo
+                    errorMessageState.value = "Error en el servidor: $response"
                 }
             },
             Response.ErrorListener { volleyError ->
                 isLoadingState.value = false
-                val errorMsg = "Error de red: ${volleyError.message ?: "Verifique la conexión Wi-Fi y la IP del servidor."}"
+                val errorMsg = "Error de red: ${volleyError.message}"
                 errorMessageState.value = errorMsg
                 Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show()
             }
         ) {
-            @Throws(AuthFailureError::class)
             override fun getParams(): Map<String, String> {
-                val parametros: MutableMap<String, String> = Hashtable()
-                parametros["user"] = email
-                parametros["passw"] = password
-                return parametros
+                val params = HashMap<String, String>()
+                params["user"] = email
+                params["passw"] = password
+                return params
             }
         }
 
@@ -252,7 +261,7 @@ fun IniciarSesionAndroid(
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        Text(text = "Correo electrónico", color = Color.White, modifier = Modifier.align(Alignment.Start).padding(bottom = 4.dp))
+        Text(text = "Username o correo", color = Color.White, modifier = Modifier.align(Alignment.Start).padding(bottom = 4.dp))
         TextField(
             value = correo,
             onValueChange = onCorreoChange,

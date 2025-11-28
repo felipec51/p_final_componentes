@@ -120,7 +120,6 @@ class AdminPeliculas : AppCompatActivity() {
         requestQueue.add(stringRequest)
     }
 
-    // FUNCIÓN PARSEADORA PARA LA CLASE JAVA Pelicula
     private fun parsePeliculas(jsonArray: JSONArray): List<Pelicula> {
         val list = mutableListOf<Pelicula>()
         for (i in 0 until jsonArray.length()) {
@@ -183,9 +182,6 @@ class AdminPeliculas : AppCompatActivity() {
     }
 }
 
-// --------------------------------------------------------------------------------
-// COMPOSABLES
-// --------------------------------------------------------------------------------
 
 @Composable
 fun AdminHeaderPeliculas(modifier: Modifier = Modifier) {

@@ -70,8 +70,7 @@ class edituser : AppCompatActivity() {
         // Inicializar Volley
         requestQueue = Volley.newRequestQueue(this)
 
-        // Recuperar el objeto Usuario (Casteado a la clase Java Usuario)
-        // El Intent debe haber sido pasado desde la Activity anterior con .putExtra("usuario_data", usuarioObjeto)
+
         @Suppress("DEPRECATION")
         usuarioOriginal = intent.getSerializableExtra("usuario_data") as? Usuario
 
@@ -94,7 +93,7 @@ class edituser : AppCompatActivity() {
         }
     }
 
-    // 2. FUNCIÓN DE ACTUALIZACIÓN CON VOLLEY
+    //  FUNCIÓN DE ACTUALIZACIÓN CON VOLLEY
     private fun updateUsuario(
         id: String,
         username: String,
