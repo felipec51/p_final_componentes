@@ -20,7 +20,7 @@ $link = Conectar();
 
 if (!$link) {
     $response['success'] = false;
-    $response['message'] = '❌ Error fatal de conexión a DB: ' . mysqli_connect_error();
+    $response['message'] = ' Error fatal de conexión a DB: ' . mysqli_connect_error();
     header('Content-Type: application/json');
     echo json_encode($response);
     exit;

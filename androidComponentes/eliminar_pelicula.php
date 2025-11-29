@@ -1,13 +1,13 @@
 <?php
-// eliminar_pelicula.php
 
-// Asegúrate de que este archivo contenga la lógica de conexión (e.g., $link = Conectar();)
+
+
 require_once 'conexion.php'; 
 $link = Conectar();
 
 header('Content-Type: application/json');
 
-//  Verificación inicial y sanitización
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['id_pelicula']) || empty($_POST['id_pelicula'])) {
     $message = ($_SERVER['REQUEST_METHOD'] !== 'POST') ? 'Método no permitido. Use POST.' : 'Falta el parámetro id_pelicula.';
     echo json_encode(['success' => false, 'message' => $message]);
@@ -32,11 +32,11 @@ try {
         $cinta_ids[] = $row['id_cinta'];
     }
     
-    // Si hay cintas, construimos una lista de IDs para eliminar préstamos.
+    
     if (!empty($cinta_ids)) {
         $ids_string = implode(',', $cinta_ids);
 
-        // PASO CRUCIAL 2: Eliminar préstamos asociados a esas cintas
+        
         $sql_prestamos = "DELETE FROM prestamo WHERE cinta_id_cinta IN ($ids_string)";
         if (!mysqli_query($link, $sql_prestamos)) {
             throw new Exception("Error al eliminar préstamos: " . mysqli_error($link));
@@ -70,10 +70,10 @@ try {
     
     if (mysqli_query($link, $sql_pelicula)) {
         if (mysqli_affected_rows($link) > 0) {
-            // Commit si todo fue exitoso y se eliminó la película principal
+            
             mysqli_commit($link);
         } else {
-            // Rollback si no se encontró la película para eliminar
+            
             mysqli_rollback($link);
             $success = false;
             $message = 'No se encontró la película con el ID especificado para eliminar.';
@@ -83,7 +83,7 @@ try {
     }
 
 } catch (Exception $e) {
-    // 6. Rollback si hay algún error
+    
     mysqli_rollback($link);
     $success = false;
     $message = "Error en la eliminación. Operación revertida: " . $e->getMessage();

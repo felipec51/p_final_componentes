@@ -184,26 +184,7 @@ fun Compra(
                 .requiredWidth(width = 204.dp)
         )
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(15.99.dp, Alignment.Start),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 319.01.dp, y = 12.dp)
-                .requiredWidth(width = 58.dp)
-                .requiredHeight(height = 32.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.icon_1n),
-                contentDescription = "Icon",
-                modifier = Modifier.requiredSize(size = 20.dp)
-            )
-            Image(
-                painter = painterResource(id = R.drawable.iconn),
-                contentDescription = "Icon",
-                modifier = Modifier.requiredSize(size = 20.dp)
-            )
-        }
+
 
         Column(
             modifier = Modifier

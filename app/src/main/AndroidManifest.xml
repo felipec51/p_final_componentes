@@ -55,6 +55,9 @@
             android:name=".AdminUsuarios"
             android:exported="false" />
         <activity
+            android:name=".Notificaciones"
+            android:exported="false" />
+        <activity
             android:name=".login"
             android:exported="true">
             <intent-filter>

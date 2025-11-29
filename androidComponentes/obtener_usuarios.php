@@ -1,9 +1,7 @@
 <?php
-// obtener_usuarios.php - Versión de carga corregida
+
 
 require_once 'conexion.php'; 
-
-
 $link = Conectar();
 
 if (!$link) {
@@ -12,7 +10,6 @@ if (!$link) {
     exit;
 }
 
-// Preparar la consulta SQL para obtener los usuarios
 $sql = "SELECT 
             u.id_usuario, 
             u.username, 
@@ -30,14 +27,14 @@ $sql = "SELECT
         ORDER BY 
             u.id_usuario DESC";
 
-// Ejecutar la consulta
+
 $resultado = mysqli_query($link, $sql);
 
 
 if ($resultado) {
     $usuarios = array();
     
-    // Convertir cada fila a un array asociativo
+    
     while ($fila = mysqli_fetch_assoc($resultado)) {
         $fila['fecha_creacion'] = date('Y-m-d H:i', strtotime($fila['fecha_creacion']));
         $usuarios[] = $fila;
@@ -48,7 +45,7 @@ if ($resultado) {
     header('Content-Type: application/json');
     echo json_encode(['success' => true, 'usuarios' => $usuarios]);
 } else {
-    // Error en la base de datos
+    
     header('Content-Type: application/json');
     echo json_encode(['success' => false, 'message' => 'Error al consultar usuarios: ' . mysqli_error($link)]);
 }

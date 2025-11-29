@@ -1,5 +1,5 @@
 <?php
-// actualizar_pelicula.php
+
 
 require_once 'conexion.php'; 
 $link = Conectar();
@@ -11,7 +11,7 @@ if (!$link) {
     exit;
 }
 
-// Validar campos necesarios
+
 if (
     !isset($_POST['id_pelicula']) || 
     !isset($_POST['titulo']) || 
@@ -19,7 +19,7 @@ if (
     !isset($_POST['calificacion']) ||
     !isset($_POST['idioma']) ||
     !isset($_POST['descripcion']) ||
-    !isset($_POST['duracion_min']) || // Nuevo campo añadido
+    !isset($_POST['duracion_min']) || 
     !isset($_POST['poster_path']) 
 ) {
     http_response_code(400);
@@ -37,7 +37,7 @@ $descripcion = mysqli_real_escape_string($link, $_POST['descripcion']);
 $duracion_min = mysqli_real_escape_string($link, $_POST['duracion_min']);
 $poster_path = mysqli_real_escape_string($link, $_POST['poster_path']);
 
-//  Consulta SQL de ACTUALIZACIÓN (incluyendo duracion_min y descripcion)
+
 $sql = "UPDATE pelicula SET 
             titulo = '$titulo',
             descripcion = '$descripcion',
@@ -55,10 +55,10 @@ if ($resultado) {
     $filas_afectadas = mysqli_affected_rows($link);
     mysqli_close($link);
     
-    if ($filas_afectadas >= 0) { // Cero filas afectadas es éxito, solo si no se cambió nada
+    if ($filas_afectadas >= 0) { 
         echo json_encode(['success' => true, 'message' => "Película con ID $id_pelicula actualizada correctamente."]);
     } else {
-        // En un caso ideal, si mysqli_affected_rows() fuera -1 indicaría error
+        
         echo json_encode(['success' => false, 'message' => "Película encontrada, pero no se pudo determinar el resultado de la actualización."]);
     }
 } else {

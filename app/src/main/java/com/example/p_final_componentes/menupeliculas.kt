@@ -1,6 +1,9 @@
 package com.example.p_final_componentes
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
@@ -22,16 +25,32 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class menupeliculas : AppCompatActivity() {
+
+    private fun navigateToNotificaciones() {
+        try {
+            val intent = Intent(this@menupeliculas, Notificaciones::class.java)
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error al navegar: ${e.message}", Toast.LENGTH_LONG).show()
+            Log.e("Catalogoadmin", "Error al navegar: ${e.message}", e)
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -44,14 +63,19 @@ class menupeliculas : AppCompatActivity() {
         val composeView = findViewById<ComposeView>(R.id.render)
         composeView.setContent {
             MaterialTheme {
-                Menupeliculasrender()
+                Menupeliculasrender(
+                    onNavigateToNotificaciones = { navigateToNotificaciones() }
+                )
             }
         }
     }
 }
 
 @Composable
-fun MenuAndroid(modifier: Modifier = Modifier) {
+fun MenuAndroid(
+    modifier: Modifier = Modifier,
+    onNavigateToNotificaciones: () -> Unit
+) {
     Box(
         modifier = modifier
             .requiredWidth(width = 412.dp)
@@ -62,12 +86,16 @@ fun MenuAndroid(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .align(alignment = Alignment.TopStart)
                 .offset(x = 9.dp,
-                    y = 14.dp))
+                    y = 14.dp),
+            onNavigateToNotificaciones = onNavigateToNotificaciones)
     }
 }
 
 @Composable
-fun InicioPeliculas(modifier: Modifier = Modifier) {
+fun InicioPeliculas(
+    modifier: Modifier = Modifier,
+    onNavigateToNotificaciones: () -> Unit
+) {
     Box(
         modifier = modifier
             .requiredWidth(width = 403.dp)
@@ -120,11 +148,40 @@ fun InicioPeliculas(modifier: Modifier = Modifier) {
                     .requiredWidth(width = 366.dp)
             )
         }
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(15.99.dp, Alignment.Start),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .align(alignment = Alignment.TopStart)
+                .offset(x = 300.dp, y = 0.dp)
+                .requiredWidth(width = 58.dp)
+                .requiredHeight(height = 32.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.icon_1n),
+                contentDescription = "Icon",
+                modifier = Modifier.requiredSize(size = 20.dp)
+            )
+            Image(
+                painter = painterResource(id = R.drawable.iconn),
+                contentDescription = "Icon",
+                modifier = Modifier.requiredSize(size = 20.dp)
+                    .clickable(
+
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = rememberRipple(bounded = true, color = Color.White.copy(alpha = 0.5f)),
+                        onClick = { onNavigateToNotificaciones() }
+                    )
+            )
+        }
     }
 }
 
 @Composable
-fun Menupeliculasrender(modifier: Modifier = Modifier) {
+fun Menupeliculasrender(
+    modifier: Modifier = Modifier,
+    onNavigateToNotificaciones: () -> Unit
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -133,12 +190,14 @@ fun Menupeliculasrender(modifier: Modifier = Modifier) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        MenuAndroid(Modifier)
+        MenuAndroid(Modifier,
+            onNavigateToNotificaciones = onNavigateToNotificaciones)
         Catalogopeli()
     }}
 @Preview(showBackground = true, showSystemUi = true,widthDp = 412, heightDp = 250)
 
 @Composable
 fun Menupeliculaprevie() {
-    Menupeliculasrender()
+    Menupeliculasrender(onNavigateToNotificaciones = {})
+
 }

@@ -1,7 +1,6 @@
 <?php
 // obtener_detalle_pelicula.php
 
-// 🚨 Reemplaza 'conexion.php' con tu ruta real de conexión si es diferente.
 require_once 'conexion.php'; 
 
 header('Content-Type: application/json');
@@ -35,7 +34,11 @@ $sql = "SELECT
             p.precio_alquiler, 
             p.ncopias AS copias_totales,
             
-            (SELECT COUNT(id_cinta) FROM cinta WHERE pelicula_id_pelicula = p.id_pelicula AND estado = 'disponible') AS copias_disponibles,
+            -- LÓGICA CORREGIDA: Cuenta las cintas que NO tienen un préstamo 'en curso'
+            (SELECT COUNT(c.id_cinta) FROM cinta c
+             LEFT JOIN prestamo pr ON c.id_cinta = pr.cinta_id_cinta AND pr.estado_alquiler = 'en curso'
+             WHERE c.pelicula_id_pelicula = p.id_pelicula AND pr.id_prestamo IS NULL
+            ) AS copias_disponibles,
             
             d.nombre AS director_nombre, 
             

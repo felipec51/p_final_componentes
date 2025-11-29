@@ -37,7 +37,7 @@ if (!$link) {
     exit;
 }
 
-//  obtener datos
+
 $id_usuario = mysqli_real_escape_string($link, $_POST['id_usuario']);
 $username = mysqli_real_escape_string($link, $_POST['username']);
 $nombre = mysqli_real_escape_string($link, $_POST['nombre']);
@@ -46,7 +46,7 @@ $telefono = mysqli_real_escape_string($link, $_POST['telefono']);
 $email = mysqli_real_escape_string($link, $_POST['email']);
 $password_received = isset($_POST['password']) ? mysqli_real_escape_string($link, $_POST['password']) : null;
 
-// Construir la consulta de actualización
+
 $sql = "UPDATE Usuario SET 
             username = '$username',
             nombre = '$nombre',
@@ -54,14 +54,14 @@ $sql = "UPDATE Usuario SET
             telefono = '$telefono',
             email = '$email'";
 
-// Solo actualizar la contraseña si se proporcionó una nueva
+
 if (!empty($password_received)) {
     $sql .= ", password = '$password_received'";
 }
 
 $sql .= " WHERE id_usuario = '$id_usuario'";
 
-// Ejecutar la consulta
+
 if (mysqli_query($link, $sql)) {
     if (mysqli_affected_rows($link) > 0) {
         $response['success'] = true;

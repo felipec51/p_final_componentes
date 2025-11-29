@@ -1,58 +1,56 @@
 <?php
 // login.php
+require_once 'conexion.php';
+header('Content-Type: application/json'); // Importante para que Android entienda JSON
 
-// 1. INICIAR EL BUFFER DE SALIDA
-// Captura cualquier advertencia o texto no deseado de archivos incluidos.
-ob_start();
+$conn = Conectar();
 
-// Muestra todos los errores de PHP para debug.
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
-// Incluye el archivo de conexión y establece la conexión
-include('conexion.php');
-$link = Conectar();
-
-// 2. LIMPIAR EL BUFFER DESPUÉS DE LA CONEXIÓN
-// Eliminamos todo el contenido (warnings, notices, etc.) generado por 'conexion.php'.
-ob_clean();
-
-// 3. Obtiene los datos enviados desde la aplicación de Android (Volley)
-$user = isset($_REQUEST['user']) ? $_REQUEST['user'] : '';
-$pass = isset($_REQUEST['passw']) ? $_REQUEST['passw'] : '';
-
-// 4. Validación Básica
-if (empty($user) || empty($pass)) {
-    echo "ERROR 1"; // Faltan campos
+if (!$conn) {
+    echo json_encode(["success" => false, "message" => "Error de conexión BD"]);
     exit;
 }
 
-// 5. Consulta SQL: SELECCIONAR EL CAMPO 'rol_id_rol' (NOMBRE CORRECTO DE LA COLUMNA)
-$user_safe = mysqli_real_escape_string($link, $user);
-$pass_safe = mysqli_real_escape_string($link, $pass);
+$user = isset($_POST['user']) ? $_POST['user'] : '';
+$pass = isset($_POST['passw']) ? $_POST['passw'] : '';
 
-// Las columnas de la BD son 'username', 'password' y 'rol_id_rol' en la tabla 'Usuario'
-$sql = "SELECT username, rol_id_rol FROM Usuario WHERE username = '$user_safe' AND password = '$pass_safe'";
-
-// 6. Ejecutar y Manejar la Consulta
-$res = mysqli_query($link, $sql);
-
-if (!$res) {
-    // Si la consulta SQL tiene un error de sintaxis o la tabla no existe
-    die("ERROR_SQL_QUERY: " . mysqli_error($link)); 
-} 
-else if (mysqli_num_rows($res) > 0) {
-    // Éxito: Se encontró al usuario
-    $fila = mysqli_fetch_assoc($res);
-    $rol = $fila['rol_id_rol']; // Obtener el valor del campo 'rol_id_rol'
-    
-    // Devolver el rol (ej: "1" o "2") al cliente de Android
-    echo $rol;
-} else {
-    // Falla: Credenciales no coinciden
-    echo "ERROR 2"; 
+if (empty($user) || empty($pass)) {
+    echo json_encode(["success" => false, "message" => "Campos vacíos"]);
+    exit;
 }
 
-// 7. Cerrar Conexión
-mysqli_close($link);
+// Escapar para seguridad
+$user_safe = mysqli_real_escape_string($conn, $user);
+$pass_safe = mysqli_real_escape_string($conn, $pass);
+
+// Seleccionamos TODOS los datos necesarios para el objeto Usuario.java
+$sql = "SELECT id_usuario, username, nombre, direccion, telefono, email, fecha_creacion, rol_id_rol 
+        FROM Usuario 
+        WHERE username = '$user_safe' AND password = '$pass_safe'";
+
+$res = mysqli_query($conn, $sql);
+
+if ($res && mysqli_num_rows($res) > 0) {
+    $fila = mysqli_fetch_assoc($res);
+    
+    // Devolvemos éxito y el objeto de usuario completo
+    echo json_encode([
+        "success" => true,
+        "rol" => $fila['rol_id_rol'],
+        "usuario" => [
+            "id" => (int)$fila['id_usuario'],
+            "username" => $fila['username'],
+            "nombre" => $fila['nombre'],
+            // No enviamos el password por seguridad, o si quieres lo agregas
+            "direccion" => $fila['direccion'],
+            "telefono" => $fila['telefono'],
+            "email" => $fila['email'],
+            "fechaCreacion" => $fila['fecha_creacion'],
+            "rolIdRol" => (int)$fila['rol_id_rol']
+        ]
+    ]);
+} else {
+    echo json_encode(["success" => false, "message" => "Credenciales incorrectas"]);
+}
+
+mysqli_close($conn);
 ?>
