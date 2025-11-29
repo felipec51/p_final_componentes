@@ -1,5 +1,5 @@
 <?php
-// obtener_peliculas.php
+
 
 require_once 'conexion.php'; 
 
@@ -26,13 +26,13 @@ $sql = "SELECT
         ORDER BY 
             p.titulo ASC";
 
-// Ejecutar la consulta
+
 $resultado = mysqli_query($link, $sql);
 
 if ($resultado) {
     $peliculas = array();
     
-    // Mapeo de columnas (nombres de la DB a los esperados por Kotlin)
+    
     while ($fila = mysqli_fetch_assoc($resultado)) {
         
         $pelicula_data = array(

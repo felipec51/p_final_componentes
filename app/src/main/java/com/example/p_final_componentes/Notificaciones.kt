@@ -2,7 +2,6 @@ package com.example.p_final_componentes
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
@@ -31,8 +31,10 @@ import org.json.JSONObject
 
 class Notificaciones : ComponentActivity() {
 
+    // Asegúrate de que la IP sea correcta
     private val BASE_URL = "http://192.168.20.35/androidComponentes"
     private val URL_NOTIFICACIONES = "$BASE_URL/obtener_notificaciones.php"
+    private val URL_ELIMINAR = "$BASE_URL/eliminar_de_lista.php"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +51,8 @@ class Notificaciones : ComponentActivity() {
             MaterialTheme {
                 NotificacionesScreen(
                     userId = usuario.id,
-                    url = URL_NOTIFICACIONES,
+                    urlObtener = URL_NOTIFICACIONES,
+                    urlEliminar = URL_ELIMINAR, // Pasamos la nueva URL
                     onPeliculaClick = { pelicula ->
                         val intent = Intent(this, Rentar::class.java)
                         intent.putExtra("PELICULA_OBJ", pelicula)
@@ -65,7 +68,8 @@ class Notificaciones : ComponentActivity() {
 @Composable
 fun NotificacionesScreen(
     userId: Int,
-    url: String,
+    urlObtener: String,
+    urlEliminar: String,
     onPeliculaClick: (Pelicula) -> Unit,
     onVolver: () -> Unit
 ) {
@@ -74,17 +78,49 @@ fun NotificacionesScreen(
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
+    // Función para eliminar película (Lógica Volley)
+    fun eliminarPelicula(pelicula: Pelicula) {
+        val queue = Volley.newRequestQueue(context)
+        val request = object : StringRequest(
+            Method.POST, urlEliminar,
+            Response.Listener { response ->
+                try {
+                    val jsonResponse = JSONObject(response)
+                    if (jsonResponse.optBoolean("success")) {
+                        Toast.makeText(context, "Eliminada de la lista", Toast.LENGTH_SHORT).show()
+                        // Actualizamos la lista local filtrando la película eliminada
+                        notificaciones = notificaciones.filter { it.id_pelicula != pelicula.id_pelicula }
+                    } else {
+                        Toast.makeText(context, "Error: ${jsonResponse.optString("message")}", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(context, "Error en respuesta", Toast.LENGTH_SHORT).show()
+                }
+            },
+            Response.ErrorListener {
+                Toast.makeText(context, "Error de conexión", Toast.LENGTH_SHORT).show()
+            }
+        ) {
+            override fun getParams(): MutableMap<String, String> {
+                val params = HashMap<String, String>()
+                params["id_usuario"] = userId.toString()
+                params["id_pelicula"] = pelicula.id_pelicula.toString()
+                return params
+            }
+        }
+        queue.add(request)
+    }
+
+    // Cargar datos iniciales
     LaunchedEffect(Unit) {
         val queue = Volley.newRequestQueue(context)
         val request = object : StringRequest(
-            Method.POST, url,
+            Method.POST, urlObtener,
             Response.Listener { response ->
                 isLoading = false
                 try {
                     val jsonResponse = JSONObject(response)
-                    val success = jsonResponse.optBoolean("success")
-
-                    if (success) {
+                    if (jsonResponse.optBoolean("success")) {
                         val jsonArray = jsonResponse.getJSONArray("data")
                         val listaTemp = mutableListOf<Pelicula>()
                         for (i in 0 until jsonArray.length()) {
@@ -120,22 +156,22 @@ fun NotificacionesScreen(
         queue.add(request)
     }
 
-
     NotificacionesContent(
         isLoading = isLoading,
         errorMessage = errorMessage,
         notificaciones = notificaciones,
-        onPeliculaClick = onPeliculaClick
+        onPeliculaClick = onPeliculaClick,
+        onEliminarClick = { pelicula -> eliminarPelicula(pelicula) } // Conectamos la acción
     )
 }
 
-// 2. COMPONENTE VISUAL (Sin lógica de Volley, listo para Preview)
 @Composable
 fun NotificacionesContent(
     isLoading: Boolean,
     errorMessage: String?,
     notificaciones: List<Pelicula>,
-    onPeliculaClick: (Pelicula) -> Unit
+    onPeliculaClick: (Pelicula) -> Unit,
+    onEliminarClick: (Pelicula) -> Unit // Nuevo parámetro
 ) {
     val colorBackground = Color(0xff18181b)
     val colorCard = Color(0xff27272a)
@@ -146,65 +182,45 @@ fun NotificacionesContent(
         modifier = Modifier
             .fillMaxSize()
             .background(colorBackground)
-            .padding(24.dp)
+            .padding(16.dp)
     ) {
-        // --- Encabezado ---
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(bottom = 20.dp)
+                .offset(x = 0.dp, y = 17.dp)
         ) {
-            Icon(
-                imageVector = Icons.Default.Notifications,
-                contentDescription = null,
-                tint = colorPrimaryPink,
-                modifier = Modifier.size(32.dp)
-            )
+            Icon(Icons.Default.Notifications, null, tint = colorPrimaryPink, modifier = Modifier.size(32.dp))
             Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = "Disponibles ahora",
-                color = Color.White,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            )
+
+            Text("Disponibles ahora", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
         }
 
-        // --- Contenido Dinámico ---
         if (isLoading) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = colorPrimaryPink)
             }
         } else if (errorMessage != null) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(text = errorMessage, color = Color.Red)
             }
         } else if (notificaciones.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        "No hay películas disponibles",
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
-                    )
+                    Text("No hay películas disponibles", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        "Te avisaremos cuando se liberen copias.",
-                        color = colorTextSecondary,
-                        fontSize = 14.sp
-                    )
+                    Text("Te avisaremos cuando se liberen copias.", color = colorTextSecondary, fontSize = 14.sp)
                 }
             }
         } else {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 items(notificaciones) { pelicula ->
                     NotificationCard(
                         pelicula = pelicula,
                         colorCard = colorCard,
                         colorAccent = colorPrimaryPink,
                         colorTextSec = colorTextSecondary,
-                        onClick = { onPeliculaClick(pelicula) }
+                        onClick = { onPeliculaClick(pelicula) },
+                        onEliminar = { onEliminarClick(pelicula) } // Pasamos evento
                     )
                 }
             }
@@ -218,7 +234,8 @@ fun NotificationCard(
     colorCard: Color,
     colorAccent: Color,
     colorTextSec: Color,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onEliminar: () -> Unit // Nuevo parámetro
 ) {
     Card(
         colors = CardDefaults.cardColors(containerColor = colorCard),
@@ -226,32 +243,27 @@ fun NotificationCard(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
+        Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top // Alineamos arriba para que el icono quede bien
             ) {
+                // Info Película
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = "¡Ya disponible!",
-                        color = colorAccent,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Text("¡Ya disponible!", color = colorAccent, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = pelicula.titulo,
-                        color = Color.White,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Text(pelicula.titulo, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Precio: $${pelicula.precio_alquiler} | Copias libres: ${pelicula.copias_disponibles}",
-                        color = colorTextSec,
-                        fontSize = 14.sp
+                    Text("Precio: $${pelicula.precio_alquiler} | Copias: ${pelicula.copias_disponibles}", color = colorTextSec, fontSize = 14.sp)
+                }
+
+                // Botón Eliminar
+                IconButton(onClick = onEliminar) {
+                    Icon(
+                        imageVector = Icons.Default.Delete, // Icono de basura
+                        contentDescription = "Eliminar de lista",
+                        tint = Color.Gray // Color gris discreto
                     )
                 }
             }
@@ -272,29 +284,18 @@ fun NotificationCard(
     }
 }
 
-// 3. LA PREVIEW (Datos falsos para ver el diseño)
+// Preview actualizado
 @Preview(showBackground = true, widthDp = 360, heightDp = 800)
 @Composable
 fun PreviewNotificacionesList() {
-    // Creamos datos falsos simulando la respuesta de la BD
-    val p1 = Pelicula()
-    p1.titulo = "Misión Imposible: Sentencia Mortal"
-    p1.precio_alquiler = 13000.0
-    p1.copias_disponibles = 2
-
-    val p2 = Pelicula()
-    p2.titulo = "Oppenheimer"
-    p2.precio_alquiler = 15000.0
-    p2.copias_disponibles = 5
-
-    val listaFalsa = listOf(p1, p2)
-
+    val p1 = Pelicula().apply { titulo = "Matrix"; precio_alquiler = 12000.0; copias_disponibles = 2 }
     MaterialTheme {
         NotificacionesContent(
             isLoading = false,
             errorMessage = null,
-            notificaciones = listaFalsa,
-            onPeliculaClick = {}
+            notificaciones = listOf(p1),
+            onPeliculaClick = {},
+            onEliminarClick = {}
         )
     }
 }

@@ -1,12 +1,12 @@
 <?php
-// URL: verificar_estado_alquiler.php
+
 require_once 'conexion.php';
 header('Content-Type: application/json');
 
 $conn = Conectar();
 
 if (!$conn) {
-    // Manejo de error de conexión
+
     echo json_encode(["tiene_alquiler" => false, "id_prestamo" => -1, "fecha_devolucion" => ""]);
     exit();
 }
@@ -19,7 +19,7 @@ if ($id_usuario <= 0 || $id_pelicula <= 0) {
     exit();
 }
 
-// SQL corregido: Busca el id_prestamo y la fecha_devolucion del préstamo activo
+
 $sql = "SELECT p.id_prestamo, p.fecha_devolucion 
         FROM prestamo p
         JOIN cinta c ON p.cinta_id_cinta = c.id_cinta 
@@ -50,4 +50,3 @@ mysqli_stmt_close($stmt);
 mysqli_close($conn);
 
 echo json_encode($response);
-?>
