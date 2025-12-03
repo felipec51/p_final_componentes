@@ -38,7 +38,7 @@ import java.util.HashMap
 class AdminUsuarios : AppCompatActivity() {
 
 
-    private val URL_BASE = "http://192.168.20.35/androidComponentes/"
+    private val URL_BASE = "http://192.168.2.4/androidComponentes/"
     private val URL_OBTENER_USUARIOS = URL_BASE + "obtener_usuarios.php"
     private val URL_ELIMINAR_USUARIO = URL_BASE + "eliminar_usuario.php"
 

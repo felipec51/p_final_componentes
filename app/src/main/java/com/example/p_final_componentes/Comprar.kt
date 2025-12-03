@@ -45,7 +45,8 @@ import java.util.Locale
 class Comprar : AppCompatActivity() {
 
     private val URL_DETALLE_PELICULA =
-        "http://192.168.20.35/androidComponentes/obtener_detalle_pelicula.php"
+        //Felipe "http://192.168.20.35/androidComponentes/obtener_detalle_pelicula.php"
+    "http://192.168.2.4/androidComponentes/obtener_detalle_pelicula.php"
 
     private lateinit var requestQueue: RequestQueue
     private var peliculaState by mutableStateOf(Pelicula())

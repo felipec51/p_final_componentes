@@ -40,7 +40,7 @@ import java.util.Hashtable
 
 class addpeli : AppCompatActivity() {
 
-    private val URL_ADD_PELICULA = "http://192.168.20.35/androidComponentes/add_pelicula.php"
+    private val URL_ADD_PELICULA = "http://192.168.2.4/androidComponentes/add_pelicula.php"
 
     private val isLoadingState = mutableStateOf(false)
     private val errorMessageState = mutableStateOf<String?>(null)
