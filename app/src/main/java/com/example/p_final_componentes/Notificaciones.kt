@@ -31,9 +31,8 @@ import org.json.JSONObject
 
 class Notificaciones : ComponentActivity() {
 
-    // Asegúrate de que la IP sea correcta
-    // felipe private val BASE_URL = "http://192.168.20.35/androidComponentes"
-    private val BASE_URL = "http://192.168.2.4/androidComponentes"
+
+    private val BASE_URL = "${ApiConfig.BASE_URL}"
     private val URL_NOTIFICACIONES = "$BASE_URL/obtener_notificaciones.php"
     private val URL_ELIMINAR = "$BASE_URL/eliminar_de_lista.php"
 

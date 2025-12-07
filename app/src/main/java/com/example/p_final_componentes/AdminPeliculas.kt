@@ -38,10 +38,10 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 
 class AdminPeliculas : AppCompatActivity() {
 
-    // 1. CONFIGURACIÓN DE URLS (Asegúrate que la IP sea correcta)
-    private val URL_BASE = "http://192.168.2.4/androidComponentes/"
-    private val URL_OBTENER_PELICULAS = URL_BASE + "obtener_peliculas.php"
-    private val URL_ELIMINAR_PELICULA = URL_BASE + "eliminar_pelicula.php"
+
+    private val URL_BASE = "${ApiConfig.BASE_URL}"
+    private val URL_OBTENER_PELICULAS = URL_BASE + "/obtener_peliculas.php"
+    private val URL_ELIMINAR_PELICULA = URL_BASE + "/eliminar_pelicula.php"
 
     private lateinit var requestQueue: RequestQueue
     private val listadoPeliculas = mutableStateListOf<Pelicula>()

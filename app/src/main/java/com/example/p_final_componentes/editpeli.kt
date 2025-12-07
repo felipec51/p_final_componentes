@@ -39,8 +39,8 @@ import java.util.HashMap
 
 class editpeli : AppCompatActivity() {
 
-    private val URL_BASE = "http://192.168.2.4/androidComponentes/"
-    private val URL_ACTUALIZAR_PELICULA = URL_BASE + "actualizar_pelicula.php"
+    private val URL_BASE = "${ApiConfig.BASE_URL}"
+    private val URL_ACTUALIZAR_PELICULA = URL_BASE + "/actualizar_pelicula.php"
     private lateinit var requestQueue: RequestQueue
     private lateinit var initialPelicula: Pelicula
     private val isLoading = mutableStateOf(false)

@@ -44,9 +44,7 @@ import java.util.Hashtable
 
 class RecuperarContrasena : AppCompatActivity() {
 
-    // URL del servidor para la recuperación
-    private val URL_RECUPERACION = "http://192.168.2.4/androidComponentes/recuperar_contrasena.php"
-
+    private val URL_RECUPERACION = "${ApiConfig.BASE_URL}/recuperar_contrasena.php"
     private val isLoadingState = mutableStateOf(false)
     private lateinit var requestQueue: RequestQueue
 

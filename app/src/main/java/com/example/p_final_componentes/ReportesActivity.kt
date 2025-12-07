@@ -35,8 +35,8 @@ import java.util.*
 
 class ReportesActivity : AppCompatActivity() {
 
-    private val URL_BASE = "http://192.168.2.4/androidComponentes/"
-    private val URL_GENERAR_REPORTE = URL_BASE + "generar_reporte.php"
+    private val URL_BASE = "${ApiConfig.BASE_URL}"
+    private val URL_GENERAR_REPORTE = URL_BASE + "/generar_reporte.php"
 
     private lateinit var requestQueue: RequestQueue
     private val reportes = mutableStateListOf<ItemReporte>()

@@ -46,7 +46,8 @@ import androidx.compose.foundation.verticalScroll
 class RegistroActivityFelipe : AppCompatActivity() {
 
 
-    private val URL_REGISTRO = "http://192.168.2.4/androidComponentes/registro.php"
+
+    private val URL_REGISTRO = "${ApiConfig.BASE_URL}/registro.php"
 
     private val isLoadingState = mutableStateOf(false)
     private val errorMessageState = mutableStateOf<String?>(null)

@@ -39,8 +39,8 @@ import java.util.Hashtable
 import org.json.JSONObject
 
 class login : AppCompatActivity() {
-    //felipe private val URL_LOGIN = "http://192.168.20.35/androidComponentes/login.php"
-    private val URL_LOGIN = "http://192.168.2.4/androidComponentes/login.php"
+
+    private val URL_LOGIN = "${ApiConfig.BASE_URL}/login.php"
     private val isLoadingState = mutableStateOf(false)
     private val errorMessageState = mutableStateOf<String?>(null)
     private lateinit var requestQueue: RequestQueue

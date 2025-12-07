@@ -51,8 +51,7 @@ sealed class RentButtonState {
 
 class Rentar : AppCompatActivity() {
 
-   //felipe private val BASE_URL = "http://192.168.20.35/androidComponentes"
-    private val BASE_URL = "http://192.168.2.4/androidComponentes"
+    private val BASE_URL = "${ApiConfig.BASE_URL}"
     private val URL_RENTAR = "$BASE_URL/rentar_pelicula.php"
     private val URL_VERIFICAR = "$BASE_URL/verificar_estado_alquiler.php" // Endpoint para verificar préstamo
 
