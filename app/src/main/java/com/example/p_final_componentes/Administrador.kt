@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -34,6 +34,16 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 
 class Administrador : ComponentActivity() {
+
+    private fun navigateToCRUD() {
+        try {
+            val intent = Intent(this@Administrador, AdminCRUDActivity::class.java)
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error al navegar: ${e.message}", Toast.LENGTH_LONG).show()
+            Log.e("Administrador", "Error al navegar: ${e.message}", e)
+        }
+    }
 
     private fun navigateToAdminUser() {
         try {
@@ -78,15 +88,15 @@ class Administrador : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_catalogoadmin2)
-        val composeView = findViewById<ComposeView>(R.id.render)
-        composeView.setContent {
+
+        setContent {
             MaterialTheme {
                 admincompleto(
                     onNavigateToadminuser = { navigateToAdminUser() },
                     onNavigateToadminPeli = { navigateToAdminPeli() },
                     onNavigateToAddPeli = { navigateToAddPeli() },
-                    onNavigateToReportes = { navigateToReportes() }
+                    onNavigateToReportes = { navigateToReportes() },
+                    onNavigateToCRUD = { navigateToCRUD() }
                 )
             }
         }
@@ -94,103 +104,93 @@ class Administrador : ComponentActivity() {
 }
 
 @Composable
-fun MainAdmin(
+fun admincompleto(
     modifier: Modifier = Modifier,
     onNavigateToadminuser: () -> Unit,
     onNavigateToadminPeli: () -> Unit,
     onNavigateToAddPeli: () -> Unit,
-    onNavigateToReportes: () -> Unit
+    onNavigateToReportes: () -> Unit,
+    onNavigateToCRUD: () -> Unit
 ) {
-    Box(
+    Column(
         modifier = modifier
-            .requiredWidth(width = 389.dp)
-            .requiredHeight(height = 450.dp)
-            .background(color = Color(0xff141414))
+            .fillMaxSize()
+            .background(Color(0xFF141414))
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Primera fila de botones
+        // Botones superiores en fila
         Row(
-            modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 19.dp, y = 43.dp)
-                .fillMaxWidth()
-                .padding(end = 19.dp),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Admin Películas
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .requiredHeight(height = 33.dp)
+                    .height(40.dp)
                     .clip(shape = RoundedCornerShape(8.dp))
                     .background(color = Color(0xff474747))
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = rememberRipple(bounded = true, color = Color.White.copy(alpha = 0.5f)),
-                        onClick = { onNavigateToadminPeli() }
+                        onClick = onNavigateToadminPeli
                     )
             ) {
                 Text(
                     text = "Admin Películas",
                     color = Color.White,
-                    lineHeight = 1.5.em,
-                    style = TextStyle(fontSize = 14.sp),
+                    style = TextStyle(fontSize = 13.sp),
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
 
-            // Agregar Película
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .requiredHeight(height = 33.dp)
+                    .height(40.dp)
                     .clip(shape = RoundedCornerShape(8.dp))
                     .background(color = Color(0xffe50914))
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = rememberRipple(bounded = true, color = Color.White.copy(alpha = 0.5f)),
-                        onClick = { onNavigateToAddPeli() }
+                        onClick = onNavigateToAddPeli
                     )
             ) {
                 Text(
                     text = "Agregar Película",
                     color = Color.White,
-                    lineHeight = 1.5.em,
-                    style = TextStyle(fontSize = 14.sp),
+                    style = TextStyle(fontSize = 13.sp),
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
 
-            // Admin Users
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .requiredHeight(height = 33.dp)
+                    .height(40.dp)
                     .clip(shape = RoundedCornerShape(8.dp))
                     .background(color = Color(0xff474747))
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = rememberRipple(bounded = true, color = Color.White.copy(alpha = 0.5f)),
-                        onClick = { onNavigateToadminuser() }
+                        onClick = onNavigateToadminuser
                     )
             ) {
                 Text(
                     text = "Admin Users",
                     color = Color.White,
-                    lineHeight = 1.5.em,
-                    style = TextStyle(fontSize = 14.sp),
+                    style = TextStyle(fontSize = 13.sp),
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
         }
 
-        // Botón de Reportes (segunda fila)
+        // Botón de Reportes
         Box(
             modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 19.dp, y = 84.dp)
                 .fillMaxWidth()
-                .padding(end = 19.dp)
-                .requiredHeight(height = 40.dp)
+                .height(50.dp)
                 .clip(shape = RoundedCornerShape(8.dp))
                 .background(
                     brush = Brush.horizontalGradient(
@@ -203,7 +203,7 @@ fun MainAdmin(
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(bounded = true, color = Color.White.copy(alpha = 0.5f)),
-                    onClick = { onNavigateToReportes() }
+                    onClick = onNavigateToReportes
                 )
         ) {
             Row(
@@ -216,147 +216,116 @@ fun MainAdmin(
                 Image(
                     painter = painterResource(id = R.drawable.filmicon),
                     contentDescription = "Reportes Icon",
-                    modifier = Modifier.requiredSize(size = 20.dp)
+                    modifier = Modifier.size(24.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = "MÓDULO DE REPORTES",
                     color = Color.White,
-                    lineHeight = 1.5.em,
-                    style = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                    style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                )
+            }
+        }
+
+        // Botón de CRUD Catálogo
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .clip(shape = RoundedCornerShape(8.dp))
+                .background(
+                    brush = Brush.horizontalGradient(
+                        colors = listOf(
+                            Color(0xff6a1b9a),
+                            Color(0xff9c27b0)
+                        )
+                    )
+                )
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = rememberRipple(bounded = true, color = Color.White.copy(alpha = 0.5f)),
+                    onClick = onNavigateToCRUD
+                )
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.filmicon),
+                    contentDescription = "CRUD Icon",
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = "GESTIONAR CATÁLOGO",
+                    color = Color.White,
+                    style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 )
             }
         }
 
         // Estadísticas
-        Box(
+        Column(
             modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 24.dp, y = 140.dp)
-                .requiredWidth(width = 322.dp)
-                .requiredHeight(height = 250.dp)
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Primera tarjeta - Total películas
-            Box(
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 3.dp, y = 8.dp)
-                    .requiredWidth(width = 322.dp)
-                    .requiredHeight(height = 102.dp)
-                    .clip(shape = RoundedCornerShape(16.dp))
-                    .background(color = Color(0xff3a3a3a).copy(alpha = 0.28f))
-            )
             Text(
-                text = "Total películas",
-                color = Color(0xff99a1af),
-                lineHeight = 1.43.em,
-                style = TextStyle(fontSize = 14.sp),
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 23.dp, y = 26.9.dp)
-            )
-            Spacer(
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 23.dp, y = 27.1.dp)
-                    .requiredWidth(width = 273.dp)
-                    .requiredHeight(height = 74.dp)
-            )
-            Image(
-                painter = painterResource(id = R.drawable.filmicon),
-                contentDescription = "FilmIcon 1",
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 260.dp, y = 46.1.dp)
-                    .requiredSize(size = 24.dp)
-            )
-            Text(
-                text = "7",
+                text = "ESTADÍSTICAS DEL SISTEMA",
                 color = Color.White,
-                lineHeight = 1.5.em,
-                style = TextStyle(fontSize = 16.sp),
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 23.dp, y = 47.9.dp)
-            )
-            Text(
-                text = "en el catalogo",
-                color = Color(0xff6a7282),
-                lineHeight = 1.33.em,
-                style = TextStyle(fontSize = 14.sp),
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 23.dp, y = 77.dp)
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
             )
 
-            // Segunda tarjeta - Géneros disponibles
+            // Card de estadísticas
             Box(
                 modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 3.dp, y = 126.dp)
-                    .requiredWidth(width = 322.dp)
-                    .requiredHeight(height = 102.dp)
-                    .clip(shape = RoundedCornerShape(16.dp))
-                    .background(color = Color(0xff3a3a3a).copy(alpha = 0.28f))
-            )
-            Text(
-                text = "Generos disponibles",
-                color = Color(0xff99a1af),
-                lineHeight = 1.43.em,
-                style = TextStyle(fontSize = 14.sp),
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 25.dp, y = 143.9.dp)
-            )
-            Text(
-                text = "8",
-                color = Color.White,
-                lineHeight = 1.5.em,
-                style = TextStyle(fontSize = 16.sp),
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 25.dp, y = 164.9.dp)
-            )
-
-            Text(
-                text = "En el catalogo",
-                color = Color(0xff6a7282),
-                lineHeight = 1.33.em,
-                style = TextStyle(fontSize = 14.sp),
-                modifier = Modifier
-                    .align(alignment = Alignment.TopStart)
-                    .offset(x = 25.dp, y = 194.dp)
-            )
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xff1f1f1f))
+                    .padding(16.dp)
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    StatRow("Total Películas", "21", Color(0xffe50914))
+                    StatRow("Total Usuarios", "5", Color(0xff00b8d4))
+                    StatRow("Películas Alquiladas", "15", Color(0xffffab00))
+                    StatRow("Ingresos del Mes", "$850,000", Color(0xff76ff03))
+                }
+            }
         }
-    }
-}
 
-@Composable
-fun admincompleto(
-    modifier: Modifier = Modifier,
-    onNavigateToadminuser: () -> Unit,
-    onNavigateToadminPeli: () -> Unit,
-    onNavigateToAddPeli: () -> Unit,
-    onNavigateToReportes: () -> Unit
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color(0xFF141414))
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        MainAdmin(
-            onNavigateToadminuser = onNavigateToadminuser,
-            onNavigateToadminPeli = onNavigateToadminPeli,
-            onNavigateToAddPeli = onNavigateToAddPeli,
-            onNavigateToReportes = onNavigateToReportes
-        )
+        // Catálogo de películas
         Catalogopeli()
     }
 }
 
+@Composable
+fun StatRow(label: String, value: String, color: Color) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            color = Color(0xffb0b0b0),
+            fontSize = 14.sp
+        )
+        Text(
+            text = value,
+            color = color,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
 @Preview(widthDp = 390, heightDp = 950)
 @Composable
 private fun MainContentPreview() {
@@ -364,6 +333,7 @@ private fun MainContentPreview() {
         onNavigateToadminuser = {},
         onNavigateToadminPeli = {},
         onNavigateToAddPeli = {},
-        onNavigateToReportes = {}
+        onNavigateToReportes = {},
+        onNavigateToCRUD = {}
     )
 }
