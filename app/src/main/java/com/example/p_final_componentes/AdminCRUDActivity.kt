@@ -31,7 +31,7 @@ import java.util.HashMap
 
 class AdminCRUDActivity : AppCompatActivity() {
 
-    private val URL_BASE = "http://192.168.2.4/androidComponentes/"
+    private val URL_BASE = "${ApiConfig.BASE_URL}"
     private lateinit var requestQueue: RequestQueue
 
     // Estados para cada entidad
@@ -75,12 +75,12 @@ class AdminCRUDActivity : AppCompatActivity() {
         loadDirectores()
     }
 
-    // ==================== GÉNEROS ====================
+
     private fun loadGeneros() {
         isLoading.value = true
         val request = StringRequest(
             Request.Method.GET,
-            URL_BASE + "obtener_generos.php",
+            URL_BASE + "/obtener_generos.php",
             { response ->
                 isLoading.value = false
                 try {
@@ -111,7 +111,7 @@ class AdminCRUDActivity : AppCompatActivity() {
     private fun addGenero(nombre: String) {
         val request = object : StringRequest(
             Method.POST,
-            URL_BASE + "agregar_genero.php",
+            URL_BASE + "/agregar_genero.php",
             { response ->
                 try {
                     val json = JSONObject(response)
@@ -135,7 +135,7 @@ class AdminCRUDActivity : AppCompatActivity() {
     private fun updateGenero(id: Int, nombre: String) {
         val request = object : StringRequest(
             Method.POST,
-            URL_BASE + "actualizar_genero.php",
+            URL_BASE + "/actualizar_genero.php",
             { response ->
                 try {
                     val json = JSONObject(response)
@@ -159,7 +159,7 @@ class AdminCRUDActivity : AppCompatActivity() {
     private fun deleteGenero(id: Int) {
         val request = object : StringRequest(
             Method.POST,
-            URL_BASE + "eliminar_genero.php",
+            URL_BASE + "/eliminar_genero.php",
             { response ->
                 try {
                     val json = JSONObject(response)
@@ -185,7 +185,7 @@ class AdminCRUDActivity : AppCompatActivity() {
         isLoading.value = true
         val request = StringRequest(
             Request.Method.GET,
-            URL_BASE + "obtener_actores.php",
+            URL_BASE + "/obtener_actores.php",
             { response ->
                 isLoading.value = false
                 try {
@@ -216,7 +216,7 @@ class AdminCRUDActivity : AppCompatActivity() {
     private fun addActor(nombre: String) {
         val request = object : StringRequest(
             Method.POST,
-            URL_BASE + "agregar_actor.php",
+            URL_BASE + "/agregar_actor.php",
             { response ->
                 try {
                     val json = JSONObject(response)
@@ -240,7 +240,7 @@ class AdminCRUDActivity : AppCompatActivity() {
     private fun updateActor(id: Int, nombre: String) {
         val request = object : StringRequest(
             Method.POST,
-            URL_BASE + "actualizar_actor.php",
+            URL_BASE + "/actualizar_actor.php",
             { response ->
                 try {
                     val json = JSONObject(response)
@@ -264,7 +264,7 @@ class AdminCRUDActivity : AppCompatActivity() {
     private fun deleteActor(id: Int) {
         val request = object : StringRequest(
             Method.POST,
-            URL_BASE + "eliminar_actor.php",
+            URL_BASE + "/eliminar_actor.php",
             { response ->
                 try {
                     val json = JSONObject(response)
@@ -285,12 +285,11 @@ class AdminCRUDActivity : AppCompatActivity() {
         requestQueue.add(request)
     }
 
-    // ==================== DIRECTORES ====================
     private fun loadDirectores() {
         isLoading.value = true
         val request = StringRequest(
             Request.Method.GET,
-            URL_BASE + "obtener_directores.php",
+            URL_BASE + "/obtener_directores.php",
             { response ->
                 isLoading.value = false
                 try {
@@ -321,7 +320,7 @@ class AdminCRUDActivity : AppCompatActivity() {
     private fun addDirector(nombre: String) {
         val request = object : StringRequest(
             Method.POST,
-            URL_BASE + "agregar_director.php",
+            URL_BASE + "/agregar_director.php",
             { response ->
                 try {
                     val json = JSONObject(response)
@@ -345,7 +344,7 @@ class AdminCRUDActivity : AppCompatActivity() {
     private fun updateDirector(id: Int, nombre: String) {
         val request = object : StringRequest(
             Method.POST,
-            URL_BASE + "actualizar_director.php",
+            URL_BASE + "/actualizar_director.php",
             { response ->
                 try {
                     val json = JSONObject(response)
@@ -369,7 +368,7 @@ class AdminCRUDActivity : AppCompatActivity() {
     private fun deleteDirector(id: Int) {
         val request = object : StringRequest(
             Method.POST,
-            URL_BASE + "eliminar_director.php",
+            URL_BASE + "/eliminar_director.php",
             { response ->
                 try {
                     val json = JSONObject(response)
@@ -390,8 +389,6 @@ class AdminCRUDActivity : AppCompatActivity() {
         requestQueue.add(request)
     }
 }
-
-// ==================== UI COMPOSABLES ====================
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

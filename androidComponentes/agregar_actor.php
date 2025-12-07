@@ -1,10 +1,9 @@
 <?php
-
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 
-$conn = new mysqli("localhost", "root", "", "mydb");
-$conn->set_charset("utf8mb4");
+require_once 'conexion.php'; 
+$conn = Conectar();
 
 $nombre = $_POST['nombre'] ?? '';
 
@@ -15,12 +14,19 @@ if (empty($nombre)) {
 
 $sql = "INSERT INTO actor (nombre) VALUES (?)";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $nombre);
 
-if ($stmt->execute()) {
-    echo json_encode(["success" => true, "message" => "Actor agregado exitosamente"]);
+if ($stmt) {
+    $stmt->bind_param("s", $nombre);
+    
+    if ($stmt->execute()) {
+        echo json_encode(["success" => true, "message" => "Actor agregado exitosamente"]);
+    } else {
+        echo json_encode(["success" => false, "message" => "Error al agregar"]);
+    }
+    
+    $stmt->close();
 } else {
-    echo json_encode(["success" => false, "message" => "Error al agregar"]);
+    echo json_encode(["success" => false, "message" => "Error al preparar la consulta"]);
 }
 
 $conn->close();

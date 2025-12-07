@@ -10,7 +10,6 @@ function Conectar(){
     
     $link = mysqli_connect($host, $user, $pass, $dbname);
     
-    
     if (!$link) {
         die("ERROR DE CONEXIÓN A MYSQL: " . mysqli_connect_error());
     }

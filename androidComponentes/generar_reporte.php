@@ -2,14 +2,14 @@
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 
-// Conexión a la base de datos
-$servidor = "localhost";
-$usuario_db = "root";
-$password_db = "";
-$base_datos = "mydb";
+require_once 'conexion.php'; 
 
-$conexion = new mysqli($servidor, $usuario_db, $password_db, $base_datos);
+// --- CORRECCIÓN AQUÍ ---
+// Llamamos a la función y guardamos el resultado en la variable $conexion
+$conexion = Conectar(); 
 
+// Ya no es necesario verificar connect_error aquí porque la función Conectar
+// ya lo maneja, pero si quieres doble seguridad:
 if ($conexion->connect_error) {
     echo json_encode([
         "success" => false,
@@ -18,15 +18,13 @@ if ($conexion->connect_error) {
     exit();
 }
 
-$conexion->set_charset("utf8mb4");
-
 // Obtener parámetros
 $tipo_reporte = isset($_POST['tipo_reporte']) ? $_POST['tipo_reporte'] : 'todos';
 $fecha_inicio = isset($_POST['fecha_inicio']) ? $_POST['fecha_inicio'] : date('Y-m-d', strtotime('-30 days'));
 $fecha_fin = isset($_POST['fecha_fin']) ? $_POST['fecha_fin'] : date('Y-m-d');
 $usuario_id = isset($_POST['usuario_id']) ? $_POST['usuario_id'] : '';
 
-// Query base para los reportes
+// Query base
 $query = "
     SELECT 
         p.id_prestamo,
@@ -48,7 +46,7 @@ $query = "
 
 $where_conditions = [];
 
-// Aplicar filtros según el tipo de reporte
+// Aplicar filtros
 switch ($tipo_reporte) {
     case 'semanal':
         $fecha_inicio = date('Y-m-d', strtotime('-7 days'));
@@ -80,6 +78,7 @@ switch ($tipo_reporte) {
         
     case 'top10':
         // QUERY ESPECIAL PARA TOP 10
+        // Nota: Asegúrate que sql_mode no tenga ONLY_FULL_GROUP_BY si da error aquí
         $query = "
             SELECT 
                 pel.id_pelicula,
@@ -102,7 +101,6 @@ switch ($tipo_reporte) {
         
     case 'todos':
     default:
-        // Sin filtros adicionales
         break;
 }
 
@@ -125,25 +123,25 @@ if ($resultado && $resultado->num_rows > 0) {
     }
 }
 
-// Calcular estadísticas
+// --- ESTADÍSTICAS ---
 $estadisticas = [];
 
-// Total de ingresos
+// 1. Total de ingresos
 $query_ingresos = "SELECT SUM(precio_alquiler) as total_ingresos FROM factura";
+// Aplicar filtro de fecha a los ingresos también para que coincida con el reporte
 if (!empty($where_conditions) && $tipo_reporte != 'top10' && $tipo_reporte != 'todos') {
-    $fecha_inicio_format = date('Y-m-d', strtotime($fecha_inicio));
-    $fecha_fin_format = date('Y-m-d', strtotime($fecha_fin . ' +1 day'));
-    $query_ingresos .= " WHERE fecha_factura BETWEEN '$fecha_inicio_format' AND '$fecha_fin_format'";
+    // Nota: factura tiene fecha_factura, no fecha_prestamo. Asumimos consistencia.
+    $query_ingresos .= " WHERE DATE(fecha_factura) BETWEEN '$fecha_inicio' AND '$fecha_fin'";
 }
 
 $resultado_ingresos = $conexion->query($query_ingresos);
-$row_ingresos = $resultado_ingresos->fetch_assoc();
+$row_ingresos = $resultado_ingresos ? $resultado_ingresos->fetch_assoc() : null;
 $estadisticas['total_ingresos'] = floatval($row_ingresos['total_ingresos'] ?? 0);
 
-// Total de alquileres
+// 2. Total de alquileres (basado en los resultados actuales)
 $estadisticas['total_alquileres'] = count($datos);
 
-// Película más rentada (solo si NO es top10)
+// 3. Película más rentada
 if ($tipo_reporte != 'top10') {
     $query_mas_rentada = "
         SELECT pel.titulo, COUNT(p.id_prestamo) as total
@@ -165,7 +163,7 @@ if ($tipo_reporte != 'top10') {
         $estadisticas['pelicula_mas_rentada'] = $row_mas_rentada['titulo'] . " (" . $row_mas_rentada['total'] . " rentas)";
     }
 } else {
-    // Para top10, mostrar el total de la primera película
+    // Si es top 10, la primera del array es la más rentada
     if (!empty($datos)) {
         $primera = $datos[0];
         $estadisticas['pelicula_mas_rentada'] = $primera['titulo_pelicula'] . " (" . $primera['cantidad_alquileres'] . " rentas)";
@@ -174,7 +172,7 @@ if ($tipo_reporte != 'top10') {
     }
 }
 
-// Usuario más activo
+// 4. Usuario más activo
 $query_usuario_activo = "
     SELECT u.nombre, COUNT(p.id_prestamo) as total
     FROM prestamo p
@@ -200,12 +198,10 @@ echo json_encode([
     "message" => "Reporte generado exitosamente",
     "datos" => $datos,
     "estadisticas" => $estadisticas,
-    "tipo_reporte" => $tipo_reporte,
-    "filtros_aplicados" => [
-        "tipo_reporte" => $tipo_reporte,
-        "fecha_inicio" => $fecha_inicio,
-        "fecha_fin" => $fecha_fin,
-        "usuario_id" => $usuario_id
+    "filtros" => [
+        "tipo" => $tipo_reporte,
+        "desde" => $fecha_inicio,
+        "hasta" => $fecha_fin
     ]
 ], JSON_UNESCAPED_UNICODE);
 
