@@ -92,7 +92,7 @@ class ReportesActivity : AppCompatActivity() {
                         // Parsear estadísticas
                         val statsJson = jsonResponse.getJSONObject("estadisticas")
                         estadisticas.value = EstadisticasReporte(
-                            totalIngresos = statsJson.getDouble("total_ingresos"),
+                            totalIngresos = statsJson.getString("total_ingresos"),
                             totalAlquileres = statsJson.getInt("total_alquileres"),
                             peliculaMasRentada = statsJson.optString("pelicula_mas_rentada", "N/A"),
                             usuarioMasActivo = statsJson.optString("usuario_mas_activo", "N/A")
@@ -137,9 +137,7 @@ class ReportesActivity : AppCompatActivity() {
             // Campos comunes
             item.id = obj.optInt("id_prestamo", i + 1) // Usar índice como fallback
             item.tituloPerlicula = obj.optString("titulo_pelicula", "N/A")
-            item.precioAlquiler = obj.optDouble("precio_alquiler", 0.0)
-
-            // Campos específicos según el tipo
+            item.precioAlquiler = obj.optString("precio_alquiler", "N/A")
             item.nombreUsuario = obj.optString("nombre_usuario", "N/A")
             item.fechaAlquiler = obj.optString("fecha_prestamo", "N/A")
             item.fechaDevolucion = obj.optString("fecha_devolucion", "N/A")
@@ -154,7 +152,7 @@ class ReportesActivity : AppCompatActivity() {
 }
 
 data class EstadisticasReporte(
-    val totalIngresos: Double,
+    val totalIngresos: String,
     val totalAlquileres: Int,
     val peliculaMasRentada: String,
     val usuarioMasActivo: String
@@ -451,7 +449,7 @@ fun ReportesScreen(
                             Row(modifier = Modifier.fillMaxWidth()) {
                                 EstadisticaItem(
                                     titulo = "Total Ingresos",
-                                    valor = "$${String.format("%.2f", estadisticas.totalIngresos)}",
+                                    valor = estadisticas.totalIngresos,
                                     icono = Icons.Default.AttachMoney,
                                     modifier = Modifier.weight(1f)
                                 )
@@ -615,7 +613,7 @@ fun ReporteItem(item: ItemReporte) {
 
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        "${String.format("%.2f", item.precioAlquiler)}",
+                        item.precioAlquiler,
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp

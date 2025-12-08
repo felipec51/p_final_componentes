@@ -9,7 +9,7 @@ public class ItemReporte implements Serializable {
     private String tituloPerlicula;
     private String fechaAlquiler;
     private String fechaDevolucion;
-    private double precioAlquiler;
+    private String precioAlquiler;
     private String estadoAlquiler;
     private int cantidadAlquileres;
 
@@ -58,11 +58,11 @@ public class ItemReporte implements Serializable {
         this.fechaDevolucion = fechaDevolucion;
     }
 
-    public double getPrecioAlquiler() {
+    public String getPrecioAlquiler() { // CAMBIO: Retorna String
         return precioAlquiler;
     }
 
-    public void setPrecioAlquiler(double precioAlquiler) {
+    public void setPrecioAlquiler(String precioAlquiler) { // CAMBIO: Recibe String
         this.precioAlquiler = precioAlquiler;
     }
 
